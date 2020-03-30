@@ -1,0 +1,630 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/iv_head_photo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center"
+                android:src="@drawable/pic_head"
+                android:layout_marginTop="@dimen/dp_10"/>
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/dp_10"
+                android:layout_marginTop="@dimen/dp_10"
+                android:drawablePadding="@dimen/dp_10"
+                android:drawableRight="@drawable/icon_edit"
+                android:text="用户昵称"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_big"/>
+        </LinearLayout>
+
+        <View
+            style="@style/horizontalOrangeLine"
+            android:layout_height="1px"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="体重"
+
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <EditText
+                android:id="@+id/et_weight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="65"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:inputType="number"
+                android:textColor="@color/text_gray_color"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="Kg"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="目标步数"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <EditText
+                android:id="@+id/et_target_step_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:text="10000"
+                android:inputType="number"
+                android:textColor="@color/text_gray_color"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="步"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:textCursorDrawable="@drawable/color_cursor"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="目标卡路里"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <EditText
+                android:id="@+id/et_target_cal_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:text="1500"
+                android:inputType="number"
+                android:textColor="@color/text_gray_color"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="kcal"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="目标距离"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <EditText
+                android:id="@+id/et_target_distance_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:inputType="number"
+                android:textColor="@color/text_gray_color"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="公里"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="性别"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <RadioGroup
+                android:id="@+id/rg_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/rg_btn_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/rg_btn_selector"
+                    android:checked="true"
+                    android:padding="@dimen/dp_10"
+                    android:text="男"
+                    android:textColor="@color/orange"/>
+
+                <RadioButton
+                    android:id="@+id/rg_btn_women"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp_20"
+                    android:layout_marginRight="@dimen/dp_20"
+                    android:button="@drawable/rg_btn_selector"
+                    android:padding="@dimen/dp_10"
+                    android:text="女"
+                    android:textColor="@color/orange"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="身高"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <com.lhzw.bluetooth.widget.CounterView
+                android:id="@+id/counter_height"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:init_num="172"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="cm"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="生日"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/tv_birthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:text="1995年1月1日"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="步长"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <com.lhzw.bluetooth.widget.CounterView
+                android:id="@+id/counter_step_length"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:init_num="70"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="cm"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="步幅"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <com.lhzw.bluetooth.widget.CounterView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:init_num="90"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:gravity="center_vertical"
+                android:text="cm"
+                android:textColor="@color/white"/>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="极限心率"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <com.lhzw.bluetooth.widget.CounterView
+                android:id="@+id/counter_max_heart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:init_num="194"/>
+        </LinearLayout>
+
+        <View
+            style="@style/horizontalGrayLine"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lhzw.bluetooth.widget.DotView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:dotColor="@color/red_dot_color"
+                app:dotSize="22"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:text="无氧耐力区"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/wu_yang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间 [147-163]"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lhzw.bluetooth.widget.DotView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:dotColor="@color/yellow_dot_color"
+                app:dotSize="22"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:text="乳酸阈值区"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/ru_suan"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间 [131-146]"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lhzw.bluetooth.widget.DotView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:dotColor="@color/green_dot_color"
+                app:dotSize="22"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:text="有氧耐力区"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/you_yang"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间 [115-130]"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lhzw.bluetooth.widget.DotView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:dotColor="@color/blue_dot_color"
+                app:dotSize="22"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:text="燃脂区"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/ran_zhi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间 [98-114]"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.lhzw.bluetooth.widget.DotView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:dotColor="@color/white"
+                app:dotSize="22"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/dp_10"
+                android:layout_weight="1"
+                android:text="暖身区"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <TextView
+                android:id="@+id/nuan_shen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="区间 [81-97]"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:text="消息通知"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/iv_phone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_phone"/>
+
+                <ImageView
+                    android:id="@+id/iv_msg"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_msg"/>
+
+                <ImageView
+                    android:id="@+id/iv_qq"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_qq"/>
+
+                <ImageView
+                    android:id="@+id/iv_wx"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/icon_wx"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View style="@style/horizontalGrayLine"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp_60"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="关于我们"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_normal"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_arrow_right"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>
