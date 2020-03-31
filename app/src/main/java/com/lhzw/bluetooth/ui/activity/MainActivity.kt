@@ -22,6 +22,7 @@ import com.lhzw.bluetooth.ui.fragment.ConnectFragment
 import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
 import org.greenrobot.eventbus.EventBus
@@ -50,8 +51,16 @@ class MainActivity : BaseActivity() {
 
     override fun initData() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
-
+              Logger.e("已获取存储权限")
+            //未初始化就 先初始化一个用户对象
+            LitePal.getDatabase()
+            val bean = LitePal.find<PersonalInfoBean>(1)
+            if (bean==null){
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 10000, 1500, 5, 194)
+                personalInfoBean.save()
+            }
         } else {
+            Logger.e("请求存储权限")
             requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE)
         }
 
