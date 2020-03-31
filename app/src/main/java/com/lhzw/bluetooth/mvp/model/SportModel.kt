@@ -232,7 +232,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 textSize = 8f;
                 setDrawAxisLine(true);
                 setLabelCount(xLabelCount, false)
-                textColor = App.instance.resources.getColor(R.color.gray_transparent)
+                textColor = App.instance.resources.getColor(R.color.white)
                 setDrawGridLines(false)
                 axisLineWidth = 1.2f
                 valueFormatter = valueFormatter_X
@@ -241,7 +241,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 typeface = Typeface.createFromAsset(App.instance.assets, "OpenSans-Light.ttf")
                 setLabelCount(yLabelCount, false)
                 textSize = 8f
-                textColor = App.instance.resources.getColor(R.color.gray_transparent)
+                textColor = App.instance.resources.getColor(R.color.white)
                 setDrawGridLines(false)
                 setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 axisLineColor = App.instance.resources.getColor(R.color.gray_lite)
