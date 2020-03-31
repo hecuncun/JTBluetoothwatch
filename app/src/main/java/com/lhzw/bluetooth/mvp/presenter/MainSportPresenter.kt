@@ -36,8 +36,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private var mListener: LocationSource.OnLocationChangedListener? = null
     private var aMap: AMap? = null
     private var locationUtils: LocationUtils? = null
-    private var lat = 0.0
-    private var lgt = 0.0
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
         locationUtils?.startLocate()
@@ -198,6 +196,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private fun drawPaths() {
         // 绘制轨迹
         var conter = 0;
+        var lat = 0.0
+        var lgt = 0.0
         var latLngs = model.queryData(mark, Constants.GPS)
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
