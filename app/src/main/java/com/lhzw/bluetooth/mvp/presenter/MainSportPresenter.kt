@@ -32,10 +32,12 @@ import kotlin.collections.ArrayList
  *
  */
 
-class MainSportPresenter(var mark: String, var duration: String, val type: Int) : BaseSportPresenter<SportConstract.View>(), SportConstract.Presenter, LocationUtils.ILocationCallBack, LocationSource {
+class MainSportPresenter(var mark: String, var duration: String, val type: Int) : BaseSportPresenter<SportConstract.View>(), SportConstract.Presenter, LocationUtils.ILocationCallBack, LocationSource, AMap.CancelableCallback {
     private var mListener: LocationSource.OnLocationChangedListener? = null
     private var aMap: AMap? = null
     private var locationUtils: LocationUtils? = null
+    private var lat = 0.0
+    private var lgt = 0.0
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
         locationUtils?.startLocate()
@@ -48,7 +50,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     override fun callBack(str: String, lat: Double, lgt: Double, aMapLocation: AMapLocation) {
         //根据获取的经纬度，将地图移动到定位位置
         aMap?.apply {
-            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, lgt), Constants.ZOOM))
+//            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat, lgt), Constants.ZOOM))
+
 //            //添加定位图标
 //            addMarker(locationUtils?.getMarkerOption(str, lat, lgt));
 //            Log.e("LatLon", "lat  $lat   lgt   $lgt")
@@ -88,13 +91,13 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 //            uiSettings.isRotateGesturesEnabled = false
 //            uiSettings.isTiltGesturesEnabled = false
             uiSettings.setAllGesturesEnabled(false)
-            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(Constants.LAT, Constants.LGT), Constants.ZOOM))
+//            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(Constants.LAT, Constants.LGT), Constants.ZOOM))
             locationUtils = LocationUtils()
             locationUtils?.setLocationCallBack(this@MainSportPresenter)
             //设置定位监听
             setLocationSource(this@MainSportPresenter);
             //设置缩放级别
-            moveCamera(CameraUpdateFactory.zoomTo(Constants.ZOOM))
+//            moveCamera(CameraUpdateFactory.zoomTo(Constants.ZOOM))
             //显示定位层并可触发，默认false
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
@@ -217,6 +220,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     private fun drawPaths() {
         // 绘制轨迹
+        var conter = 0;
         var latLngs = model.queryData(mark, Constants.GPS)
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
@@ -231,11 +235,16 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                         AMapUtils.calculateLineDistance(latLng, tmp) > 1) {
                     latLng = tmp
                     list.add(tmp)
+                    conter++
+                    lat += latLng.latitude
+                    lgt += latLng.longitude
                 }
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {
                 locationUtils?.drawPath(amp, list)
+//                aMap?.animateCamera(CameraUpdateFactory.changeLatLng(LatLng(lat / conter, lgt / conter)),this)
+                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat / conter, lgt / conter), Constants.ZOOM));
             }
         }
     }
@@ -248,4 +257,11 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     }
 
     private var model: SportModel = SportModel(mark)
+    override fun onFinish() {
+        aMap?.moveCamera(CameraUpdateFactory.zoomTo(Constants.ZOOM))
+    }
+
+    override fun onCancel() {
+
+    }
 }

@@ -17,9 +17,9 @@ import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.RefreshEvent
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
-import java.lang.Exception
 
 /**
  *
@@ -38,6 +38,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var readSportDetailMap = HashMap<String, HashMap<Int, MutableList<Byte>>>()
     private val DYNAMIC_DATE = 0x01
     private val MTU_DELAY = 0x02
+    protected var currentAddrss = ""
+    protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
 
     override fun onCreate() {
         super.onCreate()
@@ -103,8 +105,19 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
         Log.e("Watch", "onDeviceConnected .... ")
+        if(currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)){
+            CommOperation.deleteAll(WatchInfoBean::class.java)
+            CommOperation.deleteAll(SportInfoBean::class.java)
+            CommOperation.deleteAll(BoundaryAdrrBean::class.java)
+            CommOperation.deleteAll(ClimbingSportBean::class.java)
+            CommOperation.deleteAll(CurrentDataBean::class.java)
+            CommOperation.deleteAll(DailyDataBean::class.java)
+            CommOperation.deleteAll(DailyInfoDataBean::class.java)
+            CommOperation.deleteAll(FlatSportBean::class.java)
+            CommOperation.deleteAll(SportActivityBean::class.java)
+            CommOperation.deleteAll(SportInfoAddrBean::class.java)
+        }
         EventBus.getDefault().post(ConnectEvent(true))
-
         //1.连接成功  特征使能
         // myBleManager?.notification_enable()
 //        Observable.just(true).delay(3, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.newThread()).observeOn(AndroidSchedulers.mainThread()).subscribe {
@@ -177,8 +190,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onMtuUpdateResponse   ${BaseUtils.byte2HexStr(response!!)} ....")
         mHandler.removeMessages(MTU_DELAY)
         response(response, Constants.MTU_RESPONSE_CODE) {
-//            myBleManager?.watch_time_update()
-            myBleManager?.device_info()
+            myBleManager?.watch_time_update()
+//            myBleManager?.device_info()
         }
     }
 

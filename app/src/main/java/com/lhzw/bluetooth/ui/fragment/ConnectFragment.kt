@@ -141,27 +141,34 @@ class ConnectFragment : BaseFragment() {
 
 
         // filters.add(ScanFilter.Builder().setServiceUuid(mUUid).build())
-        scanner.startScan(filters, settings, scanCallback)
-        isScanning = true
+        try {
+            scanner.startScan(filters, settings, scanCallback)
+            isScanning = true
 
-        Handler().postDelayed({
-            if (isScanning) {
-                stopScan()
-            }
-        }, SCAN_DURATION)
-
+            Handler().postDelayed({
+                if (isScanning) {
+                    stopScan()
+                }
+            }, SCAN_DURATION)
+        } catch (e: Exception) {
+            Log.e("BLE_Error", "scanner already started with given callback ...")
+        }
     }
 
     private fun stopScan() {
         val scanner = BluetoothLeScannerCompat.getScanner()
-        scanner.stopScan(scanCallback)
-        isScanning = false
-        if (autoConnect && !connectState){//自动扫描还未连接成功
-            Logger.e("未找到蓝牙,继续搜索...")
-            Handler().postDelayed(Runnable {
-                startAutoScanAndConnect()
-            }, scannerDelayTime)
-            Logger.e("延时==$scannerDelayTime")
+        try {
+            scanner.stopScan(scanCallback)
+            isScanning = false
+            if (autoConnect && !connectState) {//自动扫描还未连接成功
+                Logger.e("未找到蓝牙,继续搜索...")
+                Handler().postDelayed(Runnable {
+                    startAutoScanAndConnect()
+                }, scannerDelayTime)
+                Logger.e("延时==$scannerDelayTime")
+            }
+        } catch (e: Exception) {
+            Log.e("BLE_Error", "BT Adapter is not turned ON ...")
         }
     }
 
@@ -200,7 +207,7 @@ class ConnectFragment : BaseFragment() {
     /**
      * 蓝牙扫描回调
      */
-    private var loadingView:LoadingView?=null
+    private var loadingView: LoadingView? = null
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -230,6 +237,7 @@ class ConnectFragment : BaseFragment() {
             }
             if (autoConnect) {
                 val lastList = mListValues.filter {
+
                     it.device.address == lastDeviceMacAddress
                 }
 
@@ -241,7 +249,7 @@ class ConnectFragment : BaseFragment() {
                     if (!isScanning) {//一轮扫描完了,就延时一段时间后再进行扫描操作
 
 
-                    }else{
+                    } else {
                         Logger.e("扫描中...")
                     }
                 }
@@ -309,15 +317,13 @@ class ConnectFragment : BaseFragment() {
                             val extendedDevice = mListValues.filter {
                                 macAddress == it.device.address
                             }[0]
-                            loadingView =  LoadingView(activity)
+                            loadingView = LoadingView(activity)
                             loadingView!!.setLoadingTitle("连接中...")
                             loadingView!!.show()
                             RxBus.getInstance().post("connect", extendedDevice.device)
                         } else {
                             showToast("手表不在附近,请确认手表蓝牙开启并未被别的设备连接后重试")
                         }
-
-
                     } else {
                         showToast("扫描失败")
                     }
@@ -375,15 +381,19 @@ class ConnectFragment : BaseFragment() {
 
         isScanning = true
         Handler().postDelayed({
-            if (isScanning) {
-                stopScan()
+            try {
+                if (isScanning) {
+                    stopScan()
+                }
+            } catch (e: Exception) {
+                Log.e("Bluetooth", "Bluetooth sync fail ...")
             }
         }, SCAN_DURATION)
     }
 
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun hideDialog(event:HideDialogEvent){
+    fun hideDialog(event: HideDialogEvent) {
         loadingView?.dismiss()
     }
 

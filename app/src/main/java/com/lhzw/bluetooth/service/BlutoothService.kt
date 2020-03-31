@@ -9,7 +9,6 @@ import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
-import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -40,13 +39,12 @@ class BlutoothService : BaseBlutoothService() {
             //刷新首页目标步数
             EventBus.getDefault().post(RefreshTargetStepsEvent())
         }
-
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("connect")])
     fun connect(device: BluetoothDevice) {
-        Log.e("Watch", "connect .... ")
         myBleManager?.let {
+            currentAddrss = device.address
             it.connect(device).retry(10, 1000)
                     .useAutoConnect(false)
                     .enqueue()
