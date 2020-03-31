@@ -36,7 +36,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     private var birthday: String? by Preference(Constants.BIRTHDAY, "")
-    private var nickName: String? by Preference(Constants.NICK_NAME, "")
+    private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
@@ -71,7 +71,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             counter_step_length.initNum=data.step_len
             et_target_step_num.setText(data.des_steps.toString())
             et_target_cal_num.setText(data.des_calorie.toString())
-
+            tv_name.text=nickName
 
             et_target_distance_num.setText(data.des_distance.toString())
             counter_max_heart.initNum=data.heart_rate
@@ -115,7 +115,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         val des_calorie = et_target_cal_num.text.toString().toInt()
         val des_distance = et_target_distance_num.text.toString().toInt()
         val heart_rate = counter_max_heart.initNum
-        tv_name.text=nickName
+
         val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
 
         Logger.e(personalInfoBean.toString())
@@ -198,7 +198,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             dialog.setOnConfirmListener(object : EditNameDialog.OnConfirmListener {
                 override fun onConfirm(name: String) {
                     dialog.dismiss()
-                    tv_name.text = name
+                    nickName = name
+                    tv_name.text=nickName
                 }
             })
         }
