@@ -6,9 +6,9 @@ public interface BleManagerCallbacks extends no.nordicsemi.android.ble.BleManage
 
     void onMtuUpdateResponse(byte[] response);
 
-    void onConnectionUpdateResponse(byte[] response);
+    void onConnectionUpdateResponse(byte[] response,boolean fast);
 
-    void onSettingConnectParameter(byte[] response);
+    // void onSettingConnectParameter(byte[] response);
 
     void onDeviceInfoResponse(byte[] response);
 

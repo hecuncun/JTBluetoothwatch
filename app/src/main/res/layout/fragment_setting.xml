@@ -270,6 +270,7 @@
         <View style="@style/horizontalGrayLine"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_60"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -295,9 +296,10 @@
                 android:textSize="@dimen/text_size_normal"/>
         </LinearLayout>
 
-        <View style="@style/horizontalGrayLine"/>
+        <View style="@style/horizontalGrayLine" android:visibility="gone"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_60"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -328,9 +330,10 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
 
-        <View style="@style/horizontalGrayLine"/>
+        <View style="@style/horizontalGrayLine" android:visibility="gone"/>
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp_60"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -360,7 +363,7 @@
                 android:textColor="@color/white"/>
         </LinearLayout>
 
-        <View style="@style/horizontalGrayLine"/>
+        <View style="@style/horizontalGrayLine" android:visibility="gone"/>
 
         <LinearLayout
             android:layout_width="match_parent"

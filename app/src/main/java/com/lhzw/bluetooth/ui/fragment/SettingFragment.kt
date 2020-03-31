@@ -36,6 +36,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     private var birthday: String? by Preference(Constants.BIRTHDAY, "")
+    private var nickName: String? by Preference(Constants.NICK_NAME, "")
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
@@ -114,7 +115,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         val des_calorie = et_target_cal_num.text.toString().toInt()
         val des_distance = et_target_distance_num.text.toString().toInt()
         val heart_rate = counter_max_heart.initNum
-
+        tv_name.text=nickName
         val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
 
         Logger.e(personalInfoBean.toString())

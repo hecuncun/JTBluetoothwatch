@@ -35,6 +35,7 @@ class ConnectFragment : BaseFragment() {
 
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
+    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     val REQUEST_CODE = 0x333
     val PERMISS_REQUEST_CODE = 0x356
     val PERMISS_REQUEST_BLE_CODE = 0X357
@@ -331,8 +332,6 @@ class ConnectFragment : BaseFragment() {
             }
         }
     }
-
-    private var autoConnect = false//是否自动连接
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {

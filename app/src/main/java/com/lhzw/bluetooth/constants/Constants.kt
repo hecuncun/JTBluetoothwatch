@@ -50,7 +50,7 @@ object Constants {
     const val CONNECT_STATE = "connect_state"
     const val CONNECT_DEVICE_NAME = "connect_device_name"
     const val LAST_DEVICE_ADDRESS = "last_device_address"
-
+    const val AUTO_CONNECT = "auto_connect"
 
     const val CONNECT_RESPONSE_CODE: Byte = 0x01//连接参数更新
     const val MTU_RESPONSE_CODE: Byte = 0x03//MTU更新
@@ -65,6 +65,7 @@ object Constants {
     //刷新类型
     const val TYPE_CURRENT_DATA = "type_current_data"
     const val BIRTHDAY = "birthday"
+    const val NICK_NAME = "nick_name"
 
     //数据类型
     const val STEP = 0;         // 计步     四个字节    单位  步      每分钟记录一次

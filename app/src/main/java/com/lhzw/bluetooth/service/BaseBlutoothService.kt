@@ -89,7 +89,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             // 没有活动数据
             Log.e("Tag", "no sport data ...")
             // 设置手表蓝牙为低功耗
-            myBleManager?.settinng_connect_parameter(false)
+            //myBleManager?.settinng_connect_parameter(false)
+            myBleManager?.connection_update(false)
         }
     }
 
@@ -175,16 +176,16 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     }
 
-    override fun onSettingConnectParameter(response: ByteArray?) {
-        // 设置手表为低功率状态
-        Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
-        response(response, Constants.CONNECT_RESPONSE_CODE) {
-            //开始连接进入进度条,连接并初始化成功后再发成功
-            EventBus.getDefault().post(HideDialogEvent())
-            // 刷新界面
-            RxBus.getInstance().post("reflesh", "")
-        }
-    }
+//    override fun onSettingConnectParameter(response: ByteArray?) {
+//        // 设置手表为低功率状态
+//        Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
+//        response(response, Constants.CONNECT_RESPONSE_CODE) {
+//            //开始连接进入进度条,连接并初始化成功后再发成功
+//            EventBus.getDefault().post(HideDialogEvent())
+//            // 刷新界面
+//            RxBus.getInstance().post("reflesh", "")
+//        }
+//    }
 
     override fun onMtuUpdateResponse(response: ByteArray?) {
         Log.e("Watch", "onMtuUpdateResponse   ${BaseUtils.byte2HexStr(response!!)} ....")
@@ -196,14 +197,23 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     }
 
     // 蓝牙本页入口
-    override fun onConnectionUpdateResponse(response: ByteArray?) {
-        //更新连接成功后    更新mtu
-//        Log.e("Tag", "onConnectionUpdateResponse ...  $response")
-        Log.e("Watch", "onConnectionUpdateResponse .... ${BaseUtils.byte2HexStr(response!!)}")
-        response(response, Constants.CONNECT_RESPONSE_CODE) {
-//            myBleManager?.mtu_update()
-            mHandler.sendEmptyMessage(MTU_DELAY)
+    override fun onConnectionUpdateResponse(response: ByteArray?,fast:Boolean) {
+
+        if (fast){   //更新快连接成功后    更新mtu
+
+            Logger.e("更新快速连接成功,开始更新MTU...")
+            response(response, Constants.CONNECT_RESPONSE_CODE) {
+                //            myBleManager?.mtu_update()
+                mHandler.sendEmptyMessage(MTU_DELAY)
+            }
+        }else{
+            //慢速连接
+            Logger.e("更新慢速连接成功...数据解析完毕")
+            EventBus.getDefault().post(HideDialogEvent())
+            // 刷新界面
+            RxBus.getInstance().post("reflesh", "")
         }
+
     }
 
     override fun onDeviceInfoResponse(response: ByteArray?) {
@@ -580,7 +590,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             readSportDetailMap.clear()
 
             // 设置手表蓝牙为低功耗
-            myBleManager?.settinng_connect_parameter(false)
+           // myBleManager?.settinng_connect_parameter(false)
+            myBleManager?.connection_update(false)
         }
     }
 
@@ -591,16 +602,18 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         }
     }
 
-
+    private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
-        try {
-            RxBus.getInstance().unregister(this)
-            onClear()
-        } catch (e: Exception) {
-            Log.e("Bluetooth", e.message)
-        }
+        // 杀死线程   重置为断开连接状态
+        RxBus.getInstance().post("disconnect", "")
+        connectState=false
+        //  RxBus.getInstance().unregister(this)
+        Logger.e("杀死进程")
+        autoConnect=false
+        onClear()
 
     }
 
