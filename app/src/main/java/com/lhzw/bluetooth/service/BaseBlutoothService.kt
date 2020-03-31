@@ -107,7 +107,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onDeviceConnected .... ")
         if(currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)){
             CommOperation.deleteAll(WatchInfoBean::class.java)
-            CommOperation.deleteAll(SportInfoBean::class.java)
+//            CommOperation.deleteAll(SportInfoBean::class.java)
             CommOperation.deleteAll(BoundaryAdrrBean::class.java)
             CommOperation.deleteAll(ClimbingSportBean::class.java)
             CommOperation.deleteAll(CurrentDataBean::class.java)

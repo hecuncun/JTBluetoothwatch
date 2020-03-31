@@ -46,7 +46,9 @@ data class DailyInfoDataBean(
     companion object {
         fun parserDailyInfoBean(map: Map<String, MutableList<Byte>>, body: () -> Unit) {
             val HOUR_MAX = 24
-            map.forEach { (key, value) ->
+            map.filter {
+                it.value.size == 836
+            }.forEach { (key, value) ->
                 // 删除 数据
                 val list = CommOperation.query(DailyInfoDataBean::class.java, "daily_date", key)
                 list?.forEach {
