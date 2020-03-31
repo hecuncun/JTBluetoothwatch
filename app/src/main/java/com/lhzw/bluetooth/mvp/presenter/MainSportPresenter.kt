@@ -163,34 +163,9 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         // 图表数据适配
         activity.tv_speed_walk_av.text = "${step / list!!.size}"
         activity.tv_speed_walk_best.text = "$step_max"
-//         平均心率
-//        val list1 = model.queryData(mark = mark, type = Constants.HEART_RATE)
-//        var heart_rate = 0
-//        var heart_rate_max = 0
-//        list1?.forEach {
-//            heart_rate += it.value
-//            if (heart_rate_max < it.value) {
-//                heart_rate_max = it.value
-//            }
-//        }
-//        activity.tv_speed_heart_av.text = "${heart_rate / list1!!.size}"
-        // 图表数据适配
-//        activity.tv_speed_heart_best.text = "$heart_rate_max"
-//        activity.tv_speed_heart1_av.text = "${heart_rate / list1!!.size}"
-        // 总的距离
-
-        // 总的运动时间
         activity.tv_sport_time.text = duration
-        // 最佳配速
-
         // 热量
-        val list2 = model.queryData(mark, Constants.CALORIE)
-        var calorie = 0
-        list2?.forEach {
-            calorie += it.value
-        }
-        activity.tv_heat_quantity.text = "$calorie"
-
+//        val list2 = model.queryData(mark, Constants.CALORIE)
         if (type == Constants.ACTIVITY_CLIMBING) {
             val detail = model.queryData<ClimbingSportBean>(mark)
             // 暂时没有
@@ -214,6 +189,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 activity.tv_speed_allocation_best.text = "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
                 // 平均配速
                 activity.tv_allocation_speed_best.text = "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
+                // 热量
+                activity.tv_heat_quantity.text = "${it[0].calorie}"
             }
         }
     }
