@@ -58,7 +58,7 @@ class BlutoothService : BaseBlutoothService() {
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("updatePersonInfo")])
-    fun updatePersonInfo(str: String){
+    fun updatePersonInfo(str: String) {
         myBleManager?.personal_info_save(PersonalInfoBean.createBytes())
     }
 
@@ -74,29 +74,31 @@ class BlutoothService : BaseBlutoothService() {
         when (event.packageName) {
             Constants.CALL -> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
-                if (!enablePhone){
+                if (!enablePhone) {
                     return
                 }
             }
             Constants.WEIXIN -> {
                 data[1] = 2//1：来电，2：微信，3：QQ，4：短信
-                if (!enableWx){
+                if (!enableWx) {
                     return
                 }
             }
             Constants.QQ -> {
                 data[1] = 3//1：来电，2：微信，3：QQ，4：短信
-                if (!enableQQ){
+                if (!enableQQ) {
                     return
                 }
             }
             Constants.MMS -> {
                 data[1] = 4//1：来电，2：微信，3：QQ，4：短信
-                if (!enableMsg){
+                if (!enableMsg) {
                     return
                 }
             }
-            else->{return}
+            else -> {
+                return
+            }
         }
         //获取当前时间
         val timeString = DateUtils.getLongToDateString(System.currentTimeMillis())
@@ -192,7 +194,7 @@ class BlutoothService : BaseBlutoothService() {
                     message_tmp = message_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 } else {//不是中文
                     it.toString()
-                  val v =  it.toString().toByteArray(charset("US-ASCII"))
+                    val v = it.toString().toByteArray(charset("US-ASCII"))
                     message_tmp = message_tmp.plus(it.toString().toByteArray(charset("US-ASCII")))
                 }
             }
