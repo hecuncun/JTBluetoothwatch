@@ -106,16 +106,16 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onDeviceConnected(device: BluetoothDevice) {
         Log.e("Watch", "onDeviceConnected .... ")
         if(currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)){
-            CommOperation.deleteAll(WatchInfoBean::class.java)
+//            CommOperation.deleteAll(WatchInfoBean::class.java)
 //            CommOperation.deleteAll(SportInfoBean::class.java)
-            CommOperation.deleteAll(BoundaryAdrrBean::class.java)
-            CommOperation.deleteAll(ClimbingSportBean::class.java)
-            CommOperation.deleteAll(CurrentDataBean::class.java)
-            CommOperation.deleteAll(DailyDataBean::class.java)
-            CommOperation.deleteAll(DailyInfoDataBean::class.java)
-            CommOperation.deleteAll(FlatSportBean::class.java)
-            CommOperation.deleteAll(SportActivityBean::class.java)
-            CommOperation.deleteAll(SportInfoAddrBean::class.java)
+//            CommOperation.deleteAll(BoundaryAdrrBean::class.java)
+//            CommOperation.deleteAll(ClimbingSportBean::class.java)
+//            CommOperation.deleteAll(CurrentDataBean::class.java)
+//            CommOperation.deleteAll(DailyDataBean::class.java)
+//            CommOperation.deleteAll(DailyInfoDataBean::class.java)
+//            CommOperation.deleteAll(FlatSportBean::class.java)
+//            CommOperation.deleteAll(SportActivityBean::class.java)
+//            CommOperation.deleteAll(SportInfoAddrBean::class.java)
         }
         EventBus.getDefault().post(ConnectEvent(true))
         //1.连接成功  特征使能
@@ -263,21 +263,25 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onDailyDataRequestResponse(response: ByteArray?) {
         Log.e("Tag", "onDailyDataRequestResponse ...  ${BaseUtils.byte2HexStr(response!!)}")
-        DailyDataBean.parserDailyData(response) { datas ->
-            if (datas.size > 0) {
-                noFlashMap.clear()
-            }
-            // 从noFlash获取数据信息
-            var len = Constants.MTU_MAX
-            var isOver = false
-            if (datas[0].data_len < Constants.MTU_MAX) {
-                len = datas[0].data_len
-                if (datas.size == 1) {
-                    isOver = true
+        response?.let {
+            if(response[0].toInt() == 0x0C){
+                DailyDataBean.parserDailyData(response) { datas ->
+                    if (datas.size > 0) {
+                        noFlashMap.clear()
+                    }
+                    // 从noFlash获取数据信息
+                    var len = Constants.MTU_MAX
+                    var isOver = false
+                    if (datas[0].data_len < Constants.MTU_MAX) {
+                        len = datas[0].data_len
+                        if (datas.size == 1) {
+                            isOver = true
+                        }
+                    }
+                    readDailyBean = ReadFlashBean(datas, 0, 0x0C, datas[0].start_addr, len, 1, isOver)
+                    readDailyNoFlash()
                 }
             }
-            readDailyBean = ReadFlashBean(datas, 0, 0x0C, datas[0].start_addr, len, 1, isOver)
-            readDailyNoFlash()
         }
     }
 
@@ -320,26 +324,28 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onNorFlashReadResponse(response: ByteArray?, ID: String) {
 //        Log.e("Tag", "onNorFlashReadResponse ...  ${BaseUtils.byte2HexStr(response!!)}   ${response.size}")
         response?.let {
-            Log.e("dailyinfo", "$ID : ${BaseUtils.byte2HexStr(response)}")
-            if (noFlashMap.get(ID) == null) {
-                val list = ArrayList<Byte>()
-                val tmp = it.toList()
-                list.addAll(tmp.subList(11, tmp.size))
-                noFlashMap.put(ID, list)
-            } else {
-                val tmp = it.toList()
-                noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
-                if (noFlashMap.get(ID)!!.size == 836) {
-                    Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+            if(response[0].toInt() == 0x04 && response[1].toInt() == 0x0C){
+                Log.e("dailyinfo", "$ID : ${BaseUtils.byte2HexStr(response)}")
+                if (noFlashMap.get(ID) == null) {
+                    val list = ArrayList<Byte>()
+                    val tmp = it.toList()
+                    list.addAll(tmp.subList(11, tmp.size))
+                    noFlashMap.put(ID, list)
+                } else {
+                    val tmp = it.toList()
+                    noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
+                    if (noFlashMap.get(ID)!!.size == 836) {
+                        Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+                    }
                 }
-            }
-            if (readDailyBean.isOver) {
-                DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
-                    Log.e("Tag", "read boundary addr ...")
-                    myBleManager?.read_boundary_address()
+                if (readDailyBean.isOver) {
+                    DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
+                        Log.e("Tag", "read boundary addr ...")
+                        myBleManager?.read_boundary_address()
+                    }
+                } else {
+                    readNextAddr()
                 }
-            } else {
-                readNextAddr()
             }
         }
     }
