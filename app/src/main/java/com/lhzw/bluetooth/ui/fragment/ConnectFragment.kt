@@ -232,6 +232,7 @@ class ConnectFragment : BaseFragment() {
                             mListValues.add(ExtendedBluetoothDevice(result))
                         }
                     }
+
                 }
                 Log.e("TAG", "scan_result_size==${mListValues.size}")
             }
