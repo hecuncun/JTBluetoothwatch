@@ -82,6 +82,7 @@ class ConnectFragment : BaseFragment() {
             //关闭自动连接
             autoConnect = false
 
+
             RxBus.getInstance().post("disconnect", "")
 
         }
