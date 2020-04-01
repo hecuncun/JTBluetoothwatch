@@ -240,7 +240,7 @@ class HomeFragment : BaseFragment() {
                 if (list.isNotEmpty()) {
                     //当前步数
                     Logger.e("当前步数更新==${list[0].dailyStepNumTotal.toString()}")
-                    tv_current_step_num.text = list[0].dailyStepNumTotal.toString()
+                    tv_current_step_num.text = (list[0].dailyStepNumTotal+ list[0].sportStepNumTotal).toString()
                 }
 
             }

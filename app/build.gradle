@@ -24,7 +24,7 @@ android {
     }
 
     signingConfigs {
-        release {
+        key {
             keyAlias 'keystore'
             keyPassword '123456'
             // storeFile file('D:/android/work/vswork/BluetoothWatch/keystore.jks')
@@ -41,6 +41,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig  signingConfigs.key
+        }
+        debug{
+            signingConfig  signingConfigs.key
         }
     }
     sourceSets {

@@ -417,7 +417,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     CommOperation.insert(it)
                 }
                 //保存到数据库,并刷新页面
-                Logger.e("当前步数==${bean?.dailyStepNumTotal}")
+                Logger.e("当前日常步数==${bean?.dailyStepNumTotal}")
+                Logger.e("当前运动步数==${bean?.sportStepNumTotal}")
                 EventBus.getDefault().post(RefreshEvent(Constants.TYPE_CURRENT_DATA))
                 //动态数据后,TODO 请求日常数据
                 myBleManager?.daily_data_request()
