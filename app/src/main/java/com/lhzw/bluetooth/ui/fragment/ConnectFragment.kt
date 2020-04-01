@@ -32,7 +32,6 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by hecuncun on 2019/11/13
  */
 class ConnectFragment : BaseFragment() {
-
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
@@ -332,6 +331,7 @@ class ConnectFragment : BaseFragment() {
             }
         }
     }
+
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {

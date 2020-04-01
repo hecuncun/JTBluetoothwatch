@@ -52,6 +52,7 @@ object Constants {
     const val LAST_DEVICE_ADDRESS = "last_device_address"
     const val AUTO_CONNECT = "auto_connect"
 
+
     const val CONNECT_RESPONSE_CODE: Byte = 0x01//连接参数更新
     const val MTU_RESPONSE_CODE: Byte = 0x03//MTU更新
     const val UPDATE_TIME_RESPONSE_CODE: Byte = 0x07//手表时间更新

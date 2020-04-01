@@ -24,6 +24,7 @@ android {
     }
 
     signingConfigs {
+
         key {
             keyAlias 'keystore'
             keyPassword '123456'
@@ -45,6 +46,7 @@ android {
         }
         debug{
             signingConfig  signingConfigs.key
+
         }
     }
     sourceSets {
