@@ -124,7 +124,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     // 跟新连接参数
     public int connection_update(Boolean fast) {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
-            bleManagerCallbacks.onConnectionUpdateResponse(data.getValue(),fast);
+            bleManagerCallbacks.onConnectionUpdateResponse(data.getValue());
         });
         if (fast) {
             byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
@@ -138,20 +138,20 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     }
 
     // 跟新连接参数
-//    public int settinng_connect_parameter(Boolean fast) {
-//        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
-//            bleManagerCallbacks.onSettingConnectParameter(data.getValue());
-//        });
-//        if (fast) {
-//            byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
-//            writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
-//        } else {
-//            byte[] data = new byte[]{0x01, (byte) 0x90, 0x01, (byte) 0x8A, 0x02, 0x00, 0x00, (byte) 0x90, 0x01};//低功耗，慢速
-//            writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
-//
-//        }
-//        return 0;
-//    }
+    public int settinng_connect_parameter(Boolean fast) {
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            bleManagerCallbacks.onSettingConnectParameter(data.getValue());
+        });
+        if (fast) {
+            byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
+            writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        } else {
+            byte[] data = new byte[]{0x01, (byte) 0x90, 0x01, (byte) 0x8A, 0x02, 0x00, 0x00, (byte) 0x90, 0x01};//低功耗，慢速
+            writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+
+        }
+        return 0;
+    }
 
     public int device_info() {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
