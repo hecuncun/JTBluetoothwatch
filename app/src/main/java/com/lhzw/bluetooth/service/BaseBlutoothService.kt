@@ -91,8 +91,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     // 没有活动数据
                     Log.e("Tag", "no sport data ...")
                     // 设置手表蓝牙为低功耗
-                    //myBleManager?.settinng_connect_parameter(false)
-                    myBleManager?.connection_update(false)
+                    myBleManager?.settinng_connect_parameter(false)
                 }
             }
         }
@@ -110,9 +109,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
         Log.e("Watch", "onDeviceConnected .... ")
-        if (currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)) {
+        if(currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)){
             CommOperation.deleteAll(WatchInfoBean::class.java)
-//            CommOperation.deleteAll(SportInfoBean::class.java)
+            //CommOperation.deleteAll(SportInfoBean::class.java)
             CommOperation.deleteAll(BoundaryAdrrBean::class.java)
             CommOperation.deleteAll(ClimbingSportBean::class.java)
             CommOperation.deleteAll(CurrentDataBean::class.java)
@@ -180,55 +179,53 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     }
 
-//    override fun onSettingConnectParameter(response: ByteArray?) {
-//        // 设置手表为低功率状态
-//        Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
-//        response(response, Constants.CONNECT_RESPONSE_CODE) {
-//            //开始连接进入进度条,连接并初始化成功后再发成功
-//            EventBus.getDefault().post(HideDialogEvent())
-//            // 刷新界面
-//            RxBus.getInstance().post("reflesh", "")
-//        }
-//    }
+    override fun onSettingConnectParameter(response: ByteArray?) {
+        // 设置手表为低功率状态
+        Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
+        response(response, Constants.CONNECT_RESPONSE_CODE) {
+            //开始连接进入进度条,连接并初始化成功后再发成功
+            EventBus.getDefault().post(HideDialogEvent())
+            // 刷新界面
+            RxBus.getInstance().post("reflesh", "")
+        }
+    }
 
     override fun onMtuUpdateResponse(response: ByteArray?) {
         Log.e("Watch", "onMtuUpdateResponse   ${BaseUtils.byte2HexStr(response!!)} ....")
         mHandler.removeMessages(MTU_DELAY)
         response(response, Constants.MTU_RESPONSE_CODE) {
             myBleManager?.watch_time_update()
+//            myBleManager?.device_info()
         }
     }
 
     // 蓝牙本页入口
-    override fun onConnectionUpdateResponse(response: ByteArray?, fast: Boolean) {
-        if (fast) {   //更新快连接成功后    更新mtu
-            Logger.e("更新快速连接成功,开始更新MTU...")
-            response(response, Constants.CONNECT_RESPONSE_CODE) {
-                //            myBleManager?.mtu_update()
-                mHandler.sendEmptyMessage(MTU_DELAY)
-            }
-        } else {
-            //慢速连接
-            Logger.e("更新慢速连接成功...数据解析完毕")
-            EventBus.getDefault().post(HideDialogEvent())
-            // 刷新界面
-            RxBus.getInstance().post("reflesh", "")
+    override fun onConnectionUpdateResponse(response: ByteArray?) {
+        //更新连接成功后    更新mtu
+//        Log.e("Tag", "onConnectionUpdateResponse ...  $response")
+        Log.e("Watch", "onConnectionUpdateResponse .... ${BaseUtils.byte2HexStr(response!!)}")
+        response(response, Constants.CONNECT_RESPONSE_CODE) {
+//            myBleManager?.mtu_update()
+            mHandler.sendEmptyMessage(MTU_DELAY)
         }
-
     }
 
     override fun onDeviceInfoResponse(response: ByteArray?) {
 //        Log.e("Tag", "onDeviceInfoResponse ...  ${BaseUtils.byte2HexStr(response!!)}")
-        Log.e("Watch", "onDeviceInfoResponse .... ${BaseUtils.byte2HexStr(response!!)}")
-        var bean = WatchInfoBean.createBean(response)
-        bean?.let {
-            var list = CommOperation.query(WatchInfoBean::class.java)
-            list?.let {
-                CommOperation.deleteAll(WatchInfoBean::class.java)
+        response?.let {
+            if(response[0].toInt() == 0x02){
+                Log.e("Watch", "onDeviceInfoResponse .... ${BaseUtils.byte2HexStr(response!!)}")
+                var bean = WatchInfoBean.createBean(response)
+                bean?.let {
+                    var list = CommOperation.query(WatchInfoBean::class.java)
+                    list?.let {
+                        CommOperation.deleteAll(WatchInfoBean::class.java)
+                    }
+                    CommOperation.insert(it)
+                }
+                myBleManager?.personal_info_update(PersonalInfoBean.createBytes())  // 更新个人数到手表
             }
-            CommOperation.insert(it)
         }
-        myBleManager?.personal_info_update(PersonalInfoBean.createBytes())  // 更新个人数到手表
     }
 
     override fun onDeviceConnecting(device: BluetoothDevice) {
@@ -258,10 +255,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 获取活动数据
     override fun onSportsParamReadResponse(response: ByteArray?, ID: String) {
-        Log.e("Tag", "onSportsParamReadResponse ...   ${BaseUtils.byte2HexStr(response!!)}")
-        //解析当前活动
         response?.let {
-            if (response[0].toInt() == 0x0D) {
+            if(response[0].toInt() == 0x0D) {
+                Log.e("Tag", "onSportsParamReadResponse ...   ${BaseUtils.byte2HexStr(response!!)}")
+                //解析当前活动
                 SportInfoAddrBean.parserSportInfoAddr(response, ID) { data, mark ->
                     Log.e("mark", "mark = $mark")
                     readActivityBean.request_date = data
@@ -279,7 +276,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onDailyDataRequestResponse(response: ByteArray?) {
         Log.e("Tag", "onDailyDataRequestResponse ...  ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
-            if (response[0].toInt() == 0X0C) {
+            if(response[0].toInt() == 0x0C){
                 DailyDataBean.parserDailyData(response) { datas ->
                     if (datas.size > 0) {
                         noFlashMap.clear()
@@ -339,26 +336,28 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onNorFlashReadResponse(response: ByteArray?, ID: String) {
 //        Log.e("Tag", "onNorFlashReadResponse ...  ${BaseUtils.byte2HexStr(response!!)}   ${response.size}")
         response?.let {
-            Log.e("dailyinfo", "$ID : ${BaseUtils.byte2HexStr(response)}")
-            if (noFlashMap.get(ID) == null) {
-                val list = ArrayList<Byte>()
-                val tmp = it.toList()
-                list.addAll(tmp.subList(11, tmp.size))
-                noFlashMap.put(ID, list)
-            } else {
-                val tmp = it.toList()
-                noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
-                if (noFlashMap.get(ID)!!.size == 836) {
-                    Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+            if(response[0].toInt() == 0x04 && response[1].toInt() == 0x0C){
+                Log.e("dailyinfo", "$ID : ${BaseUtils.byte2HexStr(response)}")
+                if (noFlashMap.get(ID) == null) {
+                    val list = ArrayList<Byte>()
+                    val tmp = it.toList()
+                    list.addAll(tmp.subList(11, tmp.size))
+                    noFlashMap.put(ID, list)
+                } else {
+                    val tmp = it.toList()
+                    noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
+                    if (noFlashMap.get(ID)!!.size == 836) {
+                        Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+                    }
                 }
-            }
-            if (readDailyBean.isOver) {
-                DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
-                    Log.e("Tag", "read boundary addr ...")
-                    myBleManager?.read_boundary_address()
+                if (readDailyBean.isOver) {
+                    DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
+                        Log.e("Tag", "read boundary addr ...")
+                        myBleManager?.read_boundary_address()
+                    }
+                } else {
+                    readNextAddr()
                 }
-            } else {
-                readNextAddr()
             }
         }
     }
@@ -568,6 +567,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
             }
         }
+//        readSportDetailList?.forEach {
+//            Log.e("SportDetail", "${it.sport_detail_mark}   ${it.data_type}  ${it.request_code}  ${it.read_len}")
+//        }
         readSportDetailBean()
     }
 
@@ -596,8 +598,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             readSportDetailMap.clear()
 
             // 设置手表蓝牙为低功耗
-            // myBleManager?.settinng_connect_parameter(false)
-            myBleManager?.connection_update(false)
+            myBleManager?.settinng_connect_parameter(false)
         }
     }
 
@@ -608,17 +609,11 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         }
     }
 
-    private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
-    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
+
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
-        // 杀死线程   重置为断开连接状态
-        RxBus.getInstance().post("disconnect", "")
-        connectState = false
-        //  RxBus.getInstance().unregister(this)
         Logger.e("杀死进程")
-        autoConnect = false
         onClear()
 
     }
@@ -641,7 +636,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     myBleManager?.current_data_update()
                     sendEmptyMessageDelayed(DYNAMIC_DATE, 1000)
                 }
-                MTU_DELAY -> {
+                MTU_DELAY ->{
                     Log.e("Watch", "retry send mtu data update ...")
                     myBleManager?.mtu_update()
                     sendEmptyMessageDelayed(DYNAMIC_DATE, 2000)

@@ -46,6 +46,8 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
         @Override
         protected void initialize() {
+            //这个方法被回调  说明已经发现蓝牙服务并且设备支持此服务,也就是连接成功可以通信了
+
             Log.e("Watch", "initialize .... ");
             if (mCommTXRXCharacteristic != null) {
                 enableNotifications(mCommTXRXCharacteristic).enqueue();
@@ -58,6 +60,8 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
                         connection_update(true);
                     }
                 }, 500);
+            }else {
+                Logger.e("mCommTXRXCharacteristic==null,char not found....蓝牙设备未连接成功..");
             }
 
         }
@@ -124,7 +128,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     // 跟新连接参数
     public int connection_update(Boolean fast) {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
-            bleManagerCallbacks.onConnectionUpdateResponse(data.getValue(), false);
+            bleManagerCallbacks.onConnectionUpdateResponse(data.getValue());
         });
         if (fast) {
             byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
@@ -140,7 +144,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     // 跟新连接参数
     public int settinng_connect_parameter(Boolean fast) {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
-            bleManagerCallbacks.onConnectionUpdateResponse(data.getValue(), false);
+            bleManagerCallbacks.onSettingConnectParameter(data.getValue());
         });
         if (fast) {
             byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速

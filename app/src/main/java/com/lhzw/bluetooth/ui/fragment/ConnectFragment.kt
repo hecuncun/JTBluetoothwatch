@@ -117,7 +117,7 @@ class ConnectFragment : BaseFragment() {
             ll_connected_container.visibility = View.VISIBLE
             tv_device_name.text = "设备名称:$connectedDeviceName"
         } else {
-            connectedDeviceName = ""
+          //  connectedDeviceName = ""
             ll_connected_container.visibility = View.GONE
         }
 
@@ -161,7 +161,7 @@ class ConnectFragment : BaseFragment() {
         try {
             scanner.stopScan(scanCallback)
             isScanning = false
-            if (autoConnect && !connectState) {//自动扫描还未连接成功
+            if (autoConnect && !connectState) {//重连还未连接成功
                 Logger.e("未找到蓝牙,继续搜索...")
                 Handler().postDelayed(Runnable {
                     startAutoScanAndConnect()
@@ -210,8 +210,11 @@ class ConnectFragment : BaseFragment() {
      */
     private var loadingView: LoadingView? = null
 
+    private var requestBleConnect=false//请求连接蓝牙
+
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
+            Logger.e("onScanResult")
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
@@ -235,7 +238,7 @@ class ConnectFragment : BaseFragment() {
                     }
 
                 }
-                Log.e("TAG", "scan_result_size==${mListValues.size}")
+                Log.e("TAG", "已找到周围腕表设备数量==${mListValues.size}")
             }
             if (autoConnect) {
                 val lastList = mListValues.filter {
@@ -243,17 +246,26 @@ class ConnectFragment : BaseFragment() {
                     it.device.address == lastDeviceMacAddress
                 }
 
-                if (lastList.isNotEmpty()) {
+                if (lastList.isNotEmpty() &&  !requestBleConnect) {
                     Logger.e("已找到蓝牙设备,发送连接请求...")
-                    RxBus.getInstance().post("connect", lastList[0].device)
-                } else {
-                    //结果里未找到上次连接的设备,就继续扫
-                    if (!isScanning) {//一轮扫描完了,就延时一段时间后再进行扫描操作
-
-
-                    } else {
-                        Logger.e("扫描中...")
+                    if (loadingView==null){
+                        loadingView = LoadingView(activity)
                     }
+                    loadingView!!.setLoadingTitle("连接中...")
+                    loadingView!!.show()
+                    RxBus.getInstance().post("connect", lastList[0].device)
+                    requestBleConnect=true
+                    Handler().postDelayed(Runnable {
+                        stopScan()
+                    },1000)
+                } else {
+                    if (requestBleConnect){
+                        Logger.e("发现上次连接设备,已发送了连接指令,等待连接")
+                    }else{
+                        Logger.e("还未发现上次连接设备")
+                    }
+
+
                 }
 
 
@@ -339,19 +351,27 @@ class ConnectFragment : BaseFragment() {
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
             loadingView!!.setLoadingTitle("同步数据中...")
-            autoConnect = true//将自动连接打开
             ll_connected_container.visibility = View.VISIBLE
-            tv_device_name.text = "设备名称:$name"
-            connectedDeviceName = name//保存名称
+            if (autoConnect){
+                tv_device_name.text = "设备名称:$connectedDeviceName"
+            }else{
+                connectedDeviceName = name//保存名称
+            }
             lastDeviceMacAddress = macAddress//保存macAddress
+            tv_device_name.text = "设备名称:$connectedDeviceName"
             connectState = true
+            autoConnect = true//将自动连接打开
         } else {//已断开显示UI布局
+            mListValues.clear()
             Logger.e("ConnectFragment  收到断开回调")
             connectState = false
-            connectedDeviceName = ""
-            ll_connected_container.visibility = View.GONE
+            requestBleConnect=false
+            if (!autoConnect){
+                connectedDeviceName=""
+            }else
 
-            if (autoConnect) {//自动连接   走扫描流程
+            ll_connected_container.visibility = View.GONE
+            if (autoConnect&&bleManager!!.adapter.isEnabled) {//蓝牙处于打开状态并且可以自动连接就执行   自动连接   走扫描流程
                 startAutoScanAndConnect()
             }
         }
@@ -361,10 +381,9 @@ class ConnectFragment : BaseFragment() {
     private var autoScanner: BluetoothLeScannerCompat? = null
     private var scannerDelayTime = 1000L//默认一秒
     private fun startAutoScanAndConnect() {
-        mListValues.clear()
         scannerDelayTime *= 2
-        if (scannerDelayTime > 30000L) {
-            scannerDelayTime = 30000L
+        if (scannerDelayTime >16000L) {
+            scannerDelayTime = 16000L
         }
         if (autoScanner == null) {
             autoScanner = BluetoothLeScannerCompat.getScanner()

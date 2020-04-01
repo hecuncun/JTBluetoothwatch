@@ -43,6 +43,7 @@ class BlutoothService : BaseBlutoothService() {
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("connect")])
     fun connect(device: BluetoothDevice) {
+        Logger.e("收到了RxBus  连接手表的指令")
         myBleManager?.let {
             currentAddrss = device.address
             it.connect(device).retry(10, 1000)
@@ -241,8 +242,14 @@ class BlutoothService : BaseBlutoothService() {
 
     }
 
+    private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     // 清理数据
     override fun onClear() {
-        myBleManager = null
+        myBleManager?.device_disconnect()
+        connectState=false
+        if (autoConnect){
+            autoConnect
+        }
     }
 }
