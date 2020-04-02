@@ -53,8 +53,6 @@ class ConnectFragment : BaseFragment() {
 
 
     override fun initView(view: View) {
-
-
         bleManager = activity?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bleManager?.let {
             state = it.adapter.isEnabled//拿到蓝牙状态
@@ -88,6 +86,8 @@ class ConnectFragment : BaseFragment() {
         }
 
     }
+
+
 
     private fun initBleState() {
 
@@ -210,7 +210,7 @@ class ConnectFragment : BaseFragment() {
      */
     private var loadingView: LoadingView? = null
 
-    private var requestBleConnect=false//请求连接蓝牙
+    private var requestBleConnect=false//是否请求连接蓝牙
 
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -246,23 +246,31 @@ class ConnectFragment : BaseFragment() {
                     it.device.address == lastDeviceMacAddress
                 }
 
-                if (lastList.isNotEmpty() &&  !requestBleConnect) {
+                if (lastList.isNotEmpty()) {
                     Logger.e("已找到蓝牙设备,发送连接请求...")
                     if (loadingView==null){
                         loadingView = LoadingView(activity)
                     }
                     loadingView!!.setLoadingTitle("连接中...")
                     loadingView!!.show()
-                    RxBus.getInstance().post("connect", lastList[0].device)
-                    requestBleConnect=true
-                    Handler().postDelayed(Runnable {
-                        stopScan()
-                    },1000)
+                    if (!requestBleConnect){
+                        RxBus.getInstance().post("connect", lastList[0].device)
+                        requestBleConnect=true
+                        Handler().postDelayed(Runnable {
+                            stopScan()
+                        },1000)
+                    }
                 } else {
                     if (requestBleConnect){
                         Logger.e("发现上次连接设备,已发送了连接指令,等待连接")
                     }else{
-                        Logger.e("还未发现上次连接设备")
+                        if (!connectState&& !requestBleConnect){//未找到设备  还未连接成功 就发断开指令
+                            Logger.e("未发现上次连接设备==$lastDeviceMacAddress")
+                            RxBus.getInstance().post("disconnect","")
+                            needScan=false
+
+                        }
+
                     }
 
 
@@ -336,6 +344,7 @@ class ConnectFragment : BaseFragment() {
                             loadingView!!.show()
                             RxBus.getInstance().post("connect", extendedDevice.device)
                         } else {
+                            startScan()//要是前10S没扫到就再次扫描
                             showToast("手表不在附近,请确认手表蓝牙开启并未被别的设备连接后重试")
                         }
                     } else {
@@ -346,7 +355,7 @@ class ConnectFragment : BaseFragment() {
         }
     }
 
-
+private var needScan = true
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
@@ -356,8 +365,9 @@ class ConnectFragment : BaseFragment() {
                 tv_device_name.text = "设备名称:$connectedDeviceName"
             }else{
                 connectedDeviceName = name//保存名称
+                lastDeviceMacAddress = macAddress//保存macAddress
             }
-            lastDeviceMacAddress = macAddress//保存macAddress
+
             tv_device_name.text = "设备名称:$connectedDeviceName"
             connectState = true
             autoConnect = true//将自动连接打开
@@ -368,11 +378,14 @@ class ConnectFragment : BaseFragment() {
             requestBleConnect=false
             if (!autoConnect){
                 connectedDeviceName=""
-            }else
+            }
 
             ll_connected_container.visibility = View.GONE
             if (autoConnect&&bleManager!!.adapter.isEnabled) {//蓝牙处于打开状态并且可以自动连接就执行   自动连接   走扫描流程
-                startAutoScanAndConnect()
+                if (needScan){
+                    startAutoScanAndConnect()
+                }
+
             }
         }
     }

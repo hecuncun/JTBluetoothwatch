@@ -46,15 +46,16 @@ class BlutoothService : BaseBlutoothService() {
         Logger.e("收到了RxBus  连接手表的指令")
         myBleManager?.let {
             currentAddrss = device.address
-            it.connect(device).retry(10, 1000)
+            it.connect(device).retry(3, 100)
                     .useAutoConnect(false)
+                    .timeout(10000)
                     .enqueue()
         }
     }
 
-    @Subscribe(thread = EventThread.NEW_THREAD, tags = [Tag("disconnect")])
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("disconnect")])
     fun disconnect(str: String) {
-        Log.e("Watch", "disconnect .... ")
+       Logger.e("收到RxBus断开蓝牙指令")
         myBleManager?.device_disconnect()
     }
 
