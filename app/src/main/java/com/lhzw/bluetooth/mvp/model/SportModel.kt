@@ -78,9 +78,9 @@ class SportModel(var mark: String) : SportConstract.Model {
         speed_list?.let {
             val values = ArrayList<Entry>()
             val tem_List = speed_list.filter {
-                it.value != 0
+                it.value > 0
             }.map {
-                it.value.toFloat()
+                1 / (60 * it.value.toFloat() / 1000000)
             }
             var index = 0.0f
             tem_List.forEach { v ->
@@ -157,8 +157,8 @@ class SportModel(var mark: String) : SportConstract.Model {
         var valueDescrip = arrayOf("01:53", "09:11", "13:20", "01:18", "06:24")
         detail?.let {
             var sum = it[0].warmup_heart_rate + it[0].flaming_heart_rate + it[0].aerobic_heart_rate + it[0].anaerobic_heart_rate + it[0].limitation_heart_rate
-            if(sum == 0){
-                sum =1
+            if (sum == 0) {
+                sum = 1
             }
             val value = arrayOf(
                     100 * it[0].warmup_heart_rate.toFloat() / sum,

@@ -201,7 +201,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         var latLngs = model.queryData(mark, Constants.GPS)
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
-            var latLng = LatLng(it[0].gps_latitude / 100000, it[0].gps_longitude / 100000)
+            var start = BaseUtils.gps84_To_Gcj02(it[0].gps_latitude / 100000, it[0].gps_longitude / 100000)
+            var latLng = LatLng(start[0], start[1])
             if (it[0].gps_latitude != 0.0 && it[0].gps_longitude != 0.0) {
                 list.add(latLng)
             }
