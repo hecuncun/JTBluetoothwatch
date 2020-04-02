@@ -1,12 +1,13 @@
 package com.lhzw.kotlinmvp.base
 
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.amap.api.maps.MapView
 import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.mvp.contract.SportConstract
-import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
+import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
 import kotlinx.android.synthetic.main.activity_sport_info.*
 
 /**
@@ -23,6 +24,7 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         initView()
         mMapView = map
         mMapView?.onCreate(savedInstanceState)

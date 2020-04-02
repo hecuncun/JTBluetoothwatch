@@ -194,7 +194,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onMtuUpdateResponse   ${BaseUtils.byte2HexStr(response!!)} ....")
         mHandler.removeMessages(MTU_DELAY)
         response(response, Constants.MTU_RESPONSE_CODE) {
-            myBleManager?.watch_time_update()
+                myBleManager?.watch_time_update()
 //            myBleManager?.device_info()
         }
     }
@@ -594,11 +594,14 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             myBleManager?.sport_detail_info_request(content.toByteArray(), 0x0D, bean.data_type, bean.sport_detail_mark)
         } else {
             Log.e("Tag", "parser sport detail addr over ...")
-            SportDetailInfobean.parserSportDetailInfo(readSportDetailMap)
-            readSportDetailMap.clear()
+            Thread{
+                SportDetailInfobean.parserSportDetailInfo(readSportDetailMap)
+                readSportDetailMap.clear()
+                // 设置手表蓝牙为低功耗
+                myBleManager?.settinng_connect_parameter(false)
+            }.start()
 
-            // 设置手表蓝牙为低功耗
-            myBleManager?.settinng_connect_parameter(false)
+
         }
     }
 

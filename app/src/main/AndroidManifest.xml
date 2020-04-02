@@ -27,7 +27,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.activity.SportInfoActivity" />
+        <activity
+            android:name=".ui.activity.SportInfoActivity" />
         <!--设计图大小-->
         <activity android:name=".ui.activity.DailyStatisticsActivity" />
         <activity
