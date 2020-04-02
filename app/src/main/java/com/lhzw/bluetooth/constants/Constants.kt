@@ -88,7 +88,16 @@ object Constants {
     const val TYPE_QQ = "type_qq"
     const val TYPE_WX = "type_wx"
 
-    var PI = 3.1415926535897932384626
-    var A = 6378245.0
-    var EE = 0.00669342162296594323
+    // 坐标系转换参数
+    val PI = 3.1415926535897932384626
+    val A = 6378245.0
+    val EE = 0.00669342162296594323
+    //  活动列表
+    val ACTIVITIES = arrayOf(
+            ACTIVITY_RUNNING,
+            ACTIVITY_REDING,
+            ACTIVITY_HIKING,
+            ACTIVITY_CLIMBING,
+            ACTIVITY_INDOOR
+    )
 }

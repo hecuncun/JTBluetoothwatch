@@ -256,8 +256,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 获取活动数据
     override fun onSportsParamReadResponse(response: ByteArray?, ID: String) {
         response?.let {
-            if(response[0].toInt() == 0x0D) {
-                Log.e("Tag", "onSportsParamReadResponse ...   ${BaseUtils.byte2HexStr(response!!)}")
+            Log.e("Tag", "onSportsParamReadResponse ...")
+            if(response[0].toInt() == 0x0D && Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)) {
                 //解析当前活动
                 SportInfoAddrBean.parserSportInfoAddr(response, ID) { data, mark ->
                     Log.e("mark", "mark = $mark")
@@ -443,7 +443,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
      */
     private fun readSportActivities() {
         if (readActivityBean.isOver) {
-//            Log.e("Tag", "read sport activity over ...")
+            Log.e("readSportActivities", "read sport activity over ...")
             val bean = readActivityBean.list[readActivityBean.bean_index]
             val list = CommOperation.query(SportActivityBean::class.java, "daily_date", bean.daily_date)
             var value = ContentValues()
@@ -594,11 +594,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             myBleManager?.sport_detail_info_request(content.toByteArray(), 0x0D, bean.data_type, bean.sport_detail_mark)
         } else {
             Log.e("Tag", "parser sport detail addr over ...")
-            SportDetailInfobean.parserSportDetailInfo(readSportDetailMap)
-            readSportDetailMap.clear()
+            Thread{
+                SportDetailInfobean.parserSportDetailInfo(readSportDetailMap)
+                readSportDetailMap.clear()
+                // 设置手表蓝牙为低功耗
+                myBleManager?.settinng_connect_parameter(false)
+            }.start()
 
-            // 设置手表蓝牙为低功耗
-            myBleManager?.settinng_connect_parameter(false)
         }
     }
 
@@ -643,7 +645,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 MTU_DELAY ->{
                     Log.e("Watch", "retry send mtu data update ...")
                     myBleManager?.mtu_update()
-                    sendEmptyMessageDelayed(DYNAMIC_DATE, 2000)
+                    sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
                 }
             }
 
