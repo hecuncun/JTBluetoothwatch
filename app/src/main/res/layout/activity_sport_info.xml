@@ -239,7 +239,7 @@
                     android:layout_marginBottom="20dp"
                     android:text="32:27"
                     android:textColor="@color/white"
-                    android:textSize="38sp" />
+                    android:textSize="26sp" />
 
 
                 <TextView

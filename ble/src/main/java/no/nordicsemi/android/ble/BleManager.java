@@ -2185,9 +2185,9 @@ public abstract class BleManager<E extends BleManagerCallbacks> extends TimeoutH
 		 * &#64;Override
 		 * protected void initialize() {
 		 *    requestMtu(MTU)
-		 *       .with((device, mtu) -> {
-		 *           ...
-		 *       })
+		 * 		 *       .with((device, mtu) -> {
+		 * 		 *           ...
+		 * 		 *       })
 		 *       .enqueue();
 		 *    setNotificationCallback(characteristic)
 		 *       .with((device, data) -> {

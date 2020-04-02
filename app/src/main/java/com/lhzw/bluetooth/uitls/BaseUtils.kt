@@ -204,11 +204,11 @@ object BaseUtils {
     fun formatData(start: Long, end: Long): List<String> {
         var bytes = longToByteArray(start)
         var bytes1 = longToByteArray(end)
-        var ymd = "20${bytes[0]}-"
+        var ymd = "20${bytes[0]}."
         if (bytes[1] < 0x0A) {
-            ymd += "0${bytes[1]}-"
+            ymd += "0${bytes[1]}."
         } else {
-            ymd += "${bytes[1]}-"
+            ymd += "${bytes[1]}."
         }
         if (bytes[2] < 0x0A) {
             ymd += "0${bytes[2]}"
@@ -217,14 +217,14 @@ object BaseUtils {
         }
         var hms = ""
         if (bytes[3] < 0x0A) {
-            hms += "0${bytes[3]}-"
+            hms += "0${bytes[3]}:"
         } else {
-            hms += "${bytes[3]}-"
+            hms += "${bytes[3]}:"
         }
         if (bytes[4] < 0x0A) {
-            hms += "0${bytes[4]}-"
+            hms += "0${bytes[4]}:"
         } else {
-            hms += "${bytes[4]}-"
+            hms += "${bytes[4]}:"
         }
         if (bytes[5] < 0x0A) {
             hms += "0${bytes[5]}"
@@ -235,15 +235,15 @@ object BaseUtils {
         var hour = value / 3600
         var timeLag = ""
         if (hour < 0x0A) {
-            timeLag += "0$hour-"
+            timeLag += "0$hour:"
         } else {
-            timeLag += "$hour-"
+            timeLag += "$hour:"
         }
         var min = (value - hour * 3600) / 60
         if (min < 0x0A) {
-            timeLag += "0$min-"
+            timeLag += "0$min:"
         } else {
-            timeLag += "$min-"
+            timeLag += "$min:"
         }
         var second = value % 60
         if (second < 0x0A) {

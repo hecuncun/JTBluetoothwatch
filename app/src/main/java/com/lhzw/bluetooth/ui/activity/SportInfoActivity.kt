@@ -47,8 +47,8 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         // 界面数据适配
         val mark = intent.getStringExtra("mark")
         val type = intent.getIntExtra("type", 0)
-        val duration = intent.getStringExtra("duration").split("-")
-        mPresenter = MainSportPresenter(mark, "${duration[1]}:${duration[2]}", type)
+        val duration = intent.getStringExtra("duration")
+        mPresenter = MainSportPresenter(mark, "${duration}", type)
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
             attachView(this@SportInfoActivity)

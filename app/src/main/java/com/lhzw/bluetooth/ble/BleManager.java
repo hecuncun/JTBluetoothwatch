@@ -46,6 +46,8 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private final BleManagerGattCallback mGattCallback = new BleManagerGattCallback() {
         @Override
         protected void initialize() {
+            //这个方法被回调  说明已经发现蓝牙服务并且设备支持此服务,也就是连接成功可以通信了
+
             Log.e("Watch", "initialize .... ");
             if (mCommTXRXCharacteristic != null) {
                 enableNotifications(mCommTXRXCharacteristic).enqueue();
@@ -58,6 +60,8 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
                         connection_update(true);
                     }
                 }, 500);
+            }else {
+                Logger.e("mCommTXRXCharacteristic==null,char not found....蓝牙设备未连接成功..");
             }
 
         }
