@@ -24,7 +24,7 @@ object Constants {
     const val BACK_LOCATION_PERMISSION = "android.permission.ACCESS_BACKGROUND_LOCATION"
     const val REQUESTCODE = 0 //权限获取请求code
 
-    const val ZOOM = 19F //地图放大级别
+    const val ZOOM = 15.5F //地图放大级别
     const val LGT = 116.337000
     const val LAT = 39.977290
 
