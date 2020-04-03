@@ -77,29 +77,25 @@ class SportModel(var mark: String) : SportConstract.Model {
         val speed_list = queryData(mark = mark, type = Constants.SPEED)
         speed_list?.let {
             val values = ArrayList<Entry>()
+            var max = 0.0f
             val tem_List = speed_list.filter {
                 it.value > 0
             }.map {
-                1 / (60 * it.value.toFloat() / 1000000)
+                (1000000.0f / it.value)
+            }
+            tem_List.forEach {
+                if(max < it){
+                    max = it
+                }
             }
             var index = 0.0f
             tem_List.forEach { v ->
-                values.add(Entry(index, v))
+                values.add(Entry(index, max - v))
                 index += 1
             }
-            Log.e("allocation", "${tem_List}")
-            setLineChart(activity.linechart_allocation_speed, values, R.drawable.gradient_allocation_speed, 3, 1,
-                    CustomYVFormatter_Allocation_Speed(false), CustomYVFormatter_Allocation_Speed((true)))
+            setLineChart(activity.linechart_allocation_speed, values, R.drawable.gradient_allocation_speed, 6, 4,
+                    CustomYVFormatter_Allocation_Speed(false, max), CustomYVFormatter_Allocation_Speed(true, max))
         }
-
-//        var count = 24
-//        var range = 15
-//        val values = ArrayList<Entry>()
-//        for (i in 0 until count) {
-//            val value = (Math.random().toFloat() * (range + 1)) + 20
-//            values.add(Entry(i.toFloat(), value))
-//        }
-
 
         //心率
         val heart_list = queryData(mark = mark, type = Constants.HEART_RATE)
@@ -146,7 +142,7 @@ class SportModel(var mark: String) : SportConstract.Model {
         var detail = queryData<FlatSportBean>(mark)
         var count = 4
         var range = 100
-        var colorBar = mutableListOf<Int>(activity.resources.getColor(R.color.red),
+        var colorBar = mutableListOf<Int>(activity.resources.getColor(R.color.red_dot_color),
                 activity.resources.getColor(R.color.yellow_little1), activity.resources.getColor(R.color.green2),
                 activity.resources.getColor(R.color.blue_little2), activity.resources.getColor(R.color.white))
         var barWidth = 4f
@@ -187,7 +183,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                     formatHeartRate(it[0].aerobic_heart_rate / 1000 / 60, it[0].aerobic_heart_rate / 1000 % 60),
                     formatHeartRate(it[0].flaming_heart_rate / 1000 / 60, it[0].flaming_heart_rate / 1000 % 60),
                     formatHeartRate(it[0].warmup_heart_rate / 1000 / 60, it[0].warmup_heart_rate / 1000 % 60)
-                    )
+            )
             Log.e("valueDescrip", "value : ${valueDescrip}")
             for (i in 0..count) {
                 yValus.add(BarEntry(i * spaceForBar, value[i], activity.resources.getDrawable(R.drawable.gradient_speed_heart)))
@@ -213,7 +209,7 @@ class SportModel(var mark: String) : SportConstract.Model {
     private fun setLineChart(lineChart: LineChart, values: MutableList<Entry>,
                              fillColor: Int, xLabelCount: Int, yLabelCount: Int, valueFormatter_X: ValueFormatter, valueFormatter_Y: ValueFormatter) {
         lineChart?.apply {
-            setViewPortOffsets(80.toFloat(), 60.toFloat(), 60.toFloat(), 60.toFloat())
+            setViewPortOffsets(90.toFloat(), 60.toFloat(), 60.toFloat(), 60.toFloat())
             description.isEnabled = false
             setTouchEnabled(false)
             isDragEnabled = false
@@ -244,6 +240,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 axisLineColor = App.instance.resources.getColor(R.color.gray_lite)
                 axisLineWidth = 0.8f
+                setDrawZeroLine(false)
                 valueFormatter = valueFormatter_Y
             }
 

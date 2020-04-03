@@ -38,7 +38,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private var locationUtils: LocationUtils? = null
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
-        locationUtils?.startLocate()
+//        locationUtils?.startLocate()
     }
 
     override fun deactivate() {
@@ -55,7 +55,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 //            Log.e("LatLon", "lat  $lat   lgt   $lgt")
 
         }
-        mListener?.onLocationChanged(aMapLocation)
+//        mListener?.onLocationChanged(aMapLocation)
     }
 
     override fun requirePermission(activity: Activity): Boolean {
