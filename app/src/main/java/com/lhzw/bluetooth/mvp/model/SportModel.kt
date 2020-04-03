@@ -161,11 +161,11 @@ class SportModel(var mark: String) : SportConstract.Model {
                 sum = 1
             }
             val value = arrayOf(
-                    100 * it[0].warmup_heart_rate.toFloat() / sum,
-                    100 * it[0].flaming_heart_rate.toFloat() / sum,
-                    100 * it[0].aerobic_heart_rate.toFloat() / sum,
+                    100 * it[0].limitation_heart_rate.toFloat() / sum,
                     100 * it[0].anaerobic_heart_rate.toFloat() / sum,
-                    100 * it[0].limitation_heart_rate.toFloat() / sum
+                    100 * it[0].aerobic_heart_rate.toFloat() / sum,
+                    100 * it[0].flaming_heart_rate.toFloat() / sum,
+                    100 * it[0].warmup_heart_rate.toFloat() / sum
             )
             var warmup_heart_rate_str = ""
             var tem = it[0].warmup_heart_rate / 1000 / 60
@@ -181,11 +181,14 @@ class SportModel(var mark: String) : SportConstract.Model {
                 warmup_heart_rate_str += "$tem"
             }
 
-            var valueDescrip = arrayOf(formatHeartRate(it[0].warmup_heart_rate / 1000 / 60, it[0].warmup_heart_rate / 1000 % 60),
-                    formatHeartRate(it[0].flaming_heart_rate / 1000 / 60, it[0].flaming_heart_rate / 1000 % 60),
-                    formatHeartRate(it[0].aerobic_heart_rate / 1000 / 60, it[0].aerobic_heart_rate / 1000 % 60),
+            var valueDescrip = arrayOf(
+                    formatHeartRate(it[0].limitation_heart_rate / 1000 / 60, it[0].limitation_heart_rate / 1000 % 60),
                     formatHeartRate(it[0].anaerobic_heart_rate / 1000 / 60, it[0].anaerobic_heart_rate / 1000 % 60),
-                    formatHeartRate(it[0].limitation_heart_rate / 1000 / 60, it[0].limitation_heart_rate / 1000 % 60))
+                    formatHeartRate(it[0].aerobic_heart_rate / 1000 / 60, it[0].aerobic_heart_rate / 1000 % 60),
+                    formatHeartRate(it[0].flaming_heart_rate / 1000 / 60, it[0].flaming_heart_rate / 1000 % 60),
+                    formatHeartRate(it[0].warmup_heart_rate / 1000 / 60, it[0].warmup_heart_rate / 1000 % 60)
+                    )
+            Log.e("valueDescrip", "value : ${valueDescrip}")
             for (i in 0..count) {
                 yValus.add(BarEntry(i * spaceForBar, value[i], activity.resources.getDrawable(R.drawable.gradient_speed_heart)))
             }

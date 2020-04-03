@@ -143,11 +143,11 @@ data class SportInfoAddrBean(
                 val distance = BaseUtils.byteToInt(content.copyOfRange(168, 172).toList())
                 val calorie = BaseUtils.byteToInt(content.copyOfRange(172, 176).toList())
 
-                val limitation_heart_rate = BaseUtils.byteToInt(content.copyOfRange(188, 192).toList())
-                val anaerobic_heart_rate = BaseUtils.byteToInt(content.copyOfRange(192, 196).toList())
-                val aerobic_heart_rate = BaseUtils.byteToInt(content.copyOfRange(196, 200).toList())
-                val flaming_heart_rate = BaseUtils.byteToInt(content.copyOfRange(200, 204).toList())
-                val warmup_heart_rate = BaseUtils.byteToInt(content.copyOfRange(204, 208).toList())
+                val warmup_heart_rate = BaseUtils.byteToInt(content.copyOfRange(188, 192).toList())  // 热身
+                val flaming_heart_rate = BaseUtils.byteToInt(content.copyOfRange(192, 196).toList())   // 燃脂
+                val aerobic_heart_rate = BaseUtils.byteToInt(content.copyOfRange(196, 200).toList())    // 有氧
+                val limitation_heart_rate = BaseUtils.byteToInt(content.copyOfRange(200, 204).toList())    //  极限
+                val anaerobic_heart_rate = BaseUtils.byteToInt(content.copyOfRange(204, 208).toList())     //  无氧
                 if (activity_type == Constants.ACTIVITY_CLIMBING) {
                     val vertical_speed = BaseUtils.byteToInt(content.copyOfRange(176, 178).toList())
                     val lifting_height = BaseUtils.byteToInt(content.copyOfRange(178, 180).toList())
