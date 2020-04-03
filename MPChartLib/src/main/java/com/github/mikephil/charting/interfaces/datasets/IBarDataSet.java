@@ -64,4 +64,6 @@ public interface IBarDataSet extends IBarLineScatterCandleBubbleDataSet<BarEntry
 
 
     String[] getmHoriDescrip();
+
+    int getHoriDescripColor();
 }

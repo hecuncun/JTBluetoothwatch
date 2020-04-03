@@ -96,7 +96,8 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
             if (!isSingleColor) {
                 // Set the color for the currently drawn value. If the index
                 // is out of bounds, reuse colors.
-                mRenderPaint.setColor(dataSet.getColor(j / 4));
+//                mRenderPaint.setColor(dataSet.getColor(j / 4));
+                mRenderPaint.setColor(dataSet.getHoriDescripColor());
             }
             float radiu = (buffer.buffer[j + 3] - buffer.buffer[j + 1]) / 2;
             if (valueDescrip != null && valueDescrip.length == buffer.size() / 4) {

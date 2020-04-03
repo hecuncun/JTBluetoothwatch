@@ -146,8 +146,8 @@ class SportModel(var mark: String) : SportConstract.Model {
         var detail = queryData<FlatSportBean>(mark)
         var count = 4
         var range = 100
-        var colorBar = mutableListOf<Int>(activity.resources.getColor(R.color.red_little1),
-                activity.resources.getColor(R.color.yellow_little1), activity.resources.getColor(R.color.green_little1),
+        var colorBar = mutableListOf<Int>(activity.resources.getColor(R.color.red),
+                activity.resources.getColor(R.color.yellow_little1), activity.resources.getColor(R.color.green2),
                 activity.resources.getColor(R.color.blue_little2), activity.resources.getColor(R.color.white))
         var barWidth = 4f
         var spaceForBar = 10f
@@ -194,13 +194,6 @@ class SportModel(var mark: String) : SportConstract.Model {
             }
             setHorizontalBar(activity.horizontalbar, yValus, barWidth, HorizontalBarXYFormatter(false, lables), HorizontalBarXYFormatter(true, lables), colorBar, valueDescrip)
         }
-
-//        for (i in 0..count) {
-//            var tem = Math.random() * range
-//            yValus.add(BarEntry(i * spaceForBar, tem.toFloat(), activity.resources.getDrawable(R.drawable.gradient_speed_heart)))
-//            Log.e("HorizontalBar", "$tem")
-//        }
-//        setHorizontalBar(activity.horizontalbar, yValus, barWidth, HorizontalBarXYFormatter(false, lables), HorizontalBarXYFormatter(true, lables), colorBar, valueDescrip)
     }
 
     override fun queryData(mark: String, type: Int): List<SportDetailInfobean>? {
@@ -358,6 +351,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 val dataSets = ArrayList<IBarDataSet>()
                 dataSets.add(set1)
                 set1.setmHoriDescrip(valueDescrip)
+                set1.setHoriDesripColor(context.getColor(R.color.gray_transparent))
                 set1.colors = colors
                 set1.valueTextColor = App.instance.resources.getColor(R.color.white)
                 set1.valueFormatter = yFormatter

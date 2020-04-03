@@ -48,6 +48,8 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
             "HoriDescrip"
     };
 
+    private int horiDesripColor = getColor(android.R.color.darker_gray);
+
     public BarDataSet(List<BarEntry> yVals, String label) {
         super(yVals, label);
 
@@ -76,6 +78,7 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
         barDataSet.mStackLabels = mStackLabels;
         barDataSet.mHoriDescrip = mHoriDescrip;
         barDataSet.mHighLightAlpha = mHighLightAlpha;
+        barDataSet.horiDesripColor = horiDesripColor;
     }
 
     /**
@@ -249,5 +252,14 @@ public class BarDataSet extends BarLineScatterCandleBubbleDataSet<BarEntry> impl
     @Override
     public String[] getmHoriDescrip() {
         return mHoriDescrip;
+    }
+
+    public void setHoriDesripColor(int color){
+        this.horiDesripColor = color;
+    }
+
+    @Override
+    public int getHoriDescripColor() {
+        return horiDesripColor;
     }
 }
