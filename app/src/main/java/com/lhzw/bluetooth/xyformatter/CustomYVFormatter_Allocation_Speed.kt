@@ -39,7 +39,7 @@ class CustomYVFormatter_Allocation_Speed(private var drawY: Boolean, private var
                 str += "$min${"\'"}"
             }
             if(second < 0x0A) {
-                str += "0$second${"\\′"}"
+                str += "0$second${"\""}"
             } else {
                 str += "$second${"\""}"
             }
