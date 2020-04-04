@@ -181,12 +181,30 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 }
 
                 val speed_allocation_av = BaseUtils.intToByteArray(it[0].speed)
-                activity.tv_speed_allocation_av.text = "${speed_allocation_av[0].toInt() and 0xFF}${"\'"}${speed_allocation_av[1].toInt() and 0xFF}${"\""}"
-                activity.tv_allocation_speed_av.text = "${speed_allocation_av[0].toInt() and 0xFF}${"\'"}${speed_allocation_av[1].toInt() and 0xFF}${"\""}"
+                var av_all_speed = ""
+                if(speed_allocation_av[0] < 0x0A){
+                    av_all_speed += "0"
+                }
+                av_all_speed += "${speed_allocation_av[0].toInt() and 0xFF}${"\'"}"
+                if(speed_allocation_av[1] < 0x0A){
+                    av_all_speed += "0"
+                }
+                av_all_speed += "${speed_allocation_av[1].toInt() and 0xFF}${"\""}"
+                activity.tv_speed_allocation_av.text = av_all_speed
+                activity.tv_allocation_speed_av.text = av_all_speed
                 val speed_allocation_best = BaseUtils.intToByteArray(it[0].best_speed)
-                activity.tv_speed_allocation_best.text = "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
+                var best_all_speed = ""
+                if(speed_allocation_best[0] < 0x0A){
+                    best_all_speed += "0"
+                }
+                best_all_speed += "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}"
+                if(speed_allocation_best[1] < 0x0A){
+                    best_all_speed += "0"
+                }
+                best_all_speed += "${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
+                activity.tv_speed_allocation_best.text = best_all_speed
                 // 平均配速
-                activity.tv_allocation_speed_best.text = "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
+                activity.tv_allocation_speed_best.text = best_all_speed
                 // 热量
                 activity.tv_heat_quantity.text = "${it[0].calorie}"
             }

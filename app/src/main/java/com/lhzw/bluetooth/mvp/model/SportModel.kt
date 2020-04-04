@@ -316,6 +316,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 textColor = App.instance.resources.getColor(R.color.red_little)
                 setDrawGridLines(false)
                 setDrawAxisLine(false);
+                setDrawZeroLine(true)
                 isEnabled = false
                 setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 textSize = 10f

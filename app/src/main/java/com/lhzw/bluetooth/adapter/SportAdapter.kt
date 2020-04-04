@@ -24,7 +24,7 @@ class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAd
                 Constants.ACTIVITY_INDOOR -> {
                     helper.setImageResource(R.id.im_portrait, R.mipmap.icon_indoor_sport)
                 }
-                Constants.ACTIVITY_INDOOR -> {
+                Constants.ACTIVITY_RUNNING -> {
                     helper.setImageResource(R.id.im_portrait, R.mipmap.icon_running_sport)
                 }
             }
