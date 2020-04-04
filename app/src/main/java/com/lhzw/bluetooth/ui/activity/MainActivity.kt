@@ -5,27 +5,39 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.os.Handler
 import android.provider.Settings
 import android.support.design.bottomnavigation.LabelVisibilityMode
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.FragmentTransaction
 import android.text.TextUtils
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.widget.Toast
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.ble.ExtendedBluetoothDevice
+import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.BleStateEvent
+import com.lhzw.bluetooth.event.ConnectEvent
+import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.SaveUserEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.ui.fragment.ConnectFragment
 import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
+import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
+import no.nordicsemi.android.support.v18.scanner.*
 import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.find
 
@@ -47,8 +59,11 @@ class MainActivity : BaseActivity() {
 
     private var bleStateChangeReceiver: BleStateChangeReceiver? = null
 
-    override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
+    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
 
+    override fun useEventBus()=true
+
+    override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
     override fun initData() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
               Logger.e("已获取存储权限")
@@ -73,8 +88,190 @@ class MainActivity : BaseActivity() {
         //打开监听通知栏功能
         toggleNotificationListenerService()
         openSetting()
-
+        if (autoConnect &&bleManager!!.adapter.isEnabled && !connectState){
+             startScan()
+        }
     }
+   //==================================================扫描操作START==========
+   private var isScanning = false  //是否正在扫描
+    private val SCAN_DURATION: Long = 10000//扫描时长10s
+
+    private fun startScan() {
+       Logger.e("开始搜索")
+       val scanner = BluetoothLeScannerCompat.getScanner()
+       val settings = ScanSettings.Builder()
+               .setLegacy(false)
+               .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+               .setReportDelay(1000)
+               .setUseHardwareBatchingIfSupported(false)
+               .build()
+
+       val filters = mutableListOf<ScanFilter>()//过滤器
+
+
+       // filters.add(ScanFilter.Builder().setServiceUuid(mUUid).build())
+       try {
+           scanner.startScan(filters, settings, scanCallback)
+           isScanning = true
+
+           Handler().postDelayed({
+               if (isScanning) {
+                   stopScan()
+               }
+           }, SCAN_DURATION)
+       } catch (e: Exception) {
+           Log.e("BLE_Error", "scanner already started with given callback ...")
+       }
+   }
+
+    private fun stopScan() {
+        val scanner = BluetoothLeScannerCompat.getScanner()
+        try {
+            scanner.stopScan(scanCallback)
+            isScanning = false
+            if (autoConnect && !connectState) {//重连还未连接成功
+                Logger.e("未找到蓝牙,继续搜索...")
+                Handler().postDelayed(Runnable {
+                        startAutoScanAndConnect()
+                }, scannerDelayTime)
+                Logger.e("延时==$scannerDelayTime")
+            }
+        } catch (e: Exception) {
+            Log.e("BLE_Error", "BT Adapter is not turned ON ...")
+        }
+    }
+
+
+    private var loadingView: LoadingView? = null
+    private var requestBleConnect=false//是否请求连接蓝牙
+    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
+    private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
+    private val scanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult) {
+            Logger.e("onScanResult")
+        }
+
+        override fun onBatchScanResults(results: MutableList<ScanResult>) {
+            // Log.e("Tag", "result == null ${results.size}")
+            Logger.e("搜索设备中...")
+            for (result in results) {
+                if (result.device.name != null && result.device.name.contains("SW2500")) {
+                    if (mListValues.size == 0) {
+                        mListValues.add(ExtendedBluetoothDevice(result))
+                    } else {
+                        var hasExist = false
+                        for (device in mListValues) {
+                            if (result.device.address == device.device.address) {
+                                hasExist = true
+                                break
+                            }
+                        }
+                        if (!hasExist) {
+                            mListValues.add(ExtendedBluetoothDevice(result))
+                        }
+                    }
+
+                }
+                Log.e("TAG", "已找到周围腕表设备数量==${mListValues.size}")
+            }
+
+            val lastList = mListValues.filter {
+
+                it.device.address == lastDeviceMacAddress
+            }
+
+            if (lastList.isNotEmpty()) {
+                Logger.e("已找到蓝牙设备")
+                if (loadingView==null){
+                    loadingView = LoadingView(this@MainActivity)
+                    loadingView!!.setLoadingTitle("连接中...")
+                    loadingView!!.show()
+                }
+                if (!requestBleConnect){
+                    Logger.e("RxBus发送连接请求...")
+                    RxBus.getInstance().post("connect", lastList[0].device)
+                    requestBleConnect=true
+                    Handler().postDelayed(Runnable {
+                        stopScan()
+                    },1000)
+                }
+            } else {
+                if (requestBleConnect){
+                    Logger.e("发现上次连接设备,已发送了连接指令,等待连接")
+                }else{
+                    if (!connectState && !requestBleConnect){//未找到设备  还未连接成功 就发断开指令
+                        Logger.e("未发现上次连接设备==$lastDeviceMacAddress")
+                        RxBus.getInstance().post("disconnect","")
+                    }
+
+                }
+
+
+            }
+
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+            Logger.e("onScanFailed")
+
+        }
+    }
+
+    private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onWatchConnectChanged(event: ConnectEvent) {
+        if (event.isConnected) {//已连接
+            Logger.e("收到同步数据的EVENT")
+            loadingView!!.setLoadingTitle("同步数据中...")
+//            ll_connected_container.visibility = View.VISIBLE
+//            tv_device_name.text = "设备名称:$connectedDeviceName"
+//            tv_device_name.text = "设备名称:$connectedDeviceName"
+            connectState = true
+            autoConnect = true//将自动连接打开
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun hideDialog(event: HideDialogEvent) {
+        Logger.e("MainActivity  同步数据成功")
+        loadingView?.dismiss()
+    }
+    //自动扫描并且连接
+    private var autoScanner: BluetoothLeScannerCompat? = null
+    private var scannerDelayTime = 1000L//默认一秒
+    private fun startAutoScanAndConnect() {
+        scannerDelayTime *= 2
+        if (scannerDelayTime >16000L) {
+            scannerDelayTime = 16000L
+        }
+        if (autoScanner == null) {
+            autoScanner = BluetoothLeScannerCompat.getScanner()
+        }
+        val settings = ScanSettings.Builder()
+                .setLegacy(false)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setReportDelay(1000)
+                .setUseHardwareBatchingIfSupported(false)
+                .build()
+
+        val filters = mutableListOf<ScanFilter>()//过滤器
+
+        autoScanner?.startScan(filters, settings, scanCallback)
+
+        isScanning = true
+        Handler().postDelayed({
+            try {
+                if (isScanning) {
+                    stopScan()
+                }
+            } catch (e: Exception) {
+                Log.e("Bluetooth", "Bluetooth sync fail ...")
+            }
+        }, SCAN_DURATION)
+    }
+   //==================================================扫描操作START==========
+
+
 
     //======================通知相关start=====================================================
     private val ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners"
@@ -155,6 +352,9 @@ class MainActivity : BaseActivity() {
 
         }
         toolbar_title.text = "首页"
+        showFragment(mIndex)
+        showFragment(mIndex)
+        showFragment(mIndex)
         showFragment(mIndex)
 
         //获取蓝牙状态
@@ -307,7 +507,6 @@ class MainActivity : BaseActivity() {
         return super.onKeyDown(keyCode, event)
     }
 
-
     //监听蓝牙开关的状态
     private inner class BleStateChangeReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -336,5 +535,6 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
 
 }

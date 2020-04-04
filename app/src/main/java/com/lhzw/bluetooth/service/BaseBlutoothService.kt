@@ -615,12 +615,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
-        try {
-            RxBus.getInstance().unregister(this)
-            onClear()
-        } catch (e: Exception) {
-            Log.e("Bluetooth", e.message)
-        }
+        Logger.e("杀死进程")
+        onClear()
 
     }
 
@@ -656,6 +652,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         super.onDestroy()
         Log.e("Tag", "start service onDestroy ...")
         RxBus.getInstance().unregister(this)
+        Logger.e("service onDestroy...")
         onClear()
     }
 

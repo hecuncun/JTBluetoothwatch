@@ -17,6 +17,7 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
+import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.KeyBoardUtil

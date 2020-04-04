@@ -102,7 +102,7 @@ class ConnectFragment : BaseFragment() {
             "蓝牙已开启"
         } else "请打开蓝牙"
         Logger.e("state==$state")
-        if (state) {
+        if (state && !connectState) {
             //如果打开蓝牙就开始扫描
             //先判断权限
             if (checkPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))) {

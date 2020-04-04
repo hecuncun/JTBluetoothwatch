@@ -247,8 +247,9 @@ class BlutoothService : BaseBlutoothService() {
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     // 清理数据
     override fun onClear() {
-        myBleManager?.device_disconnect()
         connectState=false
+        Logger.e("重置connectState=false")
+        myBleManager?.device_disconnect()
         if (autoConnect){
             autoConnect
         }
