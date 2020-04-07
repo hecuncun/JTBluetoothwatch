@@ -347,14 +347,16 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     val tmp = it.toList()
                     noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
                     if (noFlashMap.get(ID)!!.size == 836) {
-                        Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+//                        Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
                     }
                 }
                 if (readDailyBean.isOver) {
-                    DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
-                        Log.e("Tag", "read boundary addr ...")
-                        myBleManager?.read_boundary_address()
-                    }
+                    Thread{
+                        DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
+                            Log.e("Tag", "read boundary addr ...")
+                            myBleManager?.read_boundary_address()
+                        }
+                    }.start()
                 } else {
                     readNextAddr()
                 }
