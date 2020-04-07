@@ -100,19 +100,23 @@ data class SportDetailInfobean(
             }
         }
 
-        // 解析Gps数据
+        // 解析Gps数据 只存储大于0的数据
         private fun parserGps(mark: String, type: Int, interval: Int, sector_time: Int, content: List<Byte>, len: Int) {
             for (index in 0 until len / interval) {
-                val bean = SportDetailInfobean(
-                        mark,
-                        type,
-                        index,
-                        sector_time,
-                        0,
-                        0,
-                        BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble(),
-                        BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble())
-                CommOperation.insert(bean)
+                var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
+                var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
+                if(lat > 0.0 && lgt > 0) {
+                    val bean = SportDetailInfobean(
+                            mark,
+                            type,
+                            index,
+                            sector_time,
+                            0,
+                            0,
+                            lat,
+                            lgt)
+                    CommOperation.insert(bean)
+                }
             }
         }
 
