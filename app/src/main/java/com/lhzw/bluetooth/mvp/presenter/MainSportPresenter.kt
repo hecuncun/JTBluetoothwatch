@@ -6,7 +6,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.amap.api.location.AMapLocation
-import com.amap.api.maps.*
+import com.amap.api.maps.AMap
+import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.LocationSource
+import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.ClimbingSportBean
@@ -182,11 +185,11 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
                 val speed_allocation_av = BaseUtils.intToByteArray(it[0].speed)
                 var av_all_speed = ""
-                if(speed_allocation_av[0] < 0x0A){
+                if (speed_allocation_av[0] < 0x0A) {
                     av_all_speed += "0"
                 }
                 av_all_speed += "${speed_allocation_av[0].toInt() and 0xFF}${"\'"}"
-                if(speed_allocation_av[1] < 0x0A){
+                if (speed_allocation_av[1] < 0x0A) {
                     av_all_speed += "0"
                 }
                 av_all_speed += "${speed_allocation_av[1].toInt() and 0xFF}${"\""}"
@@ -194,11 +197,11 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 activity.tv_allocation_speed_av.text = av_all_speed
                 val speed_allocation_best = BaseUtils.intToByteArray(it[0].best_speed)
                 var best_all_speed = ""
-                if(speed_allocation_best[0] < 0x0A){
+                if (speed_allocation_best[0] < 0x0A) {
                     best_all_speed += "0"
                 }
                 best_all_speed += "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}"
-                if(speed_allocation_best[1] < 0x0A){
+                if (speed_allocation_best[1] < 0x0A) {
                     best_all_speed += "0"
                 }
                 best_all_speed += "${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
@@ -219,22 +222,13 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         var latLngs = model.queryData(mark, Constants.GPS)
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
-            var start = BaseUtils.gps84_To_Gcj02(it[0].gps_latitude / 100000, it[0].gps_longitude / 100000)
-            var latLng = LatLng(start[0], start[1])
-            if (it[0].gps_latitude != 0.0 && it[0].gps_longitude != 0.0) {
-                list.add(latLng)
-            }
             it.forEach {
-                var values = BaseUtils.gps84_To_Gcj02(it.gps_latitude / 100000, it.gps_longitude / 100000)
-                var tmp = LatLng(values[0], values[1])
-                if (it.gps_latitude != 0.0 && it.gps_longitude != 0.0 &&
-                        AMapUtils.calculateLineDistance(latLng, tmp) > 1) {
-                    latLng = tmp
-                    list.add(tmp)
-                    conter++
-                    lat += latLng.latitude
-                    lgt += latLng.longitude
-                }
+                var tmp = LatLng(it.gps_latitude, it.gps_longitude)
+                Log.e("LatLgt", "${it.gps_latitude}   ${it.gps_longitude}")
+                conter++
+                lat += it.gps_latitude
+                lgt += it.gps_longitude
+                list.add(tmp)
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {

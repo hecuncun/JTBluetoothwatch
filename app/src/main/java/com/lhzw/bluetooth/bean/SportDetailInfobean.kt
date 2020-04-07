@@ -1,6 +1,8 @@
 package com.lhzw.bluetooth.bean
 
 import android.util.Log
+import com.amap.api.maps.AMapUtils
+import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -105,17 +107,23 @@ data class SportDetailInfobean(
             for (index in 0 until len / interval) {
                 var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
                 var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
+                var tmp = LatLng(0.0, 0.0)
                 if(lat > 0.0 && lgt > 0) {
-                    val bean = SportDetailInfobean(
-                            mark,
-                            type,
-                            index,
-                            sector_time,
-                            0,
-                            0,
-                            lat,
-                            lgt)
-                    CommOperation.insert(bean)
+                    var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
+                    val latLng = LatLng(start[0], start[1])
+                    if(AMapUtils.calculateLineDistance(latLng, tmp) > 1) {
+                        tmp = latLng
+                        val bean = SportDetailInfobean(
+                                mark,
+                                type,
+                                index,
+                                sector_time,
+                                0,
+                                0,
+                                start[0],
+                                start[1])
+                        CommOperation.insert(bean)
+                    }
                 }
             }
         }
