@@ -11,6 +11,7 @@ import com.lhzw.bluetooth.BuildConfig
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.service.BlutoothService
+import com.lhzw.bluetooth.service.SmsAndPhoneService
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LogCatStrategy
 import com.orhanobut.logger.AndroidLogAdapter
@@ -63,6 +64,10 @@ class App : MultiDexApplication() {
         // 启动服务
         if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
             startService(Intent(context, BlutoothService::class.java))
+        }
+        //启动电话/短信监听服务
+        if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)){
+            startService(Intent(context,SmsAndPhoneService::class.java))
         }
         initLoggerConfig()
         //初始化数据库

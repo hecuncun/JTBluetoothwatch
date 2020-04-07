@@ -114,6 +114,9 @@
             </intent-filter>
 
         </service>
+        <!--  短信  来电   服务      -->
+        <service android:name=".service.SmsAndPhoneService" />
+
     </application>
     <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />

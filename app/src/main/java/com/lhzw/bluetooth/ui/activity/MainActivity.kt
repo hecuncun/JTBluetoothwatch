@@ -61,16 +61,16 @@ class MainActivity : BaseActivity() {
 
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
 
-    override fun useEventBus()=true
+    override fun useEventBus() = true
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
     override fun initData() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
-              Logger.e("已获取存储权限")
+            Logger.e("已获取存储权限")
             //未初始化就 先初始化一个用户对象
             LitePal.getDatabase()
             val bean = LitePal.find<PersonalInfoBean>(1)
-            if (bean==null){
+            if (bean == null) {
                 val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 10000, 1500, 5, 194)
                 personalInfoBean.save()
             }
@@ -88,41 +88,42 @@ class MainActivity : BaseActivity() {
         //打开监听通知栏功能
         toggleNotificationListenerService()
         openSetting()
-        if (autoConnect &&bleManager!!.adapter.isEnabled && !connectState){
-             startScan()
+        if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {
+            startScan()
         }
     }
-   //==================================================扫描操作START==========
-   private var isScanning = false  //是否正在扫描
-    private val SCAN_DURATION: Long = 10000//扫描时长10s
+
+    //==================================================扫描操作START==========
+    private var isScanning = false  //是否正在扫描
+    private val SCAN_DURATION: Long = 30000//扫描时长10s
 
     private fun startScan() {
-       Logger.e("开始搜索")
-       val scanner = BluetoothLeScannerCompat.getScanner()
-       val settings = ScanSettings.Builder()
-               .setLegacy(false)
-               .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-               .setReportDelay(1000)
-               .setUseHardwareBatchingIfSupported(false)
-               .build()
+        Logger.e("开始搜索")
+        val scanner = BluetoothLeScannerCompat.getScanner()
+        val settings = ScanSettings.Builder()
+                .setLegacy(false)
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                .setReportDelay(1000)
+                .setUseHardwareBatchingIfSupported(false)
+                .build()
 
-       val filters = mutableListOf<ScanFilter>()//过滤器
+        val filters = mutableListOf<ScanFilter>()//过滤器
 
 
-       // filters.add(ScanFilter.Builder().setServiceUuid(mUUid).build())
-       try {
-           scanner.startScan(filters, settings, scanCallback)
-           isScanning = true
+        // filters.add(ScanFilter.Builder().setServiceUuid(mUUid).build())
+        try {
+            scanner.startScan(filters, settings, scanCallback)
+            isScanning = true
 
-           Handler().postDelayed({
-               if (isScanning) {
-                   stopScan()
-               }
-           }, SCAN_DURATION)
-       } catch (e: Exception) {
-           Log.e("BLE_Error", "scanner already started with given callback ...")
-       }
-   }
+            Handler().postDelayed({
+                if (isScanning) {
+                    stopScan()
+                }
+            }, SCAN_DURATION)
+        } catch (e: Exception) {
+            Log.e("BLE_Error", "scanner already started with given callback ...")
+        }
+    }
 
     private fun stopScan() {
         val scanner = BluetoothLeScannerCompat.getScanner()
@@ -132,9 +133,13 @@ class MainActivity : BaseActivity() {
             if (autoConnect && !connectState) {//重连还未连接成功
                 Logger.e("未找到蓝牙,继续搜索...")
                 Handler().postDelayed(Runnable {
-                        startAutoScanAndConnect()
+                    startAutoScanAndConnect()
                 }, scannerDelayTime)
                 Logger.e("延时==$scannerDelayTime")
+            } else {
+                if (!connectState) {
+                    showToast("腕表蓝牙未开启或处于连接状态")
+                }
             }
         } catch (e: Exception) {
             Log.e("BLE_Error", "BT Adapter is not turned ON ...")
@@ -143,7 +148,6 @@ class MainActivity : BaseActivity() {
 
 
     private var loadingView: LoadingView? = null
-    private var requestBleConnect=false//是否请求连接蓝牙
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
     private val scanCallback = object : ScanCallback() {
@@ -182,28 +186,20 @@ class MainActivity : BaseActivity() {
 
             if (lastList.isNotEmpty()) {
                 Logger.e("已找到蓝牙设备")
-                if (loadingView==null){
+                if (loadingView == null) {
                     loadingView = LoadingView(this@MainActivity)
                     loadingView!!.setLoadingTitle("连接中...")
                     loadingView!!.show()
                 }
-                if (!requestBleConnect){
+
+                if (!connectState){
                     Logger.e("RxBus发送连接请求...")
                     RxBus.getInstance().post("connect", lastList[0].device)
-                    requestBleConnect=true
-                    Handler().postDelayed(Runnable {
-                        stopScan()
-                    },1000)
                 }
             } else {
-                if (requestBleConnect){
-                    Logger.e("发现上次连接设备,已发送了连接指令,等待连接")
-                }else{
-                    if (!connectState && !requestBleConnect){//未找到设备  还未连接成功 就发断开指令
-                        Logger.e("未发现上次连接设备==$lastDeviceMacAddress")
-                        RxBus.getInstance().post("disconnect","")
-                    }
-
+                if (!connectState) {//未找到设备  还未连接成功 就发断开指令
+                    Logger.e("未发现上次连接设备,断开重试")
+                    RxBus.getInstance().post("disconnect", "")
                 }
 
 
@@ -222,7 +218,7 @@ class MainActivity : BaseActivity() {
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
             Logger.e("收到同步数据的EVENT")
-            loadingView!!.setLoadingTitle("同步数据中...")
+            loadingView?.setLoadingTitle("同步数据中...")
 //            ll_connected_container.visibility = View.VISIBLE
 //            tv_device_name.text = "设备名称:$connectedDeviceName"
 //            tv_device_name.text = "设备名称:$connectedDeviceName"
@@ -236,12 +232,13 @@ class MainActivity : BaseActivity() {
         Logger.e("MainActivity  同步数据成功")
         loadingView?.dismiss()
     }
+
     //自动扫描并且连接
     private var autoScanner: BluetoothLeScannerCompat? = null
     private var scannerDelayTime = 1000L//默认一秒
     private fun startAutoScanAndConnect() {
         scannerDelayTime *= 2
-        if (scannerDelayTime >16000L) {
+        if (scannerDelayTime > 16000L) {
             scannerDelayTime = 16000L
         }
         if (autoScanner == null) {
@@ -269,12 +266,12 @@ class MainActivity : BaseActivity() {
             }
         }, SCAN_DURATION)
     }
-   //==================================================扫描操作START==========
-
+    //==================================================扫描操作START==========
 
 
     //======================通知相关start=====================================================
     private val ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners"
+
     private fun openSetting() {
         if (!isEnabled()) {
             val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
@@ -283,7 +280,8 @@ class MainActivity : BaseActivity() {
             Toast.makeText(this, "已开启服务权限", Toast.LENGTH_LONG).show()
         }
     }
-    private  fun toggleNotificationListenerService() {
+
+    private fun toggleNotificationListenerService() {
         val pm = packageManager
         pm.setComponentEnabledSetting(
                 ComponentName(this@MainActivity, com.lhzw.bluetooth.service.NotifyService::class.java),
@@ -320,7 +318,7 @@ class MainActivity : BaseActivity() {
             //未初始化就 先初始化一个用户对象
             LitePal.getDatabase()
             val bean = LitePal.find<PersonalInfoBean>(1)
-            if (bean==null){
+            if (bean == null) {
                 val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 10000, 1500, 5, 194)
                 personalInfoBean.save()
             }
