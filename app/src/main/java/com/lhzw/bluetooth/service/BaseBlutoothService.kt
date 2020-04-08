@@ -358,7 +358,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
                 if (readDailyBean.isOver) {
-                    Thread {
+                    Thread{
                         DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
                             Log.e("Tag", "read boundary addr ...")
                             myBleManager?.read_boundary_address()
@@ -436,15 +436,17 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 读取noflash中日常数据
     private fun readDailyNoFlash() {
-        var bean = readDailyBean.list[readDailyBean.index]
-        val content = ArrayList<Byte>()
-        content.add(0x04)
-        content.add(bean.response.toByte())
-        content.addAll(BaseUtils.intToByteArray(readDailyBean.current_addr))
-        content.add((readDailyBean.read_len and 0xff).toByte())
-        Log.e("Daily", "${bean.sport_date}  ${BaseUtils.byte2HexStr(content.toByteArray())}")
-        myBleManager?.norFlash_read(content.toByteArray(), bean.sport_date)
-        content.clear()
+        Thread {
+            var bean = readDailyBean.list[readDailyBean.index]
+            val content = ArrayList<Byte>()
+            content.add(0x04)
+            content.add(bean.response.toByte())
+            content.addAll(BaseUtils.intToByteArray(readDailyBean.current_addr))
+            content.add((readDailyBean.read_len and 0xff).toByte())
+            Log.e("Daily", "${bean.sport_date}  ${BaseUtils.byte2HexStr(content.toByteArray())}")
+            myBleManager?.norFlash_read(content.toByteArray(), bean.sport_date)
+            content.clear()
+        }.start()
     }
 
     /**
@@ -468,7 +470,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             content.addAll(readActivityBean.request_date.toList())
             content.add(readActivityBean.request_mark)
             content.addAll(activities_addr)
-            var value  = BaseUtils.byte2HexStr(content.toByteArray())!!
+            var value = BaseUtils.byte2HexStr(content.toByteArray())!!
             ERROR += "\n日期 ${value.substring(3, 20)}\n活动序号 ：${value.substring(21, 23)}\n地址：${value.substring(24, 35)}"
             Log.e("readSport", "$bean.daily_date  $value}")
             myBleManager?.sports_param_read(content.toByteArray(), bean.daily_date + "-" + BaseUtils.byte2HexStr(byteArrayOf(readActivityBean.request_mark)))
