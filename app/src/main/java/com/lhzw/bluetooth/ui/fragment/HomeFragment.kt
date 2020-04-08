@@ -257,7 +257,7 @@ class HomeFragment : BaseFragment() {
         if (list.isNotEmpty()) {
             tv_goal_step_num.text = list[0].des_steps.toString()
         }
-        showToast("保存成功")
+        showToast("成功")
 
     }
 
