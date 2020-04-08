@@ -224,7 +224,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             var list = ArrayList<LatLng>()
             it.forEach {
                 var tmp = LatLng(it.gps_latitude, it.gps_longitude)
-                Log.e("LatLgt", "${it.gps_latitude}   ${it.gps_longitude}")
                 conter++
                 lat += it.gps_latitude
                 lgt += it.gps_longitude
