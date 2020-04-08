@@ -36,12 +36,12 @@ class SmsAndPhoneService : Service() {
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        LogUtils.e("SmsAndPhoneService--------onStartCommand--------->")
+        Logger.e("SmsAndPhoneService--------onStartCommand--------->")
         return super.onStartCommand(intent, flags, startId)
     }
 
     override fun onDestroy() {
-        LogUtils.e("SmsAndPhoneService----onDestroy----unregisterReceiver--------->$NLServerReceiver")
+        Logger.e("SmsAndPhoneService----onDestroy----unregisterReceiver--------->$NLServerReceiver")
         unregisterReceiver(NLServerReceiver)
         super.onDestroy()
     }
@@ -68,28 +68,29 @@ class SmsAndPhoneService : Service() {
                     }
                     //---显示SMS消息---
                     LogUtils.e("收到短息==>$str")
-                    if (connectState){
-                        RxBus.getInstance().post("notification", NotificationEvent(100,str,Constants.MMS))
+                    if (connectState) {
+                        RxBus.getInstance().post("notification", NotificationEvent(100, str, Constants.MMS))
                     }
                 }
             }
             if (action == "android.intent.action.PHONE_STATE") {
                 val state = paramIntent.getStringExtra("state")
                 val incoming_number = paramIntent.getStringExtra("incoming_number")
-                LogUtils.e("state==$state----------incoming_number==$incoming_number")
+                Logger.e("state==$state----------incoming_number==$incoming_number")
                 if ("RINGING" == state) {
                     if (!TextUtils.isEmpty(incoming_number)) {
                         var phoneNumber = "" // 剔除号码中的分隔符
                         var name = ""
+                        phoneNumber = incoming_number.replace("-", "").replace(" ", "")
                         try {
-                            phoneNumber = incoming_number.replace("-", "").replace(" ", "")
                             name = PhoneUtil.getContactNameByPhoneNumber(paramContext, phoneNumber)
-                            Logger.e("收到来电phoneNumber==$phoneNumber===name==$name")
-                            if (connectState){
-                                RxBus.getInstance().post("notification", NotificationEvent(101,name+phoneNumber,Constants.CALL))
-                            }
-                        } catch (e: Exception) {
+                        }catch (e:Exception){
                             e.printStackTrace()
+                        }
+
+                        Logger.e("收到来电phoneNumber==$phoneNumber===name==$name")
+                        if (connectState) {
+                            RxBus.getInstance().post("notification", NotificationEvent(101, name + phoneNumber, Constants.CALL_COMING))
                         }
                     }
                 }

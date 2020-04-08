@@ -56,6 +56,7 @@ class MainActivity : BaseActivity() {
     private var mSettingFragment: SettingFragment? = null
     private var mConnectFragment: ConnectFragment? = null
     private val PERMISS_REQUEST_CODE = 0x100
+    private val PERMISS_REQUEST_CODE_PHONE = 0x101
 
     private var bleStateChangeReceiver: BleStateChangeReceiver? = null
 
@@ -65,6 +66,11 @@ class MainActivity : BaseActivity() {
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
     override fun initData() {
+        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS))) {
+            Logger.e("已获取监听电话短信权限")
+        } else {
+            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
+        }
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")
             //未初始化就 先初始化一个用户对象
@@ -78,6 +84,8 @@ class MainActivity : BaseActivity() {
             Logger.e("请求存储权限")
             requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE)
         }
+
+
 
         //注册蓝牙广播
         bleStateChangeReceiver = BleStateChangeReceiver()
@@ -192,7 +200,7 @@ class MainActivity : BaseActivity() {
                     loadingView!!.show()
                 }
 
-                if (!connectState){
+                if (!connectState) {
                     Logger.e("RxBus发送连接请求...")
                     RxBus.getInstance().post("connect", lastList[0].device)
                 }

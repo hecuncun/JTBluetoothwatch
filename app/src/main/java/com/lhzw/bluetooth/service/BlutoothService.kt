@@ -74,7 +74,7 @@ class BlutoothService : BaseBlutoothService() {
         }
         data[0] = 0x0F.toByte()
         when (event.packageName) {
-            Constants.CALL -> {
+            Constants.CALL,Constants.CALL_COMING -> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
                 if (!enablePhone) {
                     return

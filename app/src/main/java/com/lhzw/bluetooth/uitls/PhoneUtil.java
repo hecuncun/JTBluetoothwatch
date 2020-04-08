@@ -25,7 +25,7 @@ public class PhoneUtil {
                 null); // Sort order.
 
         if (cursor == null) {
-            return null;
+            return "未知来电";
         }
         for (int i = 0; i < cursor.getCount(); i++) {
             cursor.moveToPosition(i);
@@ -35,6 +35,6 @@ public class PhoneUtil {
             String name = cursor.getString(nameFieldColumnIndex);
             return name;
         }
-        return null;
+        return "未知来电";
     }
 }

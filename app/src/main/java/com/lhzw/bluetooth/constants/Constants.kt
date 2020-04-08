@@ -37,7 +37,8 @@ object Constants {
     const val QQ = "com.tencent.mobileqq"
     const val SINA = "com.sina.weibo"
     const val MMS = "com.android.mms"
-    const val CALL = "com.android.incallui"
+    const val CALL_COMING = "com.android.incallui"
+    const val CALL = "com.android.server.telecom"
 
     //记录定位中心点经纬度
     const val CENTER_LAT = "CENTER_LAT"

@@ -166,7 +166,7 @@ class ConnectFragment : BaseFragment() {
             } else {//扫码结束   未连接成功
                 if (!connectState) {
                     loadingView?.dismiss()
-                    showToast("连接失败,请开启腕表蓝牙,并未处于连接状态")
+                    showToast("连接失败,请开启腕表蓝牙,并未处于连接状态后重试")
                 }
             }
         } catch (e: Exception) {
