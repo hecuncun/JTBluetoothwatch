@@ -14,6 +14,7 @@ import com.lhzw.bluetooth.ble.ExtendedBluetoothDevice
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.BleStateEvent
+import com.lhzw.bluetooth.event.BlutoothEvent
 import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.ext.showToast
@@ -178,7 +179,7 @@ class ConnectFragment : BaseFragment() {
     fun onBleStateChanged(event: BleStateEvent) {
         state = event.state
         initBleState()
-        if (state && autoConnect){//打开蓝牙,并且是自动连接时才扫描
+        if (state && autoConnect) {//打开蓝牙,并且是自动连接时才扫描
             startScan()
         }
 
@@ -258,10 +259,10 @@ class ConnectFragment : BaseFragment() {
                         loadingView = LoadingView(activity)
                         loadingView!!.setLoadingTitle("连接中...")
                     }
-                    if (!connectState){
+                    if (!connectState) {
                         Logger.e("已找到蓝牙设备,发送连接请求...")
                         loadingView!!.show()
-                        RxBus.getInstance().post("connect", lastList[0].device)
+                        RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, activity!!))
                     }
                 }
             } else {
@@ -274,9 +275,9 @@ class ConnectFragment : BaseFragment() {
                     val extendedDevice = mListValues.filter {
                         macAddress == it.device.address
                     }[0]
-                    if (!connectState){
+                    if (!connectState) {
                         Logger.e("找到蓝牙设备发送连接指令...")
-                        RxBus.getInstance().post("connect", extendedDevice.device)
+                        RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, activity!!))
                     }
                 } else {
                     Logger.e("搜索目标蓝牙设备中...")

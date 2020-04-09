@@ -20,16 +20,14 @@ import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.ble.ExtendedBluetoothDevice
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.BleStateEvent
-import com.lhzw.bluetooth.event.ConnectEvent
-import com.lhzw.bluetooth.event.HideDialogEvent
-import com.lhzw.bluetooth.event.SaveUserEvent
+import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.ui.fragment.ConnectFragment
 import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
 import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.view.SyncProgressBar
 import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
@@ -66,10 +64,10 @@ class MainActivity : BaseActivity() {
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
     override fun initData() {
-        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS))) {
+        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
             Logger.e("已获取监听电话短信权限")
         } else {
-            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS,Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
+            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
         }
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")
@@ -84,7 +82,6 @@ class MainActivity : BaseActivity() {
             Logger.e("请求存储权限")
             requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE)
         }
-
 
 
         //注册蓝牙广播
@@ -202,7 +199,7 @@ class MainActivity : BaseActivity() {
 
                 if (!connectState) {
                     Logger.e("RxBus发送连接请求...")
-                    RxBus.getInstance().post("connect", lastList[0].device)
+                    RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, this@MainActivity))
                 }
             } else {
                 if (!connectState) {//未找到设备  还未连接成功 就发断开指令
@@ -222,6 +219,7 @@ class MainActivity : BaseActivity() {
     }
 
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
@@ -374,6 +372,7 @@ class MainActivity : BaseActivity() {
     }
 
     private val REQUEST_ENABLE_BLE = 101
+
     /**
      * 显示Fragment
      */

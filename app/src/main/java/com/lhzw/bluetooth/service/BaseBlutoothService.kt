@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.service
 
+import android.app.Activity
 import android.app.Service
 import android.bluetooth.BluetoothDevice
 import android.content.ContentValues
@@ -43,6 +44,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var currentAddrss = ""
     protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var ERROR = ""
+    protected var mContext : Activity? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -657,7 +659,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
                 }
             }
-
         }
     }
 

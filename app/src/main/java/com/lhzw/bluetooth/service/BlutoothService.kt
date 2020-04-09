@@ -1,12 +1,12 @@
 package com.lhzw.bluetooth.service
 
-import android.bluetooth.BluetoothDevice
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.event.BlutoothEvent
 import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -42,11 +42,12 @@ class BlutoothService : BaseBlutoothService() {
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("connect")])
-    fun connect(device: BluetoothDevice) {
+    fun connect(event: BlutoothEvent) {
         Logger.e("收到了RxBus  连接手表的指令")
+        mContext = event.context
         myBleManager?.let {
-            currentAddrss = device.address
-            it.connect(device).retry(3, 100)
+            currentAddrss = event.device.address
+            it.connect(event.device).retry(3, 100)
                     .useAutoConnect(false)
                     .timeout(10000)
                     .enqueue()
@@ -55,7 +56,7 @@ class BlutoothService : BaseBlutoothService() {
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("disconnect")])
     fun disconnect(str: String) {
-       Logger.e("收到RxBus断开蓝牙指令")
+        Logger.e("收到RxBus断开蓝牙指令")
         myBleManager?.device_disconnect()
     }
 
@@ -74,7 +75,7 @@ class BlutoothService : BaseBlutoothService() {
         }
         data[0] = 0x0F.toByte()
         when (event.packageName) {
-            Constants.CALL,Constants.CALL_COMING -> {
+            Constants.CALL, Constants.CALL_COMING -> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
                 if (!enablePhone) {
                     return
@@ -245,12 +246,14 @@ class BlutoothService : BaseBlutoothService() {
 
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
+
     // 清理数据
     override fun onClear() {
-        connectState=false
+        connectState = false
+        mContext = null
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
-        if (autoConnect){
+        if (autoConnect) {
             autoConnect
         }
     }
