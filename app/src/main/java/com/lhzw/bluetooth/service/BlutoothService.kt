@@ -80,7 +80,7 @@ class BlutoothService : BaseBlutoothService() {
         }
         data[0] = 0x0F.toByte()
         when (event.packageName) {
-            Constants.CALL, Constants.CALL_COMING -> {
+            Constants.CALL, Constants.CALL_COMING ,Constants.CALL_CONTACT-> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
                 if (!enablePhone) {
                     return
@@ -197,7 +197,7 @@ class BlutoothService : BaseBlutoothService() {
         try {
 
             message_string.forEach {
-                Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
+              //  Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
                 if (BaseUtils.isChinese(it)) {//是中文
                     message_tmp = message_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 } else {//不是中文

@@ -39,6 +39,7 @@ object Constants {
     const val MMS = "com.android.mms"
     const val CALL_COMING = "com.android.incallui"
     const val CALL = "com.android.server.telecom"
+    const val CALL_CONTACT = "com.android.contacts"
 
     //记录定位中心点经纬度
     const val CENTER_LAT = "CENTER_LAT"
