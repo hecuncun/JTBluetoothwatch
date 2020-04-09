@@ -138,5 +138,10 @@ class App : MultiDexApplication() {
             Log.d(TAG, "onDestroy: " + activity.componentName.className)
         }
     }
+    // 后台杀死回调
+    override fun onTerminate() {
+        super.onTerminate()
+        System.out.println("System onTerminate");
+    }
 
 }

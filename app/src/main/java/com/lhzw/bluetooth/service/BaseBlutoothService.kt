@@ -670,6 +670,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         onClear()
     }
 
+
     // 清理线程清理数据接口
     open abstract fun onClear()
 }

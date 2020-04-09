@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.service
 
+import android.content.Intent
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
@@ -30,6 +31,10 @@ class BlutoothService : BaseBlutoothService() {
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val flags = START_STICKY;
+        return super.onStartCommand(intent, flags!!, startId)
+    }
 
     //手动更新个人信息
     override fun onPersonalInfoSaveResponse(response: ByteArray?) {
