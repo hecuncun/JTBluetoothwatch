@@ -193,8 +193,8 @@ class MainActivity : BaseActivity() {
                 Logger.e("已找到蓝牙设备")
                 if (loadingView == null) {
                     loadingView = LoadingView(this@MainActivity)
-                    loadingView!!.setLoadingTitle("连接中...")
-                    loadingView!!.show()
+                    loadingView?.setLoadingTitle("连接中...")
+                    loadingView?.show()
                 }
 
                 if (!connectState) {
@@ -244,8 +244,8 @@ class MainActivity : BaseActivity() {
     private var scannerDelayTime = 1000L//默认一秒
     private fun startAutoScanAndConnect() {
         scannerDelayTime *= 2
-        if (scannerDelayTime > 16000L) {
-            scannerDelayTime = 16000L
+        if (scannerDelayTime > 8000L) {
+            scannerDelayTime = 8000L
         }
         if (autoScanner == null) {
             autoScanner = BluetoothLeScannerCompat.getScanner()
@@ -253,7 +253,7 @@ class MainActivity : BaseActivity() {
         val settings = ScanSettings.Builder()
                 .setLegacy(false)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setReportDelay(1000)
+                .setReportDelay(500)
                 .setUseHardwareBatchingIfSupported(false)
                 .build()
 

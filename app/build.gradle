@@ -13,8 +13,8 @@ android {
         applicationId "com.lhzw.bluetooth"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 8
-        versionName "v2.0.2e"
+        versionCode 9
+        versionName "v2.0.3e"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {

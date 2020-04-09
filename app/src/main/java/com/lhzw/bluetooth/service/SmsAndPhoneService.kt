@@ -28,6 +28,7 @@ class SmsAndPhoneService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        connectState=false
         Logger.e("SmsAndPhoneService ====onCreate")
         val localIntentFilter = IntentFilter()
         localIntentFilter.addAction("android.provider.Telephony.SMS_RECEIVED")
@@ -48,9 +49,11 @@ class SmsAndPhoneService : Service() {
 
     private val NLServerReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(paramContext: Context, paramIntent: Intent) {
+            var phoneNumber = ""
+            var name = ""
             val action = paramIntent.action ?: return
             if (action == "android.provider.Telephony.SMS_RECEIVED") {
-                var str = ""
+                var msg = ""
                 //---接收传入的消息---
                 val bundle = paramIntent.extras
                 var msgs: Array<SmsMessage?>? = null
@@ -60,16 +63,17 @@ class SmsAndPhoneService : Service() {
                     for (i in msgs.indices) {
                         msgs[i] = SmsMessage.createFromPdu(pdus[i] as ByteArray)
                         if (i == 0) { //---获取发送者手机号---
-                            str += msgs[i]?.getOriginatingAddress()
-                            str += ":"
+                            phoneNumber = msgs[i]?.getOriginatingAddress().toString()
+                            name=PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber)
                         }
                         //---获取消息内容---
-                        str += msgs[i]?.getMessageBody().toString()
+                        msg = msgs[i]?.getMessageBody().toString()
                     }
                     //---显示SMS消息---
-                    LogUtils.e("收到短息==>$str")
+                    LogUtils.e("收到短息==>$name($phoneNumber):$msg")
+                    var message = name+(phoneNumber)+":"+msg
                     if (connectState) {
-                        RxBus.getInstance().post("notification", NotificationEvent(100, str, Constants.MMS))
+                        RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
                     }
                 }
             }
@@ -79,11 +83,10 @@ class SmsAndPhoneService : Service() {
                 Logger.e("state==$state----------incoming_number==$incoming_number")
                 if ("RINGING" == state) {
                     if (!TextUtils.isEmpty(incoming_number)) {
-                        var phoneNumber = "" // 剔除号码中的分隔符
-                        var name = ""
                         phoneNumber = incoming_number.replace("-", "").replace(" ", "")
                         try {
-                            name = PhoneUtil.getContactNameByPhoneNumber(paramContext, phoneNumber)
+                            name = PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber)
+                            Logger.e("来电名字==$name")
                         }catch (e:Exception){
                             e.printStackTrace()
                         }

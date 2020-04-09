@@ -328,7 +328,7 @@ class ConnectFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
-            loadingView!!.setLoadingTitle("同步数据中...")
+            loadingView?.setLoadingTitle("同步数据中...")
             ll_connected_container.visibility = View.VISIBLE
             if (connectedDeviceName.isEmpty()) {
                 connectedDeviceName = name
@@ -360,8 +360,8 @@ class ConnectFragment : BaseFragment() {
     private var scannerDelayTime = 1000L//默认一秒
     private fun startAutoScanAndConnect() {
         scannerDelayTime *= 2
-        if (scannerDelayTime > 16000L) {
-            scannerDelayTime = 16000L
+        if (scannerDelayTime > 8000L) {
+            scannerDelayTime = 8000L
         }
         if (autoScanner == null) {
             autoScanner = BluetoothLeScannerCompat.getScanner()
@@ -369,7 +369,7 @@ class ConnectFragment : BaseFragment() {
         val settings = ScanSettings.Builder()
                 .setLegacy(false)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .setReportDelay(1000)
+                .setReportDelay(500)
                 .setUseHardwareBatchingIfSupported(false)
                 .build()
 
