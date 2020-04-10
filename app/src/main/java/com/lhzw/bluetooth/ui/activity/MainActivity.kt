@@ -1,11 +1,13 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Handler
+import android.os.PowerManager
 import android.provider.Settings
 import android.support.design.bottomnavigation.LabelVisibilityMode
 import android.support.design.widget.BottomNavigationView
@@ -27,7 +29,6 @@ import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
 import com.lhzw.bluetooth.uitls.Preference
-import com.lhzw.bluetooth.view.SyncProgressBar
 import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
@@ -63,6 +64,7 @@ class MainActivity : BaseActivity() {
     override fun useEventBus() = true
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
+    @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
         if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
             Logger.e("已获取监听电话短信权限")
@@ -96,8 +98,12 @@ class MainActivity : BaseActivity() {
         if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {
             startScan()
         }
-    }
 
+    val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
+         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
+         wakeLock?.acquire()
+    }
+  private  var wakeLock: PowerManager.WakeLock? =null
     //==================================================扫描操作START==========
     private var isScanning = false  //是否正在扫描
     private val SCAN_DURATION: Long = 30000//扫描时长10s
@@ -492,7 +498,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(bleStateChangeReceiver)
-
+        wakeLock?.release()
     }
 
     override fun initListener() {

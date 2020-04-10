@@ -70,10 +70,15 @@ class BlutoothService : BaseBlutoothService() {
         myBleManager?.personal_info_save(PersonalInfoBean.createBytes())
     }
 
+    private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
+
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
     fun notifyWatchMsg(event: NotificationEvent) {
         Logger.e("BlutoothService收到推送==>package==${event.packageName}")
+        if (acceptMsg){
+            listMsg.add(event)
+        }
         val data = ByteArray(214)
         for (i in data.indices) {
             data[i] = 0
@@ -258,6 +263,7 @@ class BlutoothService : BaseBlutoothService() {
         mContext = null
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
+        acceptMsg=false
         if (autoConnect) {
             autoConnect
         }

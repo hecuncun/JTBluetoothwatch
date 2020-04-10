@@ -11,10 +11,10 @@ import android.text.TextUtils
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
+import com.lhzw.bluetooth.uitls.MyLogWriter
 import com.lhzw.bluetooth.uitls.PhoneUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
-import me.jessyan.autosize.utils.LogUtils
 
 /**
  * Created by heCunCun on 2020/4/7
@@ -38,7 +38,11 @@ class SmsAndPhoneService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Logger.e("SmsAndPhoneService--------onStartCommand--------->")
-        return super.onStartCommand(intent, flags, startId)
+        val flags = START_STICKY
+        intent?.let {
+            return super.onStartCommand(intent, flags!!, startId)
+        }
+       return Service.START_STICKY
     }
 
     override fun onDestroy() {
@@ -70,8 +74,8 @@ class SmsAndPhoneService : Service() {
                         msg = msgs[i]?.getMessageBody().toString()
                     }
                     //---显示SMS消息---
-                    LogUtils.e("收到短息==>$name($phoneNumber):$msg")
-                    var message = name+(phoneNumber)+":"+msg
+                    Logger.e("收到短息==>$name($phoneNumber):$msg")
+                    val message = name+(phoneNumber)+":"+msg
                     if (connectState) {
                         RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
                     }
@@ -87,6 +91,7 @@ class SmsAndPhoneService : Service() {
                         try {
                             name = PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber)
                             Logger.e("来电名字==$name")
+                            MyLogWriter.writeLogtoFile("ERROR","PHONE","查通讯录得到来电名字==$name")
                         }catch (e:Exception){
                             e.printStackTrace()
                         }

@@ -54,6 +54,7 @@ object Constants {
     const val CONNECT_DEVICE_NAME = "connect_device_name"
     const val LAST_DEVICE_ADDRESS = "last_device_address"
     const val AUTO_CONNECT = "auto_connect"
+    const val ACCEPT_MSG = "accept_msg"
 
 
     const val CONNECT_RESPONSE_CODE: Byte = 0x01//连接参数更新

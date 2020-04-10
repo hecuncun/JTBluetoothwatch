@@ -18,6 +18,7 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
+import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshEvent
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -45,7 +46,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var ERROR = ""
     protected var mContext : Activity? = null
-
+    protected var listMsg= mutableListOf<NotificationEvent>()//所有消息集合
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
@@ -105,6 +106,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onDeviceDisconnected(device: BluetoothDevice) {
         Log.e("Watch", "onDeviceDisconnected .... ")
         EventBus.getDefault().post(ConnectEvent(false))
+        //断开连接后就不接收消息
+        acceptMsg=false
     }
 
     override fun onAppShortMsgResponse(response: ByteArray?) {
@@ -184,6 +187,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     }
 
+    private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     override fun onSettingConnectParameter(response: ByteArray?) {
         // 设置手表为低功率状态
         Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
@@ -192,6 +196,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             EventBus.getDefault().post(HideDialogEvent())
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
+            //开始接受消息提醒
+            acceptMsg=true
         }
     }
 
