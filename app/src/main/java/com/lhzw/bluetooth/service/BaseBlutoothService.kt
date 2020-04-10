@@ -47,6 +47,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var ERROR = ""
     protected var mContext : Activity? = null
     protected var listMsg= mutableListOf<NotificationEvent>()//所有消息集合
+    protected var isSending = false
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
@@ -112,7 +113,27 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onAppShortMsgResponse(response: ByteArray?) {
         Logger.d("onAppShortMsgResponse")
+        response?.let {
+            if (it[0].toByte() == Constants.SEND_PHONE_RESPONSE_CODE) {
+                if (it[1].toInt() == 0) {
+                    listMsg.removeAt(0)
+                    if(listMsg.size > 0) {
+                        sendToPhoneData(listMsg[0])
+                    } else {
+                        isSending = false
+                    }
+                } else {
+                    if(listMsg.size > 0) {
+                        sendToPhoneData(listMsg[0])
+                    } else {
+                        isSending = false
+                    }
+                }
+            }
+        }
     }
+
+
 
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
@@ -638,7 +659,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         // 杀死线程清理数据
         Logger.e("杀死进程")
         onClear()
-
+        Log.e("BluetoothWatch", "onTaskRemoved ...");
     }
 
     protected fun response(bytes: ByteArray?, RESPONSE: Byte, body: () -> Unit) {
@@ -676,6 +697,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         onClear()
     }
 
+    open abstract fun sendToPhoneData(event: NotificationEvent)
 
     // 清理线程清理数据接口
     open abstract fun onClear()

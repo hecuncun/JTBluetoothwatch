@@ -72,13 +72,8 @@ class BlutoothService : BaseBlutoothService() {
 
     private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
 
-
-    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
-    fun notifyWatchMsg(event: NotificationEvent) {
-        Logger.e("BlutoothService收到推送==>package==${event.packageName}")
-        if (acceptMsg){
-            listMsg.add(event)
-        }
+    // 向手推送消息
+    override fun sendToPhoneData(event: NotificationEvent) {
         val data = ByteArray(214)
         for (i in data.indices) {
             data[i] = 0
@@ -88,28 +83,33 @@ class BlutoothService : BaseBlutoothService() {
             Constants.CALL, Constants.CALL_COMING ,Constants.CALL_CONTACT-> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
                 if (!enablePhone) {
+                    cycleSendData()
                     return
                 }
             }
             Constants.WEIXIN -> {
                 data[1] = 2//1：来电，2：微信，3：QQ，4：短信
                 if (!enableWx) {
+                    cycleSendData()
                     return
                 }
             }
             Constants.QQ -> {
                 data[1] = 3//1：来电，2：微信，3：QQ，4：短信
                 if (!enableQQ) {
+                    cycleSendData()
                     return
                 }
             }
             Constants.MMS -> {
                 data[1] = 4//1：来电，2：微信，3：QQ，4：短信
                 if (!enableMsg) {
+                    cycleSendData()
                     return
                 }
             }
             else -> {
+                cycleSendData()
                 return
             }
         }
@@ -133,9 +133,6 @@ class BlutoothService : BaseBlutoothService() {
         if (split.isNotEmpty()) {
             title_string = split[0].trim()//来电姓名或号码
         }
-
-
-
         try {
             title_string.forEach {
 
@@ -202,7 +199,7 @@ class BlutoothService : BaseBlutoothService() {
         try {
 
             message_string.forEach {
-              //  Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
+                //  Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
                 if (BaseUtils.isChinese(it)) {//是中文
                     message_tmp = message_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 } else {//不是中文
@@ -251,7 +248,29 @@ class BlutoothService : BaseBlutoothService() {
         System.arraycopy(message_size, 0, data, 210, message_size.size)
 
         myBleManager?.app_short_msg(data)
+    }
 
+
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
+    fun notifyWatchMsg(event: NotificationEvent) {
+        Logger.e("BlutoothService收到推送==>package==${event.packageName}")
+        if (acceptMsg){
+            listMsg.add(event)
+            // 执行发送数据
+            if(!isSending) {
+                isSending = true
+                sendToPhoneData(listMsg[0])
+            }
+        }
+    }
+
+    private fun cycleSendData(){
+        listMsg.removeAt(0)
+        if(listMsg.size > 0) {
+            sendToPhoneData(listMsg[0])
+        } else {
+            isSending = false
+        }
     }
 
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)

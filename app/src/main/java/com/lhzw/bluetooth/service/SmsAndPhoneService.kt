@@ -11,7 +11,6 @@ import android.text.TextUtils
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
-import com.lhzw.bluetooth.uitls.MyLogWriter
 import com.lhzw.bluetooth.uitls.PhoneUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
@@ -38,11 +37,7 @@ class SmsAndPhoneService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Logger.e("SmsAndPhoneService--------onStartCommand--------->")
-        val flags = START_STICKY
-        intent?.let {
-            return super.onStartCommand(intent, flags!!, startId)
-        }
-       return Service.START_STICKY
+        return super.onStartCommand(intent, flags!!, startId)
     }
 
     override fun onDestroy() {
@@ -91,7 +86,6 @@ class SmsAndPhoneService : Service() {
                         try {
                             name = PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber)
                             Logger.e("来电名字==$name")
-                            MyLogWriter.writeLogtoFile("ERROR","PHONE","查通讯录得到来电名字==$name")
                         }catch (e:Exception){
                             e.printStackTrace()
                         }

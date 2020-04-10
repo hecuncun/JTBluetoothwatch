@@ -16,6 +16,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.Toast
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
@@ -98,8 +99,8 @@ class MainActivity : BaseActivity() {
         if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {
             startScan()
         }
-
-    val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
          wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
          wakeLock?.acquire()
     }
@@ -463,7 +464,7 @@ class MainActivity : BaseActivity() {
         mSportsFragment?.let { transaction.hide(it) }
         mSettingFragment?.let { transaction.hide(it) }
         mConnectFragment?.let { transaction.hide(it) }
-
+        Log.e("BluetoothWatch", "onDestroy ...");
     }
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
@@ -546,6 +547,8 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
+
 
 
 }

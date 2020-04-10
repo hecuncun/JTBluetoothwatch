@@ -63,6 +63,7 @@ object Constants {
     const val UPDATE_PERSON_INFO_RESPONSE_CODE: Byte = 0X09//更新用户个人信息
     const val CURRENT_DATA_UPDATE_RESPONSE_CODE: Byte = 0X10//动态数据更新
     const val UPDATE_DAILY_INFO_RESPONSE_CODE: Byte = 0X0C//动态数据更新
+    const val SEND_PHONE_RESPONSE_CODE: Byte = 0X0F// 推送消息回传号 0x0f
 
 
     const val MTU_MAX = 244 - 11//动态数据更新
