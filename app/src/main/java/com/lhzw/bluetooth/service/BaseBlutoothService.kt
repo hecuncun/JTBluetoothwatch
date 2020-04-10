@@ -4,10 +4,12 @@ import android.app.Activity
 import android.app.Service
 import android.bluetooth.BluetoothDevice
 import android.content.ContentValues
+import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
 import android.os.Message
+import android.os.PowerManager
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
@@ -45,8 +47,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var currentAddrss = ""
     protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var ERROR = ""
-    protected var mContext : Activity? = null
-    protected var listMsg= mutableListOf<NotificationEvent>()//所有消息集合
+    protected var mContext: Activity? = null
+    protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
     override fun onCreate() {
         super.onCreate()
@@ -58,6 +60,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.e("Tag", "start onStartCommand ...")
+        acquireWakeLock()
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -108,7 +111,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onDeviceDisconnected .... ")
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
-        acceptMsg=false
+        acceptMsg = false
     }
 
     override fun onAppShortMsgResponse(response: ByteArray?) {
@@ -117,13 +120,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             if (it[0].toByte() == Constants.SEND_PHONE_RESPONSE_CODE) {
                 if (it[1].toInt() == 0) {
                     listMsg.removeAt(0)
-                    if(listMsg.size > 0) {
+                    if (listMsg.size > 0) {
                         sendToPhoneData(listMsg[0])
                     } else {
                         isSending = false
                     }
                 } else {
-                    if(listMsg.size > 0) {
+                    if (listMsg.size > 0) {
                         sendToPhoneData(listMsg[0])
                     } else {
                         isSending = false
@@ -132,7 +135,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
     }
-
 
 
     // 连接成功
@@ -218,7 +220,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
             //开始接受消息提醒
-            acceptMsg=true
+            acceptMsg = true
         }
     }
 
@@ -387,7 +389,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
                 if (readDailyBean.isOver) {
-                    Thread{
+                    Thread {
                         DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
                             Log.e("Tag", "read boundary addr ...")
                             myBleManager?.read_boundary_address()
@@ -694,6 +696,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Tag", "start service onDestroy ...")
         RxBus.getInstance().unregister(this)
         Logger.e("service onDestroy...")
+        releaseWakeLock()
         onClear()
     }
 
@@ -701,4 +704,31 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 清理线程清理数据接口
     open abstract fun onClear()
+
+    private var wakeLock: PowerManager.WakeLock? = null
+
+    /**
+     * 获取电源锁，保持该服务在屏幕熄灭时仍然获取CPU时，保持运行
+     */
+    private fun acquireWakeLock() {
+        if (null == wakeLock) {
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
+                    or PowerManager.ON_AFTER_RELEASE, javaClass
+                    .canonicalName)
+            if (null != wakeLock) {
+                Log.i("WakeLock", "call acquireWakeLock")
+                wakeLock!!.acquire()
+            }
+        }
+    }
+
+    // 释放设备电源锁
+    private fun releaseWakeLock() {
+        if (null != wakeLock && wakeLock!!.isHeld) {
+            Log.i("WakeLock", "call releaseWakeLock")
+            wakeLock!!.release()
+            wakeLock = null
+        }
+    }
 }

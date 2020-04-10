@@ -100,10 +100,11 @@ class MainActivity : BaseActivity() {
             startScan()
         }
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
-         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
-         wakeLock?.acquire()
+//        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
+//         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
+//         wakeLock?.acquire()
     }
+
   private  var wakeLock: PowerManager.WakeLock? =null
     //==================================================扫描操作START==========
     private var isScanning = false  //是否正在扫描
@@ -499,7 +500,8 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(bleStateChangeReceiver)
-        wakeLock?.release()
+//        wakeLock?.release()
+//        releaseWakeLock();
     }
 
     override fun initListener() {
