@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.bean
 
+import android.content.ContentValues
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.BaseUtils
 import org.litepal.LitePal
@@ -75,23 +76,28 @@ data class DailyDataBean(
                     datas.add(bean)
 
                     // 活动表数据更新 判断该活动号是否存在 判断活动数量是否大于0
-                    val activityBeans = CommOperation.query(SportActivityBean::class.java, "daily_date", sport_date)
-                    if (activityBeans.isNotEmpty()) {
-                        CommOperation.delete(SportActivityBean::class.java, "daily_date", sport_date)
-                    }
                     if(sport_num > 0) {
-                        val response = 0x0D.toInt().toString()
-                        val dateBytes = listOf<Byte>(
-                                content[2 + 0 + 12 * day], content[2 + 1 + 12 * day], content[2 + 2 + 12 * day],
-                                0x00, 0x00, 0x00)
-                        val sportActivityBean = SportActivityBean(
-                                response,
-                                sport_date,
-                                BaseUtils.byteToLong(dateBytes),
-                                sport_num,
-                                0,
-                                start_addr)
-                        CommOperation.insert(sportActivityBean)
+                        val activityBeans = CommOperation.query(SportActivityBean::class.java, "daily_date", sport_date)
+                        if (activityBeans.isNotEmpty()) {
+//                        CommOperation.delete(SportActivityBean::class.java, "daily_date", sport_date)
+                            val value = ContentValues();
+                            value.put("current_activity_num", sport_num)
+                            value.put("activities_addr", start_addr)
+                            CommOperation.update(SportActivityBean::class.java, value,activityBeans[0].id)
+                        } else {
+                            val response = 0x0D.toInt().toString()
+                            val dateBytes = listOf<Byte>(
+                                    content[2 + 0 + 12 * day], content[2 + 1 + 12 * day], content[2 + 2 + 12 * day],
+                                    0x00, 0x00, 0x00)
+                            val sportActivityBean = SportActivityBean(
+                                    response,
+                                    sport_date,
+                                    BaseUtils.byteToLong(dateBytes),
+                                    sport_num,
+                                    0,
+                                    start_addr)
+                            CommOperation.insert(sportActivityBean)
+                        }
                     }
                 }
                 body(datas)

@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.util.Log
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.constants.Constants
+import java.util.*
 import java.util.regex.Pattern
 
 
@@ -319,5 +320,16 @@ object BaseUtils {
     private fun outOfChina(lat: Double, lon: Double): Boolean {
         if (lon < 72.004 || lon > 137.8347) return true
         return if (lat < 0.8293 || lat > 55.8271) true else false
+    }
+
+    // 获取当前日期
+    fun getCurrentData() : String{
+        val date = Date()
+        val calendar = Calendar.getInstance()
+        calendar.time = date
+        val year = calendar[Calendar.YEAR] % 100
+        val month = calendar[Calendar.MONTH] + 1
+        val day = calendar[Calendar.DAY_OF_MONTH]
+        return "$year-$month-$day"
     }
 }

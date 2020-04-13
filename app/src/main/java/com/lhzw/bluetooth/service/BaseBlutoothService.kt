@@ -68,6 +68,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         return null
     }
 
+    // 有活动数据显示进度条
     override fun onActivityAddressRequestResponse(response: ByteArray?) {
         Log.e("Tag", "parserBoundaryAdrr   ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
@@ -294,7 +295,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             if (response[0].toInt() == 0x0D && Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)) {
                 //解析当前活动
                 SportInfoAddrBean.parserSportInfoAddr(response, ID) { data, mark ->
-                    Log.e("mark", "mark = $mark")
+                    Log.e("Sportmark", "mark = $mark")
                     readActivityBean.request_date = data
                     readActivityBean.request_mark = mark
                     readNextActivity()
@@ -450,19 +451,27 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
             Log.e("currentData", "currentdata  ${BaseUtils.byte2HexStr(response)}")
             if (it[0] == Constants.CURRENT_DATA_UPDATE_RESPONSE_CODE) {
+                CommOperation.deleteAll(CurrentDataBean::class.java)
                 val bean = CurrentDataBean.createBean(response)
                 bean?.let {
-                    val list = CommOperation.query(CurrentDataBean::class.java)
-                    list.let {
-                        CommOperation.deleteAll(CurrentDataBean::class.java)
-                    }
                     CommOperation.insert(it)
                 }
                 //保存到数据库,并刷新页面
                 Logger.e("当前步数==${bean?.dailyStepNumTotal}")
                 EventBus.getDefault().post(RefreshEvent(Constants.TYPE_CURRENT_DATA))
                 //动态数据后,TODO 请求日常数据
-                myBleManager?.daily_data_request()
+                val list = CommOperation.query(SportActivityBean::class.java, "daily_date", BaseUtils.getCurrentData())
+                if (list.isNotEmpty()) {
+                    val date = BaseUtils.longToByteArray(list[0].request_date).toByteArray()
+                    Log.e("CurrentData", "${BaseUtils.byte2HexStr(date)}")
+                    val content = byteArrayOf(
+                            0x0C, date[0], date[1], date[2], date[3], date[4], date[5], list[0].current_activity_mark.toByte()
+                    )
+                    Log.e("Sportmark", "${BaseUtils.byte2HexStr(content)}")
+                    myBleManager?.daily_data_request(content)
+                } else {
+                    myBleManager?.daily_data_request(byteArrayOf(0x0C))
+                }
             }
         }
     }

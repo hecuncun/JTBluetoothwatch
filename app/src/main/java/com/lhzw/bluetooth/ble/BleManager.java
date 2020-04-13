@@ -270,12 +270,12 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         return 0;
     }
 
-    public int daily_data_request() {
+    public int daily_data_request(byte[] content) {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
             bleManagerCallbacks.onDailyDataRequestResponse(data.getValue());
         });
-        byte[] data = new byte[]{0X0C};
-        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+//        byte[] data = new byte[]{0X0C};
+        writeCharacteristic(mCommTXRXCharacteristic, content).enqueue();
         return 0;
     }
 
