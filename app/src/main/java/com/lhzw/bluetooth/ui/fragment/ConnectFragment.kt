@@ -228,7 +228,8 @@ class ConnectFragment : BaseFragment() {
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
             // Log.e("Tag", "result == null ${results.size}")
-            Logger.e("搜索设备中...")
+
+            Logger.e("搜索设备中... ThreadName=${Thread.currentThread().name}")
             for (result in results) {
                 if (result.device.name != null && result.device.name.contains("SW2500")) {
                     if (mListValues.size == 0) {

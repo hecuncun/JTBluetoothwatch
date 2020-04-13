@@ -70,11 +70,12 @@ class SmsAndPhoneService : Service() {
                     }
                     //---显示SMS消息---
                     Logger.e("收到短息==>$name($phoneNumber):$msg")
-                    val message = name+(phoneNumber)+":"+msg
+                    val message = name+phoneNumber+":"+msg
                     if (connectState) {
                         RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
                     }
                 }
+
             }
             if (action == "android.intent.action.PHONE_STATE") {
                 val state = paramIntent.getStringExtra("state")

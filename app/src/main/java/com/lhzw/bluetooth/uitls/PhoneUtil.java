@@ -53,24 +53,26 @@ public class PhoneUtil {
     public synchronized static String getDisplayNameByPhone1(Context context, String phoneNum) {
         String[] projection = { ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.NUMBER };
         String displayName = "";
-        String phone1 = new StringBuffer(phoneNum.subSequence(0, 3)).append(" ").append(phoneNum.substring(3, 7))
-                .append(" ").append(phoneNum.substring(7, 11)).toString();
-        String phone2 = new StringBuffer(phoneNum.subSequence(0, 3)).append("-").append(phoneNum.substring(3, 7))
-                .append("-").append(phoneNum.substring(7, 11)).toString();
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, ContactsContract.CommonDataKinds.Phone.NUMBER + " in(?,?,?)", new String[] {
-                phoneNum, phone1, phone2 }, null);
+        if (phoneNum.length()==11){
+            String phone1 = new StringBuffer(phoneNum.subSequence(0, 3)).append(" ").append(phoneNum.substring(3, 7))
+                    .append(" ").append(phoneNum.substring(7, 11)).toString();
+            String phone2 = new StringBuffer(phoneNum.subSequence(0, 3)).append("-").append(phoneNum.substring(3, 7))
+                    .append("-").append(phoneNum.substring(7, 11)).toString();
+            ContentResolver resolver = context.getContentResolver();
+            Cursor cursor = resolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, ContactsContract.CommonDataKinds.Phone.NUMBER + " in(?,?,?)", new String[] {
+                    phoneNum, phone1, phone2 }, null);
+            if (cursor != null) {
 
-        if (cursor != null) {
-
-            while (cursor.moveToNext()) {
-                displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                if (!TextUtils.isEmpty(displayName)) {
-                    break;
+                while (cursor.moveToNext()) {
+                    displayName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    if (!TextUtils.isEmpty(displayName)) {
+                        break;
+                    }
+                    cursor.close();
                 }
-                cursor.close();
-            }
         }
+
+     }
         return displayName;
     }
 

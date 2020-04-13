@@ -132,11 +132,12 @@ class BlutoothService : BaseBlutoothService() {
         val split = event.tickerText.split(":")
         if (split.isNotEmpty()) {
             title_string = split[0].trim()//来电姓名或号码
+            Logger.e("title_string==1${title_string}1")
         }
         try {
             title_string.forEach {
 
-                Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
+               // Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
                 if (BaseUtils.isChinese(it)) {//是中文
                     title_tmp = title_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 } else {//不是中文
