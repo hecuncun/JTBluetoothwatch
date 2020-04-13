@@ -388,7 +388,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     val tmp = it.toList()
                     noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
                     if (noFlashMap.get(ID)!!.size == 836) {
-//                        Log.e("result", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
+                        Log.e("DailyData", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
                     }
                 }
                 if (readDailyBean.isOver) {
@@ -478,8 +478,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 读取noflash中日常数据
     private fun readDailyNoFlash() {
-        Thread {
-            var bean = readDailyBean.list[readDailyBean.index]
+        var bean = readDailyBean.list[readDailyBean.index]
+        Thread{
             val content = ArrayList<Byte>()
             content.add(0x04)
             content.add(bean.response.toByte())

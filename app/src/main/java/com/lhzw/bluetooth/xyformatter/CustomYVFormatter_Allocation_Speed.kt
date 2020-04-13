@@ -11,7 +11,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
  *
  */
 // 配速
-class CustomYVFormatter_Allocation_Speed(private var drawY: Boolean, private var max : Float) : ValueFormatter() {
+class CustomYVFormatter_Allocation_Speed(private var drawY: Boolean, private var max: Float) : ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         if (drawY) {
             return valueOfY_format(value)
@@ -27,22 +27,23 @@ class CustomYVFormatter_Allocation_Speed(private var drawY: Boolean, private var
     }
 
     private fun valueOfY_format(value: Float): String {
-        Log.e("H_AllocationY", "mValue : ${value}")
+        Log.e("H_AllocationY", "mValue : ${value}  $max")
         if (value != 0.0f) {
-            var y_value = max - value
-            val min = (y_value / 60).toInt()
-            val second = (y_value % 60).toInt()
+            var y_value = Math.abs(max - value).toInt()
+            val min = y_value / 60
+            val second = y_value % 60
             var str = ""
-            if(min < 0x0A) {
-                str += "0$min${"\'"}"
+            if (min < 0x0A) {
+                str += "0${min}${"\'"}"
             } else {
                 str += "$min${"\'"}"
             }
-            if(second < 0x0A) {
+            if (second < 0x0A) {
                 str += "0$second${"\""}"
             } else {
                 str += "$second${"\""}"
             }
+            Log.e("H_AllocationY", "mValue :-------- ${str}")
             return str
         }
         return ""

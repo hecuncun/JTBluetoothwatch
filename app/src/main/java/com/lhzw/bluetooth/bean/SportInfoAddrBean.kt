@@ -196,7 +196,7 @@ data class SportInfoAddrBean(
                     CommOperation.insert(flatSport)
                 }
                 CommOperation.insert(bean)
-                body(content.copyOfRange(10, 16).toList().toByteArray(), content[2])
+                body(content.copyOfRange(4, 10).toList().toByteArray(), content[2])
             }
         }
     }

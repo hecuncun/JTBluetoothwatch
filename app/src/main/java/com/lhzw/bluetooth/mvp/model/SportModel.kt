@@ -209,7 +209,7 @@ class SportModel(var mark: String) : SportConstract.Model {
     private fun setLineChart(lineChart: LineChart, values: MutableList<Entry>,
                              fillColor: Int, xLabelCount: Int, yLabelCount: Int, valueFormatter_X: ValueFormatter, valueFormatter_Y: ValueFormatter) {
         lineChart?.apply {
-            setViewPortOffsets(90.toFloat(), 60.toFloat(), 60.toFloat(), 60.toFloat())
+            setViewPortOffsets(120.toFloat(), 60.toFloat(), 60.toFloat(), 60.toFloat())
             description.isEnabled = false
             setTouchEnabled(false)
             isDragEnabled = false
