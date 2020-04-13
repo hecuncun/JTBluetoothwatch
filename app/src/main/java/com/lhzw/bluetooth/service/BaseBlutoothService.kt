@@ -470,7 +470,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     Log.e("Sportmark", "${BaseUtils.byte2HexStr(content)}")
                     myBleManager?.daily_data_request(content)
                 } else {
-                    myBleManager?.daily_data_request(byteArrayOf(0x0C))
+                    myBleManager?.daily_data_request(byteArrayOf(0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
                 }
             }
         }
@@ -479,7 +479,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 读取noflash中日常数据
     private fun readDailyNoFlash() {
         var bean = readDailyBean.list[readDailyBean.index]
-        Thread{
+        Thread {
             val content = ArrayList<Byte>()
             content.add(0x04)
             content.add(bean.response.toByte())
