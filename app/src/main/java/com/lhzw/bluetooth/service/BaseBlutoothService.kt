@@ -339,22 +339,24 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 //        Log.e("SportDetail", "readSportDetailData  type : $type  ... ${BaseUtils.byte2HexStr(response!!)}")
         if (request_code.toInt() == 0x0D) {
             response?.let {
-                if (readSportDetailMap.get(ID) == null) {
-                    val detail = HashMap<Int, MutableList<Byte>>()
-                    readSportDetailMap.put(ID, detail)
+                if (response.size > 11) {
+                    if (readSportDetailMap.get(ID) == null) {
+                        val detail = HashMap<Int, MutableList<Byte>>()
+                        readSportDetailMap.put(ID, detail)
+                    }
+                    val map = readSportDetailMap.get(ID)
+                    if (map!!.get(type) == null) {
+                        val list = ArrayList<Byte>()
+                        val tmp = it.toList()
+                        list.addAll(tmp.subList(11, tmp.size))
+                        map.put(type, list)
+                        Log.e("sportdetail", "type $type  ${BaseUtils.byte2HexStr(tmp.subList(11, tmp.size).toByteArray())}")
+                    } else {
+                        val tmp = it.toList()
+                        map.get(type)?.addAll(tmp.subList(11, tmp.size))
+                    }
+                    readSportDetailBean()
                 }
-                val map = readSportDetailMap.get(ID)
-                if (map!!.get(type) == null) {
-                    val list = ArrayList<Byte>()
-                    val tmp = it.toList()
-                    list.addAll(tmp.subList(11, tmp.size))
-                    map.put(type, list)
-                    Log.e("sportdetail", "type $type  ${BaseUtils.byte2HexStr(tmp.subList(11, tmp.size).toByteArray())}")
-                } else {
-                    val tmp = it.toList()
-                    map.get(type)?.addAll(tmp.subList(11, tmp.size))
-                }
-                readSportDetailBean()
             }
         }
     }
