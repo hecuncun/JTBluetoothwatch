@@ -10,6 +10,7 @@ import android.util.Log
 import com.lhzw.bluetooth.BuildConfig
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.service.BlutoothService
 import com.lhzw.bluetooth.service.SmsAndPhoneService
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -64,6 +65,10 @@ class App : MultiDexApplication() {
         // 启动服务
         if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
             startService(Intent(context, BlutoothService::class.java))
+        }
+        //启动蓝牙连接服务
+        if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)){
+            startService(Intent(context,BleConnectService::class.java))
         }
         //启动电话/短信监听服务
         if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)){

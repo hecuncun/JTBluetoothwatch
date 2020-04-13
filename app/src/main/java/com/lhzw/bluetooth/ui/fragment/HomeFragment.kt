@@ -161,7 +161,6 @@ class HomeFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onBleStateChanged(event: BleStateEvent) {
         if (event.state) {//打开
-            //todo 此处需要判断蓝牙是否已连接   再看是否显示下面的提示
             tv_ble_state_tip.text = "在连接中添加设备"
         } else {//关闭
             tv_ble_state_tip.text = "蓝牙关闭"
@@ -186,7 +185,10 @@ class HomeFragment : BaseFragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent){
-        initWatchData()
+        if (event.success){
+            initWatchData()
+        }
+
     }
 
 
@@ -240,7 +242,7 @@ class HomeFragment : BaseFragment() {
                 val list = LitePal.findAll(CurrentDataBean::class.java)
                 if (list.isNotEmpty()) {
                     //当前步数
-                    Logger.e("当前步数更新==${list[0].dailyStepNumTotal.toString()}")
+                    //Logger.e("当前步数更新==${list[0].dailyStepNumTotal.toString()}")
                     tv_current_step_num.text = (list[0].dailyStepNumTotal+ list[0].sportStepNumTotal).toString()
                 }
 

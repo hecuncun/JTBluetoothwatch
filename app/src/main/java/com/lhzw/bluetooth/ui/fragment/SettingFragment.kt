@@ -65,7 +65,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             } else {
                 rg_btn_women.isChecked = true
             }
-            Logger.e("显示个人信息身高=="+ data.height)
+          //  Logger.e("显示个人信息身高=="+ data.height)
 
             counter_height.initNum = data.height
             et_weight.setText(data.weight.toString())

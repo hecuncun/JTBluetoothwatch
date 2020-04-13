@@ -1,6 +1,5 @@
 package com.lhzw.bluetooth.service
 
-import android.app.Activity
 import android.app.Service
 import android.bluetooth.BluetoothDevice
 import android.content.ContentValues
@@ -47,7 +46,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var currentAddrss = ""
     protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var ERROR = ""
-    protected var mContext: Activity? = null
+    protected var mContext: Context? = null
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
     override fun onCreate() {
@@ -109,7 +108,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     }
 
     override fun onDeviceDisconnected(device: BluetoothDevice) {
-        Log.e("Watch", "onDeviceDisconnected .... ")
+       Logger.e(" BaseBlutoothService  收到断开回调 发EventBus")
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
         acceptMsg = false
@@ -217,7 +216,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             //开始连接进入进度条,连接并初始化成功后再发成功
-            EventBus.getDefault().post(HideDialogEvent())
+            EventBus.getDefault().post(HideDialogEvent(true))
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
             //开始接受消息提醒
@@ -704,9 +703,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.e("Tag", "start service onDestroy ...")
         RxBus.getInstance().unregister(this)
-        Logger.e("service onDestroy...")
+        Logger.e("BaseBlutoothService 服务销毁 onDestroy...")
         releaseWakeLock()
         onClear()
     }
