@@ -93,16 +93,17 @@ class ConnectFragment : BaseFragment() {
         }
 
         // 同步数据
-        activity?.tv_sync?.setOnClickListener{
-            if(BleConnectService.isConnecting){
+        activity?.tv_sync?.setOnClickListener {
+            if (BleConnectService.isConnecting) {
                 Toast.makeText(context, "正在进行同步中，请稍后同步", Toast.LENGTH_LONG).show()
             } else {
+                BleConnectService.isConnecting = true
                 Toast.makeText(context, "开始同步", Toast.LENGTH_LONG).show()
                 RxBus.getInstance().post("sync", SyncDataEvent("sync"))
                 if (loadingView == null) {
-                        loadingView = LoadingView(activity)
+                    loadingView = LoadingView(activity)
 
-                    }
+                }
                 loadingView?.setLoadingTitle("同步数据...")
                 loadingView?.show()
             }
