@@ -84,7 +84,7 @@ data class DailyDataBean(
                             val value = ContentValues();
                             value.put("current_activity_num", sport_num)
                             value.put("activities_addr", start_addr)
-                            Log.e("parserDaily", "sport_num  =  ${list[0].sport_num}  new_sport_num = ${sport_num}")
+//                            Log.e("parserDaily", "sport_num  =  ${list[0].sport_num}  new_sport_num = ${sport_num}")
                             CommOperation.update(SportActivityBean::class.java, value,activityBeans[0].id)
                         } else {
                             val response = 0x0D.toInt().toString()

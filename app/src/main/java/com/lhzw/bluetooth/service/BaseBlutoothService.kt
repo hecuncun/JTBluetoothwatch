@@ -98,7 +98,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     readSportActivities()
                 } else {
                     // 没有活动数据
-                    Log.e("Tag", "no sport data ...")
+//                    Log.e("Tag", "no sport data ...")
                     // 设置手表蓝牙为低功耗
                     myBleManager?.settinng_connect_parameter(false)
                     Log.e("callBackBluetooth", "settinng_connect_parameter....")
@@ -295,7 +295,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onSportsParamReadResponse(response: ByteArray?, ID: String) {
         response?.let {
 //            Log.e("readSport", "onSportsParamReadResponse ... ${BaseUtils.byte2HexStr(response)}")
-            Log.e("callBackBluetooth", "onSportsParamReadResponse.... $ID   ${response[0].toInt() == 0x0D}   ${Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)}")
+            Log.e("callBackBluetooth", "onSportsParamReadResponse.... $ID")
             if (response[0].toInt() == 0x0D && Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)) {
                 //解析当前活动
                 SportInfoAddrBean.parserSportInfoAddr(response, ID) { data, mark, bean ->
@@ -473,7 +473,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 val list = CommOperation.query(SportActivityBean::class.java, "daily_date", BaseUtils.getCurrentData())
                 if (list.isNotEmpty()) {
                     val date = BaseUtils.longToByteArray(list[0].request_date).toByteArray()
-                    Log.e("parserDaily", "${BaseUtils.byte2HexStr(date)}   ${list[0].current_activity_num}")
+//                    Log.e("parserDaily", "${BaseUtils.byte2HexStr(date)}   ${list[0].current_activity_num}")
                     val content = byteArrayOf(
                             0x0C, date[0], date[1], date[2], date[3], date[4], date[5], list[0].current_activity_mark.toByte()
                     )
@@ -525,7 +525,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             content.addAll(activities_addr)
             var value = BaseUtils.byte2HexStr(content.toByteArray())!!
             ERROR += "\n日期 ${value.substring(3, 20)}\n活动序号 ：${value.substring(21, 23)}\n地址：${value.substring(24, 35)}"
-            Log.e("readSport", "$bean.daily_date  $value}")
+//            Log.e("readSport", "$bean.daily_date  $value}")
             myBleManager?.sports_param_read(content.toByteArray(), bean.daily_date + "-" + BaseUtils.byte2HexStr(byteArrayOf(readActivityBean.request_mark)))
             Log.e("callBackBluetooth", "sports_param_read....")
             content.clear()
