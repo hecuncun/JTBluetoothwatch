@@ -47,6 +47,7 @@ class BleConnectService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
+
         return START_STICKY
     }
 
@@ -80,7 +81,7 @@ class BleConnectService : Service() {
     //手机蓝牙状态变化
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onBleStateChanged(event: BleStateEvent) {
-        if ( event.state && autoConnect) {//打开蓝牙,并且是自动连接时才扫描
+        if (event.state && autoConnect) {//打开蓝牙,并且是自动连接时才扫描
             startScan()
         }
 
@@ -161,7 +162,7 @@ class BleConnectService : Service() {
                     }
 
                 }
-            //    Logger.e("已找到周围腕表设备数量==${mListValues.size}")
+                //    Logger.e("已找到周围腕表设备数量==${mListValues.size}")
             }
             if (lastDeviceMacAddress.isNotEmpty()) {//目标设备不为空
                 if (autoConnect) {
@@ -172,7 +173,7 @@ class BleConnectService : Service() {
                     if (lastList.isNotEmpty()) {
                         if (!connectState) {
                             Logger.e("已找到蓝牙设备,发送连接请求...")
-                            RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, this@BleConnectService))
+                            RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
                         }
                     }
                 } else {
@@ -186,7 +187,7 @@ class BleConnectService : Service() {
                         }[0]
                         if (!connectState) {
                             Logger.e("找到蓝牙设备发送连接指令...")
-                            RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, this@BleConnectService))
+                            RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
                         }
                     } else {
                         Logger.e("搜索目标蓝牙设备中...")
@@ -200,6 +201,7 @@ class BleConnectService : Service() {
 
         }
     }
+
     //自动扫描并且连接
     private var autoScanner: BluetoothLeScannerCompat? = null
     private var scannerDelayTime = 1000L//默认一秒
@@ -238,7 +240,7 @@ class BleConnectService : Service() {
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         Logger.e("BleConnectService  onDestroy ")
-        startService(Intent(App.context,BleConnectService::class.java))
+        startService(Intent(App.context, BleConnectService::class.java))
         super.onDestroy()
     }
 }

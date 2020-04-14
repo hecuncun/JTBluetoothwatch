@@ -109,7 +109,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     }
 
     override fun onDeviceDisconnected(device: BluetoothDevice) {
-        Log.e("BluetoothCallBack", "onDeviceDisconnected  ........")
+        Log.e("Watch", "onDeviceDisconnected .... ")
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
         acceptMsg = false
@@ -217,7 +217,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("Watch", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             //开始连接进入进度条,连接并初始化成功后再发成功
-            EventBus.getDefault().post(HideDialogEvent())
+            EventBus.getDefault().post(HideDialogEvent(true))
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
             //开始接受消息提醒

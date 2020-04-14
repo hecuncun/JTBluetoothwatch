@@ -43,6 +43,8 @@ class App : MultiDexApplication() {
 
         private val TAG = "App"
 
+        private var activityContext : Activity? = null
+
         var context: Context by Delegates.notNull()
             private set//  对于属性context，如果你想改变访问的可见性，但是又不想改变它的默认实现，那么你就可以定义set和get但不进行实现。
 
@@ -53,6 +55,13 @@ class App : MultiDexApplication() {
             return app.refWatcher
         }
 
+        fun getActivityContext() : Activity?{
+            return activityContext
+        }
+
+        fun setActivityContext(activityContext : Activity?){
+            this.activityContext = activityContext
+        }
     }
 
     override fun onCreate() {

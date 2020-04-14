@@ -16,6 +16,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants

@@ -17,7 +17,6 @@ import android.view.MotionEvent
 import android.view.WindowManager
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
-import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.KeyBoardUtil
@@ -60,8 +59,9 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         super.onCreate(savedInstanceState)
+        App.setActivityContext(this@BaseActivity)
         setContentView(attachLayoutRes())
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏
+//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏
         if (useEventBus()) {
             EventBus.getDefault().register(this)
         }
