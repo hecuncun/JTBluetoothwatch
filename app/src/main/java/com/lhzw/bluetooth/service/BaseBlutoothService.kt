@@ -303,7 +303,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             } else {
                 // 设置手表蓝牙为低功耗
                 myBleManager?.settinng_connect_parameter(false)
-                Toast.makeText(App.context, "获取信息有误.同步数据结束，请求指令：$ERROR", Toast.LENGTH_LONG).show()
+//                Toast.makeText(App.context, "获取信息有误.同步数据结束，请求指令：$ERROR", Toast.LENGTH_LONG).show()
             }
         }
     }
