@@ -22,10 +22,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/dp_10"
             android:background="@drawable/bg_back_selector"
-            android:paddingBottom="@dimen/dp_10"
             android:paddingLeft="@dimen/dp_10"
-            android:paddingRight="@dimen/dp_10"
             android:paddingTop="@dimen/dp_10"
+            android:paddingRight="@dimen/dp_10"
+            android:paddingBottom="@dimen/dp_10"
             android:visibility="gone" />
 
         <TextView
@@ -58,8 +58,8 @@
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
             android:layout_gravity="center|right"
-            android:padding="@dimen/dp_5"
             android:layout_marginRight="@dimen/dp_10"
+            android:padding="@dimen/dp_5"
             android:scaleType="centerCrop"
             android:visibility="gone" />
 
@@ -72,6 +72,16 @@
             android:paddingRight="10dp"
             android:scaleType="centerCrop"
             android:src="@mipmap/ic_launcher_round"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/tv_sync"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_gravity="center|right"
+            android:layout_marginRight="12dp"
+            android:background="@drawable/bg_sync_info_selector"
+            android:padding="@dimen/dp_10"
             android:visibility="gone" />
     </android.support.v7.widget.Toolbar>
 

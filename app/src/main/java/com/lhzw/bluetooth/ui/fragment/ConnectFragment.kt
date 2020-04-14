@@ -21,6 +21,7 @@ import com.orhanobut.logger.Logger
 import com.uuzuche.lib_zxing.activity.CaptureActivity
 import com.uuzuche.lib_zxing.activity.CodeUtils
 import kotlinx.android.synthetic.main.fragment_connect.*
+import kotlinx.android.synthetic.main.toolbar.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -69,7 +70,7 @@ class ConnectFragment : BaseFragment() {
                 if (!connectState) {
                     if (checkPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))) {
 
-                   //     startScan()
+                        //     startScan()
                         jumpToScannerActivity()
                     } else {
                         requestPermission(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), PERMISS_REQUEST_BLE_CODE)
@@ -86,24 +87,41 @@ class ConnectFragment : BaseFragment() {
             connectState = false
             connectedDeviceName = ""
             ll_connected_container.visibility = View.GONE
+            activity?.tv_sync?.visibility = View.GONE
             //关闭自动连接
             autoConnect = false
             RxBus.getInstance().post("disconnect", "")
         }
 
+        // 同步数据
+        activity?.tv_sync?.setOnClickListener{
+//            if(){
+//
+//            } else {
+//
+//            }
+        }
     }
 
-   //连接页面的显示状态
+    //连接页面的显示状态
     private fun initBleState() {
-        tv_open.visibility = if (state) { View.GONE } else View.VISIBLE
-        iv_ble_state.setImageResource(if (state) { R.drawable.icon_ble_open } else R.drawable.icon_ble_close)
-        tv_state_tip.text = if (state) { "蓝牙已开启" } else "请打开蓝牙"
+        tv_open.visibility = if (state) {
+            View.GONE
+        } else View.VISIBLE
+        iv_ble_state.setImageResource(if (state) {
+            R.drawable.icon_ble_open
+        } else R.drawable.icon_ble_close)
+        tv_state_tip.text = if (state) {
+            "蓝牙已开启"
+        } else "请打开蓝牙"
         //判断蓝牙连接成功状态
         if (connectState) {
             ll_connected_container.visibility = View.VISIBLE
+            activity?.tv_sync?.visibility = View.VISIBLE
             tv_device_name.text = "设备名称:$connectedDeviceName"
         } else {
             ll_connected_container.visibility = View.GONE
+            activity?.tv_sync?.visibility = View.GONE
         }
     }
 
@@ -181,7 +199,7 @@ class ConnectFragment : BaseFragment() {
             startActivityForResult(intent, REQUEST_CODE)
         }
         if (requestCode == PERMISS_REQUEST_BLE_CODE) {
-           // EventBus.getDefault().post(ScanBleEvent())
+            // EventBus.getDefault().post(ScanBleEvent())
             jumpToScannerActivity()
         }
     }
@@ -194,7 +212,7 @@ class ConnectFragment : BaseFragment() {
      */
     private var loadingView: LoadingView? = null
 
-   // private var requestBleConnect = false//是否请求连接蓝牙
+    // private var requestBleConnect = false//是否请求连接蓝牙
 
 //    private val scanCallback = object : ScanCallback() {
 //        override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -270,7 +288,7 @@ class ConnectFragment : BaseFragment() {
 //    }
 
 
-  //  private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
+    //  private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -283,7 +301,7 @@ class ConnectFragment : BaseFragment() {
                         showToast("扫描结果为$result")
                         Logger.e("result=$result")
                         //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
-                        if ( result!!.split(",")[0]=="SW2500"){//如果为手表设备,扫码成功就保存设备
+                        if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
                             lastDeviceMacAddress = result.split(",")[2]
                             connectedDeviceName = result.split(",")[1]
                             //下面为连接流程
@@ -292,7 +310,7 @@ class ConnectFragment : BaseFragment() {
                             loadingView?.show()
                             EventBus.getDefault().post(ScanBleEvent())
                             Logger.e("发送开始扫描的EventBus")
-                        }else{
+                        } else {
                             showToast("无法识别的设备")
                         }
 
@@ -307,25 +325,27 @@ class ConnectFragment : BaseFragment() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
-           loadingView?.setLoadingTitle("同步数据中...")
+            loadingView?.setLoadingTitle("同步数据中...")
             ll_connected_container.visibility = View.VISIBLE
+            activity?.tv_sync?.visibility = View.VISIBLE
 //            if (connectedDeviceName.isEmpty()) {
 //                connectedDeviceName = name
 //            }
             tv_device_name.text = "设备名称:$connectedDeviceName"
-  //          lastDeviceMacAddress = macAddress//保存macAddress
+            //          lastDeviceMacAddress = macAddress//保存macAddress
 //            connectState = true
 //            autoConnect = true//将自动连接打开
         } else {//已断开显示UI布局
-         //   mListValues.clear()
+            //   mListValues.clear()
             Logger.e("ConnectFragment  收到断开回调")
-          //  connectState = false
-      //      requestBleConnect = false
+            //  connectState = false
+            //      requestBleConnect = false
             if (!autoConnect) {//主动断开
                 connectedDeviceName = ""//上个设备名重置为""
             }
 
             ll_connected_container.visibility = View.GONE
+            activity?.tv_sync?.visibility = View.GONE
 //            if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {//蓝牙处于打开状态并且可以自动连接就执行   自动连接   走扫描流程
 //
 //                startAutoScanAndConnect()
@@ -373,5 +393,4 @@ class ConnectFragment : BaseFragment() {
     fun hideDialog(event: HideDialogEvent) {
         loadingView?.dismiss()
     }
-
 }

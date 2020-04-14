@@ -92,7 +92,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                             0,
                             0,   // 默认值是什么? 0 : 1
                             false)
-                    if(readSportInfoBeanList.isNotEmpty()) {
+                    if (readSportInfoBeanList.isNotEmpty()) {
                         readSportInfoBeanList.clear()
                     }
                     readSportActivities()
@@ -630,7 +630,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
             }
         }
-        if(readSportInfoBeanList.isNotEmpty()){
+        if (readSportInfoBeanList.isNotEmpty()) {
             readSportInfoBeanList.clear()
         }
         readSportDetailBean()

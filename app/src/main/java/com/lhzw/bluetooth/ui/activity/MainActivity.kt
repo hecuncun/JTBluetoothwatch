@@ -384,12 +384,10 @@ class MainActivity : BaseActivity() {
         toolbar_right_img.visibility = View.GONE
         toolbar_right_tv.visibility = View.GONE
         im_back.visibility = View.GONE
-
         when (index) {
             FRAGMENT_HOME -> {
                 toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_home)
                 toolbar_right_img.visibility = View.VISIBLE
-
                 toolbar_right_img.setOnClickListener {
                     // toolbar_right_img.setImageResource(if (state) R.drawable.icon_ble_open else R.drawable.icon_ble_close)
                     //打开,关闭蓝牙
