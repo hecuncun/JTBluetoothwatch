@@ -69,7 +69,7 @@ data class SportInfoAddrBean(
     val id: Long = 1  //uniquen
 
     companion object {
-        fun parserSportInfoAddr(content: ByteArray?, ID: String, body: (data: ByteArray, mark: Byte) -> Unit) {
+        fun parserSportInfoAddr(content: ByteArray?, ID: String, body: (data: ByteArray, mark: Byte, bean : SportInfoAddrBean) -> Unit) {
             content?.let {
                 val list = CommOperation.query(SportInfoAddrBean::class.java, "daily_date_mark", ID)
                 if (list.isNotEmpty()) {
@@ -196,7 +196,7 @@ data class SportInfoAddrBean(
                     CommOperation.insert(flatSport)
                 }
                 CommOperation.insert(bean)
-                body(content.copyOfRange(10, 16).toList().toByteArray(), content[2])
+                body(content.copyOfRange(10, 16).toList().toByteArray(), content[2],bean)
             }
         }
     }
