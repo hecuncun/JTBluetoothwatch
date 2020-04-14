@@ -630,6 +630,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
             }
         }
+        if(readSportInfoBeanList.isNotEmpty()){
+            readSportInfoBeanList.clear()
+        }
         readSportDetailBean()
     }
 
