@@ -289,7 +289,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         //更新个人信息成功就开始同步动态数据
         response(response, Constants.UPDATE_PERSON_INFO_RESPONSE_CODE) {
 //            myBleManager?.current_data_update()
-            mHandler.sendEmptyMessageDelayed(DYNAMIC_DATE, 1000)
+            mHandler.sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
         }
     }
 
@@ -700,12 +700,12 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 DYNAMIC_DATE -> {
                     Log.e("callBackBluetooth", "current_data_update....")
                     myBleManager?.current_data_update()
-                    sendEmptyMessageDelayed(DYNAMIC_DATE, 1000)
+                    sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
                 }
                 MTU_DELAY -> {
                     Log.e("callBackBluetooth", "mtu_update....")
                     myBleManager?.mtu_update()
-                    sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
+                    sendEmptyMessageDelayed(MTU_DELAY, 3000)
                 }
             }
         }
