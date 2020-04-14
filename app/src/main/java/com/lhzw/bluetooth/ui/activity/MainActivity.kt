@@ -492,6 +492,7 @@ class MainActivity : BaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver(bleStateChangeReceiver)
+        App.setActivityContext(null)
 //        wakeLock?.release()
 //        releaseWakeLock();
     }
@@ -541,8 +542,4 @@ class MainActivity : BaseActivity() {
             }
         }
     }
-
-
-
-
 }
