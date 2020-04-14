@@ -40,6 +40,10 @@ class BleConnectService : Service() {
         return null
     }
 
+    companion object{
+        var isConnecting=false //是否正在连接
+    }
+
     override fun onCreate() {
         //初始配置
         Logger.e("BleConnectService  onCreate ")

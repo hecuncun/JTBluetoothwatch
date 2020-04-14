@@ -11,6 +11,7 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.BlutoothEvent
 import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
+import com.lhzw.bluetooth.event.SyncDataEvent
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -60,6 +61,12 @@ class BlutoothService : BaseBlutoothService() {
         }
     }
 
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("sync")])
+    fun syncData(event: SyncDataEvent) {
+        myBleManager?.connection_update(true)
+        Log.e("SyncData", "sync data ...")
+    }
+
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("disconnect")])
     fun disconnect(str: String) {
         Logger.e("收到RxBus断开蓝牙指令")
@@ -81,7 +88,7 @@ class BlutoothService : BaseBlutoothService() {
         }
         data[0] = 0x0F.toByte()
         when (event.packageName) {
-            Constants.CALL, Constants.CALL_COMING ,Constants.CALL_CONTACT-> {
+            Constants.CALL, Constants.CALL_COMING, Constants.CALL_CONTACT -> {
                 data[1] = 1//1：来电，2：微信，3：QQ，4：短信
                 if (!enablePhone) {
                     cycleSendData()
@@ -138,7 +145,7 @@ class BlutoothService : BaseBlutoothService() {
         try {
             title_string.forEach {
 
-               // Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
+                // Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
                 if (BaseUtils.isChinese(it)) {//是中文
                     title_tmp = title_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 } else {//不是中文
@@ -256,19 +263,19 @@ class BlutoothService : BaseBlutoothService() {
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
     fun notifyWatchMsg(event: NotificationEvent) {
         Logger.e("BlutoothService收到推送==>package==${event.packageName}")
-        if (acceptMsg){
+        if (acceptMsg) {
             listMsg.add(event)
             // 执行发送数据
-            if(!isSending) {
+            if (!isSending) {
                 isSending = true
                 sendToPhoneData(listMsg[0])
             }
         }
     }
 
-    private fun cycleSendData(){
+    private fun cycleSendData() {
         listMsg.removeAt(0)
-        if(listMsg.size > 0) {
+        if (listMsg.size > 0) {
             sendToPhoneData(listMsg[0])
         } else {
             isSending = false
@@ -282,12 +289,12 @@ class BlutoothService : BaseBlutoothService() {
         connectState = false
         mContext = null
         Logger.e("重置connectState=false")
-      //  myBleManager?.device_disconnect()
-        acceptMsg=false
+        //  myBleManager?.device_disconnect()
+        acceptMsg = false
     }
 
     override fun onDestroy() {
-        startService(Intent(App.context,BlutoothService::class.java))
+        startService(Intent(App.context, BlutoothService::class.java))
         super.onDestroy()
     }
 }

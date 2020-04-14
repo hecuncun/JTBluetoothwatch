@@ -6,15 +6,14 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.BleStateEvent
-import com.lhzw.bluetooth.event.ConnectEvent
-import com.lhzw.bluetooth.event.HideDialogEvent
-import com.lhzw.bluetooth.event.ScanBleEvent
+import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
+import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
@@ -95,11 +94,18 @@ class ConnectFragment : BaseFragment() {
 
         // 同步数据
         activity?.tv_sync?.setOnClickListener{
-//            if(){
-//
-//            } else {
-//
-//            }
+            if(BleConnectService.isConnecting){
+                Toast.makeText(context, "正在进行同步中，请稍后同步", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, "开始同步", Toast.LENGTH_LONG).show()
+                RxBus.getInstance().post("sync", SyncDataEvent("sync"))
+                if (loadingView == null) {
+                        loadingView = LoadingView(activity)
+
+                    }
+                loadingView?.setLoadingTitle("同步数据...")
+                loadingView?.show()
+            }
         }
     }
 

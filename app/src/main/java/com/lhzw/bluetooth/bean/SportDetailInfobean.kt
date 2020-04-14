@@ -112,7 +112,7 @@ data class SportDetailInfobean(
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
                     val latLng = LatLng(start[0], start[1])
                     val distance = AMapUtils.calculateLineDistance(latLng, tmp)
-                    if (distance > 1 && distance > 20) {
+                    if (distance > 1 && distance < 20) {
                         tmp = latLng
                         val bean = SportDetailInfobean(
                                 mark,
