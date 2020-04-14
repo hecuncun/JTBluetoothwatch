@@ -166,7 +166,6 @@ class BleConnectService : Service() {
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
             Log.e("SCANCallBack","搜索设备中...size==${results.size}")
-
             for (result in results) {
                 if (result.device.name != null && result.device.name.contains("SW2500")) {
                     if (mListValues.size == 0) {
