@@ -54,6 +54,7 @@ object Constants {
     const val CONNECT_STATE = "connect_state"
     const val CONNECT_DEVICE_NAME = "connect_device_name"
     const val LAST_DEVICE_ADDRESS = "last_device_address"
+    const val LAST_CONNECTED_ADDRESS = "last_connected_address"
     const val AUTO_CONNECT = "auto_connect"
     const val ACCEPT_MSG = "accept_msg"
 

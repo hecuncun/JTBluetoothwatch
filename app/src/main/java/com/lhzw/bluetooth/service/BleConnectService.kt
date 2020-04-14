@@ -53,6 +53,7 @@ class BleConnectService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
+        isConnecting=false
         return START_STICKY
     }
 
