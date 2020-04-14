@@ -8,6 +8,7 @@ import android.content.IntentFilter
 import android.os.IBinder
 import android.telephony.SmsMessage
 import android.text.TextUtils
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
@@ -35,14 +36,15 @@ class SmsAndPhoneService : Service() {
         registerReceiver(NLServerReceiver, localIntentFilter)
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Logger.e("SmsAndPhoneService--------onStartCommand--------->")
-        return super.onStartCommand(intent, flags!!, startId)
+        return START_STICKY
     }
 
     override fun onDestroy() {
         Logger.e("SmsAndPhoneService----onDestroy----unregisterReceiver--------->$NLServerReceiver")
         unregisterReceiver(NLServerReceiver)
+        startService(Intent(App.context,SmsAndPhoneService::class.java))
         super.onDestroy()
     }
 

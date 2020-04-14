@@ -5,6 +5,7 @@ import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.BlutoothEvent
@@ -275,7 +276,6 @@ class BlutoothService : BaseBlutoothService() {
     }
 
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
-    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
 
     // 清理数据
     override fun onClear() {
@@ -284,8 +284,10 @@ class BlutoothService : BaseBlutoothService() {
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
         acceptMsg=false
-        if (autoConnect) {
-            autoConnect
-        }
+    }
+
+    override fun onDestroy() {
+        startService(Intent(App.context,BlutoothService::class.java))
+        super.onDestroy()
     }
 }

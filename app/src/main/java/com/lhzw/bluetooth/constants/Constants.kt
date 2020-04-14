@@ -48,6 +48,7 @@ object Constants {
     // 服务包名
     const val SERVICE_PACKAGE = "com.lhzw.bluetooth.service.BlutoothService"
     const val SMS_AND_PHONE_SERVICE_PACKAGE = "com.lhzw.bluetooth.service.SmsAndPhoneService"
+    const val BLE_CONNECT_SERVICE_PACKAGE = "com.lhzw.bluetooth.service.BleConnectService"
 
 
     const val CONNECT_STATE = "connect_state"
