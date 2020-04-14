@@ -14,6 +14,7 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
 import no.nordicsemi.android.support.v18.scanner.*
 import org.greenrobot.eventbus.EventBus
@@ -26,13 +27,14 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class BleConnectService : Service() {
     private var isScanning = false  //是否正在扫描
-    private val SCAN_DURATION: Long = 10000//扫描持续时长10s
+    private val SCAN_DURATION: Long = 60000//扫描持续时长30s
     private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
     private var bleManager: BluetoothManager? = null
+    private var loadingView: LoadingView? = null
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -42,12 +44,14 @@ class BleConnectService : Service() {
         Logger.e("BleConnectService  onCreate ")
         EventBus.getDefault().register(this)
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        if (autoConnect){
+            startScan()
+        }
         super.onCreate()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
-
         return START_STICKY
     }
 
@@ -83,6 +87,18 @@ class BleConnectService : Service() {
     fun onBleStateChanged(event: BleStateEvent) {
         if (event.state && autoConnect) {//打开蓝牙,并且是自动连接时才扫描
             startScan()
+        }
+
+    }
+
+    /**
+     * 同步数据成功
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun hideDialog(event: HideDialogEvent) {
+        if (event.success){
+            Logger.e("MainActivity  同步数据成功")
+            loadingView?.dismiss()
         }
 
     }
@@ -174,6 +190,11 @@ class BleConnectService : Service() {
                         if (!connectState) {
                             Logger.e("已找到蓝牙设备,发送连接请求...")
                             RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
+                            if (loadingView==null){
+                                loadingView = LoadingView(App.getActivityContext())
+                                loadingView?.setLoadingTitle("连接中...")
+                                loadingView?.show()
+                            }
                         }
                     }
                 } else {

@@ -288,8 +288,8 @@ class ConnectFragment : BaseFragment() {
                             connectedDeviceName = result.split(",")[1]
                             //下面为连接流程
                             loadingView = LoadingView(activity)
-                            loadingView!!.setLoadingTitle("连接中...")
-                            loadingView!!.show()
+                            loadingView?.setLoadingTitle("连接中...")
+                            loadingView?.show()
                             EventBus.getDefault().post(ScanBleEvent())
                             Logger.e("发送开始扫描的EventBus")
                         }else{

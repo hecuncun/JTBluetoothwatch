@@ -282,7 +282,7 @@ class BlutoothService : BaseBlutoothService() {
         connectState = false
         mContext = null
         Logger.e("重置connectState=false")
-        myBleManager?.device_disconnect()
+      //  myBleManager?.device_disconnect()
         acceptMsg=false
     }
 
