@@ -44,7 +44,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private val DYNAMIC_DATE = 0x01
     private val MTU_DELAY = 0x02
     protected var currentAddrss = ""
-    protected var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
+    protected var lastConnectedDevice: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//上次连接成功的设备
     private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     private var ERROR = ""
     protected var mContext: Activity? = null
@@ -140,7 +140,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
         Log.e("callBackBluetooth", "onDeviceConnected....")
-        if (currentAddrss.isNotEmpty() && !currentAddrss.equals(lastDeviceMacAddress)) {
+        if (currentAddrss.isNotEmpty() && !currentAddrss.equals(lastConnectedDevice)) {
             CommOperation.deleteAll(WatchInfoBean::class.java)
             //CommOperation.deleteAll(SportInfoBean::class.java)
             CommOperation.deleteAll(BoundaryAdrrBean::class.java)
