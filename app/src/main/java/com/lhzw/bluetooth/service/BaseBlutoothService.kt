@@ -220,6 +220,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
             //开始接受消息提醒
+            BleConnectService.isConnecting = false
             acceptMsg = true
         }
     }
