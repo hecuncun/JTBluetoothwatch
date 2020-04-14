@@ -195,15 +195,16 @@ class BleConnectService : Service() {
                             if (!isConnecting){
                                 RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
                                 isConnecting=true
-                            }
-
-                            if (loadingView==null){
-                                if (App.getActivityContext()!=null){
-                                    loadingView = LoadingView(App.getActivityContext())
-                                    loadingView?.setLoadingTitle("连接中...")
-                                    loadingView?.show()
+                                if (loadingView==null){
+                                    if (App.getActivityContext()!=null){
+                                        loadingView = LoadingView(App.getActivityContext())
+                                        loadingView?.setLoadingTitle("连接中...")
+                                        loadingView?.show()
+                                    }
                                 }
                             }
+
+
                         }
                     }
                 } else {
