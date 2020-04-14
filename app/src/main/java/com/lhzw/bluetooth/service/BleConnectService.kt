@@ -57,6 +57,7 @@ class BleConnectService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
+        isConnecting=false
         return START_STICKY
     }
 
@@ -198,15 +199,16 @@ class BleConnectService : Service() {
                             if (!isConnecting){
                                 RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
                                 isConnecting=true
-                            }
-
-                            if (loadingView==null){
-                                if (App.getActivityContext()!=null){
-                                    loadingView = LoadingView(App.getActivityContext())
-                                    loadingView?.setLoadingTitle("连接中...")
-                                    loadingView?.show()
+                                if (loadingView==null){
+                                    if (App.getActivityContext()!=null){
+                                        loadingView = LoadingView(App.getActivityContext())
+                                        loadingView?.setLoadingTitle("连接中...")
+                                        loadingView?.show()
+                                    }
                                 }
                             }
+
+
                         }
                     }
                 } else {
