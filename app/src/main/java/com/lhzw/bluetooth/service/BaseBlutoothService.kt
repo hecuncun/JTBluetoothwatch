@@ -45,7 +45,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private val MTU_DELAY = 0x02
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
-    private var lastDeviceMacAddress: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//缓存扫码的mac
+    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
     private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     private var ERROR = ""
     protected var mContext: Activity? = null
