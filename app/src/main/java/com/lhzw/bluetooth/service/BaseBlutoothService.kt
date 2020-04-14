@@ -131,6 +131,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         sendToPhoneData(listMsg[0])
                     } else {
                         isSending = false
+
                     }
                 }
             }
