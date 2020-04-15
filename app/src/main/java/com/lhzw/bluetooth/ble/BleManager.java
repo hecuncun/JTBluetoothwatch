@@ -59,7 +59,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
                         connection_update(true);
                     }
                 }, 500);
-            }else {
+            } else {
                 Logger.e("mCommTXRXCharacteristic==null,char not found....蓝牙设备未连接成功..");
             }
 

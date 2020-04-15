@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.util.Log
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.umeng.socialize.media.Base
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
 
@@ -33,7 +34,7 @@ data class DailyDataBean(
 
     companion object {
         // 存储日常数据
-        fun parserDailyData(content: ByteArray?, body: (datas: MutableList<DailyDataBean>) -> Unit) {
+        fun parserDailyData(content: ByteArray?, isSyncAscending:Boolean, body: (datas: MutableList<DailyDataBean>) -> Unit) {
             content?.let {
                 val response = content[0].toInt().toString()
                 val sport_days = content[1].toInt()
@@ -74,8 +75,11 @@ data class DailyDataBean(
                             data_len
                     )
                     CommOperation.insert(bean)
-                    datas.add(bean)
-
+                    if(isSyncAscending){
+                        if(sport_date.equals(BaseUtils.getCurrentData())) datas.add(bean)
+                    } else {
+                        datas.add(bean)
+                    }
                     // 活动表数据更新 判断该活动号是否存在 判断活动数量是否大于0
                     if(sport_num > 0) {
                         val activityBeans = CommOperation.query(SportActivityBean::class.java, "daily_date", sport_date)
