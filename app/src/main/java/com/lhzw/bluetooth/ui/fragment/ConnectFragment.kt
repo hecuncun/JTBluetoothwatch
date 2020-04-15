@@ -361,7 +361,7 @@ class ConnectFragment : BaseFragment() {
         }
     }
 
-//    //自动扫描并且连接
+    //    //自动扫描并且连接
 //    private var autoScanner: BluetoothLeScannerCompat? = null
 //    private var scannerDelayTime = 1000L//默认一秒
 //    private fun startAutoScanAndConnect() {
@@ -394,7 +394,13 @@ class ConnectFragment : BaseFragment() {
 //            }
 //        }, SCAN_DURATION)
 //    }
-
+    fun refleshSyncState() {
+        if (connectState) {
+            activity?.tv_sync?.visibility = View.VISIBLE
+        } else {
+            activity?.tv_sync?.visibility = View.GONE
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {

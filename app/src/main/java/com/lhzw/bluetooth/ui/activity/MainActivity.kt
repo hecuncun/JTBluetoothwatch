@@ -60,6 +60,7 @@ class MainActivity : BaseActivity() {
     override fun useEventBus() = true
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
+
     @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
         if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
@@ -92,7 +93,7 @@ class MainActivity : BaseActivity() {
         toggleNotificationListenerService()
         openSetting()
         if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {
-             EventBus.getDefault().post(ScanBleEvent())
+            EventBus.getDefault().post(ScanBleEvent())
         }
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
@@ -100,7 +101,7 @@ class MainActivity : BaseActivity() {
 //         wakeLock?.acquire()
     }
 
-  private  var wakeLock: PowerManager.WakeLock? =null
+    private var wakeLock: PowerManager.WakeLock? = null
     //==================================================扫描操作START==========
 //    private var isScanning = false  //是否正在扫描
 //    private val SCAN_DURATION: Long = 30000//扫描时长10s
@@ -221,23 +222,23 @@ class MainActivity : BaseActivity() {
 //        }
 //    }
 
- //   private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
+    //   private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
             Logger.e("收到同步数据的EVENT")
-          //  loadingView?.setLoadingTitle("同步数据中...")
+            //  loadingView?.setLoadingTitle("同步数据中...")
         }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
-        if (event.success){
+        if (event.success) {
             Logger.e("MainActivity  同步数据成功")
         }
 
-     //   loadingView?.dismiss()
+        //   loadingView?.dismiss()
     }
 
 //    //自动扫描并且连接
@@ -383,6 +384,7 @@ class MainActivity : BaseActivity() {
         mIndex = index
         toolbar_right_img.visibility = View.GONE
         toolbar_right_tv.visibility = View.GONE
+        tv_sync.visibility = View.GONE
         im_back.visibility = View.GONE
         when (index) {
             FRAGMENT_HOME -> {
@@ -442,6 +444,7 @@ class MainActivity : BaseActivity() {
                     transaction.add(com.lhzw.bluetooth.R.id.container, mConnectFragment!!, "connect")
                 } else {
                     transaction.show(mConnectFragment!!)
+                    mConnectFragment?.refleshSyncState()
                 }
             }
         }
