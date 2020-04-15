@@ -145,6 +145,7 @@ class BleConnectService : Service() {
                 Logger.e("未找到蓝牙,继续搜索...")
                 Handler().postDelayed(Runnable {
                     startAutoScanAndConnect()
+                    isConnecting=false
                 }, scannerDelayTime)
                 Logger.e("延时==$scannerDelayTime")
             } else {//扫码结束   未连接成功
@@ -152,6 +153,7 @@ class BleConnectService : Service() {
                     showToast("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
                     Logger.e("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
                     EventBus.getDefault().post(HideDialogEvent(false))
+                    isConnecting=false
                 }
             }
         } catch (e: Exception) {
@@ -165,7 +167,7 @@ class BleConnectService : Service() {
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
-            Log.e("SCANCallBack","搜索设备中...size==${results.size}")
+           // Log.e("SCANCallBack","搜索设备中...size==${results.size}")
             for (result in results) {
                 if (result.device.name != null && result.device.name.contains("SW2500")) {
                     if (mListValues.size == 0) {
@@ -184,7 +186,7 @@ class BleConnectService : Service() {
                     }
 
                 }
-                   Logger.e("已找到周围腕表设备数量==${mListValues.size}")
+                   //Logger.e("已找到周围腕表设备数量==${mListValues.size}")
             }
             if (lastDeviceMacAddress.isNotEmpty()) {//目标设备不为空
                 if (autoConnect) {
@@ -196,6 +198,7 @@ class BleConnectService : Service() {
                         if (!connectState) {
                             Logger.e("已找到蓝牙设备,发送连接请求...")
                             if (!isConnecting){
+                                Logger.e("发送连接请求...")
                                 RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
                                 isConnecting=true
                                 if (loadingView==null){
@@ -220,8 +223,9 @@ class BleConnectService : Service() {
                             it.device.address == lastDeviceMacAddress
                         }[0]
                         if (!connectState) {
-                            Logger.e("找到蓝牙设备发送连接指令...")
+                            Logger.e("找到蓝牙设备")
                             if (!isConnecting){
+                                Logger.e("发送连接指令...")
                                 RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
                                 isConnecting=true
                             }
