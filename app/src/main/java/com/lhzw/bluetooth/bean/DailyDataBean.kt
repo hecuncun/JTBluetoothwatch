@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.util.Log
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.BaseUtils
-import com.umeng.socialize.media.Base
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
 
@@ -34,7 +33,7 @@ data class DailyDataBean(
 
     companion object {
         // 存储日常数据
-        fun parserDailyData(content: ByteArray?, isSyncAscending:Boolean, body: (datas: MutableList<DailyDataBean>) -> Unit) {
+        fun parserDailyData(content: ByteArray?, isSyncAscending: Boolean, body: (datas: MutableList<DailyDataBean>) -> Unit) {
             content?.let {
                 val response = content[0].toInt().toString()
                 val sport_days = content[1].toInt()
@@ -75,35 +74,33 @@ data class DailyDataBean(
                             data_len
                     )
                     CommOperation.insert(bean)
-                    if(isSyncAscending){
-                        if(sport_date.equals(BaseUtils.getCurrentData())) datas.add(bean)
+                    if (isSyncAscending) {
+                        if (sport_date.equals(BaseUtils.getCurrentData())) datas.add(bean)
                     } else {
                         datas.add(bean)
                     }
                     // 活动表数据更新 判断该活动号是否存在 判断活动数量是否大于0
-                    if(sport_num > 0) {
-                        val activityBeans = CommOperation.query(SportActivityBean::class.java, "daily_date", sport_date)
-                        if (activityBeans.isNotEmpty()) {
+                    val activityBeans = CommOperation.query(SportActivityBean::class.java, "daily_date", sport_date)
+                    if (activityBeans.isNotEmpty()) {
 //                        CommOperation.delete(SportActivityBean::class.java, "daily_date", sport_date)
-                            val value = ContentValues();
-                            value.put("current_activity_num", sport_num)
-                            value.put("activities_addr", start_addr)
-//                            Log.e("parserDaily", "sport_num  =  ${list[0].sport_num}  new_sport_num = ${sport_num}")
-                            CommOperation.update(SportActivityBean::class.java, value,activityBeans[0].id)
-                        } else {
-                            val response = 0x0D.toInt().toString()
-                            val dateBytes = listOf<Byte>(
-                                    content[2 + 0 + 12 * day], content[2 + 1 + 12 * day], content[2 + 2 + 12 * day],
-                                    0x00, 0x00, 0x00)
-                            val sportActivityBean = SportActivityBean(
-                                    response,
-                                    sport_date,
-                                    BaseUtils.byteToLong(dateBytes),
-                                    sport_num,
-                                    0,
-                                    start_addr)
-                            CommOperation.insert(sportActivityBean)
-                        }
+                        val value = ContentValues();
+                        value.put("current_activity_num", sport_num)
+                        value.put("activities_addr", start_addr)
+                        Log.e("parserDaily", "sport_num  =  ${list[0].sport_num}  new_sport_num = ${sport_num}")
+                        CommOperation.update(SportActivityBean::class.java, value, activityBeans[0].id)
+                    } else {
+                        val response = 0x0D.toInt().toString()
+                        val dateBytes = listOf<Byte>(
+                                content[2 + 0 + 12 * day], content[2 + 1 + 12 * day], content[2 + 2 + 12 * day],
+                                0x00, 0x00, 0x00)
+                        val sportActivityBean = SportActivityBean(
+                                response,
+                                sport_date,
+                                BaseUtils.byteToLong(dateBytes),
+                                sport_num,
+                                0,
+                                start_addr)
+                        CommOperation.insert(sportActivityBean)
                     }
                 }
                 body(datas)

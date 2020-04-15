@@ -36,7 +36,7 @@ data class SportDetailInfobean(
     val id: Long = 0
 
     companion object {
-        fun parserSportDetailInfo(map: HashMap<String, HashMap<Int, MutableList<Byte>>>) {
+        fun parserSportDetailInfo(map: HashMap<String, HashMap<Int, MutableList<Byte>>>, body: () -> Unit) {
             map.forEach { (mark, data) ->
                 deleteData(mark) //如果数据表中有该mark数据，进行删除
                 data.forEach { (type, content) ->
@@ -46,21 +46,26 @@ data class SportDetailInfobean(
                         // 除了Gps 4字节数据  活动步数 单位步 1分钟 活动距离 单位 cm  热量 单位 卡 一分钟 速度 单位 m/s 一分钟
                         Constants.STEP, Constants.DISTANCE, Constants.CALORIE -> {
                             parserData(mark, type, 4, 1, content, read_len)
+                            body()
                         }
                         // 一个字节  一分钟  心率
                         Constants.HEART_RATE -> {
                             parserData(mark, type, 1, 1, content, read_len)
+                            body()
                         }
                         // 4字节 气压 单位帕  高度4字节浮点数  高度米 5分钟
                         Constants.AIR_PRESSURE -> {
                             parserAirPressure(mark, type, 8, 5, content, read_len)
+                            body()
                         }
                         // 8个字节数据 经纬度各占四个字节，带符号整形数据 然后在除 1000000  高精度 1s 低电量 1s或者5s
                         Constants.GPS -> {
                             parserGps(mark, type, 8, 1, content, read_len)
+                            body()
                         }
                         Constants.SPEED -> {
                             parserData(mark, type, 2, 1, content, read_len)
+                            body()
                         }
                     }
                 }
@@ -112,7 +117,7 @@ data class SportDetailInfobean(
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
                     val latLng = LatLng(start[0], start[1])
                     val distance = AMapUtils.calculateLineDistance(latLng, tmp)
-                    if (distance > 1 && distance < 20) {
+                    if (distance > 5 && distance < 50) {
                         tmp = latLng
                         val bean = SportDetailInfobean(
                                 mark,

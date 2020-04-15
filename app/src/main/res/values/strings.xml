@@ -22,4 +22,6 @@
     <string name="app_installed_error">该应用未安装！</string>
     <string name="OK">OK</string>
     <string name="action_share">分享</string>
+    <string name="progress_update_content">动态数据已更新 @</string>
+    <string name="progress_parser_content">数据已解析 @</string>
 </resources>
