@@ -157,9 +157,14 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         }
 //        activity.tv_step_num.text = "$step"
         // 平均步频
-        activity.tv_step_frequency_av.text = "${step / list!!.size}"
+        if(list!!.isNotEmpty()) {
+            activity.tv_step_frequency_av.text = "${step / list!!.size}"
+            activity.tv_speed_walk_av.text = "${step / list!!.size}"
+        } else {
+            activity.tv_step_frequency_av.text = "${step}"
+            activity.tv_speed_walk_av.text = "${step}"
+        }
         // 图表数据适配
-        activity.tv_speed_walk_av.text = "${step / list!!.size}"
         activity.tv_speed_walk_best.text = "$step_max"
         activity.tv_sport_time.text = duration
         // 热量
