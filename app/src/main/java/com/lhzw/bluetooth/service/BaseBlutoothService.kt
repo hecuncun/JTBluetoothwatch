@@ -148,7 +148,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
-        Log.e("callBackBluetooth", "onDeviceConnected....")
+        Log.e("callBackBluetooth", "onDeviceConnected.... $currentAddrss  $lastConnectedDevice")
         if (currentAddrss.isNotEmpty() && !currentAddrss.equals(lastConnectedDevice)) {
             CommOperation.deleteAll(WatchInfoBean::class.java)
             //CommOperation.deleteAll(SportInfoBean::class.java)
@@ -160,6 +160,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             CommOperation.deleteAll(FlatSportBean::class.java)
             CommOperation.deleteAll(SportActivityBean::class.java)
             CommOperation.deleteAll(SportInfoAddrBean::class.java)
+//            lastConnectedDevice = currentAddrss
+            isSyncAscending =  false
+        } else {
+            isSyncAscending = true
         }
         EventBus.getDefault().post(ConnectEvent(true))
         //1.连接成功  特征使能
