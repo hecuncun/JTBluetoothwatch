@@ -84,7 +84,7 @@ class ConnectFragment : BaseFragment() {
         tv_disconnect.setOnClickListener {
             //点击断开蓝牙,直接前端显示断开,不重新连接
             connectState = false
-            connectedDeviceName = ""
+        //    connectedDeviceName = ""
             ll_connected_container.visibility = View.GONE
             activity?.tv_sync?.visibility = View.GONE
             //关闭自动连接
@@ -347,10 +347,6 @@ class ConnectFragment : BaseFragment() {
             Logger.e("ConnectFragment  收到断开回调")
             //  connectState = false
             //      requestBleConnect = false
-            if (!autoConnect) {//主动断开
-                connectedDeviceName = ""//上个设备名重置为""
-            }
-
             ll_connected_container.visibility = View.GONE
             activity?.tv_sync?.visibility = View.GONE
 //            if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {//蓝牙处于打开状态并且可以自动连接就执行   自动连接   走扫描流程

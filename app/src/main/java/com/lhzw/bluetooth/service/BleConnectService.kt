@@ -27,7 +27,7 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class BleConnectService : Service() {
     private var isScanning = false  //是否正在扫描
-    private val SCAN_DURATION: Long = 60000//扫描持续时长30s
+    private val SCAN_DURATION: Long = 20000//扫描持续时长10s
     private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
@@ -36,6 +36,7 @@ class BleConnectService : Service() {
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
     private var bleManager: BluetoothManager? = null
     private var loadingView: LoadingView? = null
+
     override fun onBind(p0: Intent?): IBinder? {
         return null
     }
@@ -117,11 +118,12 @@ class BleConnectService : Service() {
         val settings = ScanSettings.Builder()
                 .setLegacy(false)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                .setReportDelay(1000)
+                .setReportDelay(500)
                 .setUseHardwareBatchingIfSupported(false)
                 .build()
 
         val filters = mutableListOf<ScanFilter>()//过滤器
+        filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
         try {
             scanner.startScan(filters, settings, scanCallback)
             isScanning = true
@@ -167,7 +169,7 @@ class BleConnectService : Service() {
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
-           // Log.e("SCANCallBack","搜索设备中...size==${results.size}")
+            Log.e("SCANCallBack","搜索设备中...size==${results.size}")
             for (result in results) {
                 if (result.device.name != null && result.device.name.contains("SW2500")) {
                     if (mListValues.size == 0) {
@@ -186,7 +188,7 @@ class BleConnectService : Service() {
                     }
 
                 }
-                   //Logger.e("已找到周围腕表设备数量==${mListValues.size}")
+                   Logger.e("已找到周围腕表设备数量==${mListValues.size}")
             }
             if (lastDeviceMacAddress.isNotEmpty()) {//目标设备不为空
                 if (autoConnect) {
@@ -249,8 +251,8 @@ class BleConnectService : Service() {
     private var scannerDelayTime = 1000L//默认一秒
     private fun startAutoScanAndConnect() {
         scannerDelayTime *= 2
-        if (scannerDelayTime > 8000L) {
-            scannerDelayTime = 8000L
+        if (scannerDelayTime > 4000L) {
+            scannerDelayTime = 4000L
         }
         if (autoScanner == null) {
             autoScanner = BluetoothLeScannerCompat.getScanner()
@@ -258,12 +260,13 @@ class BleConnectService : Service() {
         val settings = ScanSettings.Builder()
                 .setLegacy(false)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                .setReportDelay(1000)
+                .setReportDelay(500)
                 .setUseHardwareBatchingIfSupported(false)
                 .build()
 
         val filters = mutableListOf<ScanFilter>()//过滤器
-
+        filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
+       // filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString("88660002-8866-8866-8866-78A901000000")).build())
         autoScanner?.startScan(filters, settings, scanCallback)
 
         isScanning = true
