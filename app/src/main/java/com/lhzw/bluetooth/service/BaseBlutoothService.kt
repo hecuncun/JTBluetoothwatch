@@ -52,6 +52,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
     private var isSyncAscending = false
+    private var test=""
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
