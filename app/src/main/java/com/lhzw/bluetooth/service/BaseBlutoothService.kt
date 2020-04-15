@@ -58,6 +58,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var isSyncAscending = false
     private var hasSports = false
     private var progresssBar: SyncProgressBar? = null
+    private var sportActivityBeanList = ArrayList<SportActivityBean>()
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
@@ -81,6 +82,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("callBackBluetooth", "onActivityAddressRequestResponse....")
         response?.let {
             if (response[0].toInt() == 0x0E) {
+                if (sportActivityBeanList.size > 0) {
+                    sportActivityBeanList.clear()
+                }
                 val list = CommOperation.query(BoundaryAdrrBean::class.java)
                 if (list.isEmpty()) {
                     BoundaryAdrrBean.parserBoundaryAdrr(response)
@@ -127,6 +131,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
         acceptMsg = false
+        cancelProgressBar()
     }
 
     override fun onAppShortMsgResponse(response: ByteArray?) {
@@ -241,10 +246,16 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             BleConnectService.isConnecting = false
             acceptMsg = true
             if (hasSports) {
+                sportActivityBeanList.forEach {
+                    var value = ContentValues()
+                    value.put("request_date", it.request_date)
+                    value.put("current_activity_mark", it.current_activity_mark)
+                    CommOperation.update(SportActivityBean::class.java, value, it.id)
+                }
+                sportActivityBeanList.clear()
                 cancelProgressBar()
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
-                Log.e("CancelDialog", "------------------------------------------   1")
                 EventBus.getDefault().post(HideDialogEvent(true))
             }
         }
@@ -253,7 +264,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onMtuUpdateResponse(response: ByteArray?) {
         Log.e("callBackBluetooth", "onMtuUpdateResponse....")
         mHandler.removeMessages(MTU_DELAY)
-        requestTimes=0
+        requestTimes = 0
         response(response, Constants.MTU_RESPONSE_CODE) {
             myBleManager?.watch_time_update()
             Log.e("callBackBluetooth", "watch_time_update....")
@@ -488,9 +499,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
 //            Log.e("currentData", "currentdata  ${BaseUtils.byte2HexStr(response)}")
             Log.e("callBackBluetooth", "onCurrentDataUpdate....")
-            if (it[0] == Constants.CURRENT_DATA_UPDATE_RESPONSE_CODE &&it.size==25) {
+            if (it[0] == Constants.CURRENT_DATA_UPDATE_RESPONSE_CODE && it.size == 25) {
                 mHandler.removeMessages(DYNAMIC_DATE)
-                requestTimes=0
+                requestTimes = 0
                 CommOperation.deleteAll(CurrentDataBean::class.java)
                 val bean = CurrentDataBean.createBean(response)
                 bean?.let {
@@ -540,10 +551,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             Log.e("readSportActivities", "read sport activity over ...")
             val bean = readActivityBean.list[readActivityBean.bean_index]
             val list = CommOperation.query(SportActivityBean::class.java, "daily_date", bean.daily_date)
-            var value = ContentValues()
-            value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
-            value.put("current_activity_mark", readActivityBean.request_mark.toInt())
-            CommOperation.update(SportActivityBean::class.java, value, list[0].id)
+            list[0].request_date = BaseUtils.byteToLong(readActivityBean.request_date.toList())
+            list[0].current_activity_mark = readActivityBean.request_mark.toInt()
+            sportActivityBeanList.add(list[0])
+//            var value = ContentValues()
+//            value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
+//            value.put("current_activity_mark", readActivityBean.request_mark.toInt())
+//            CommOperation.update(SportActivityBean::class.java, value, list[0].id)
             init_sport_detail_addr()
         } else {
             val bean = readActivityBean.list[readActivityBean.bean_index]
@@ -575,10 +589,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             } else {
                 // 更新bean
                 val list = CommOperation.query(SportActivityBean::class.java, "daily_date", bean.daily_date)
-                var value = ContentValues()
-                value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
-                value.put("current_activity_mark", readActivityBean.request_mark.toInt())
-                CommOperation.update(SportActivityBean::class.java, value, list[0].id)
+                list[0].request_date = BaseUtils.byteToLong(readActivityBean.request_date.toList())
+                list[0].current_activity_mark = readActivityBean.request_mark.toInt()
+                sportActivityBeanList.add(list[0])
+//                var value = ContentValues()
+//                value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
+//                value.put("current_activity_mark", readActivityBean.request_mark.toInt())
+//                CommOperation.update(SportActivityBean::class.java, value, list[0].id)
                 // 请求下一个bean 数据
                 readActivityBean.bean_index++
                 readActivityBean.activity_index = 0
@@ -707,30 +724,30 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     when (type) {
                         // 除了Gps 4字节数据  活动步数 单位步 1分钟 活动距离 单位 cm  热量 单位 卡 一分钟 速度 单位 m/s 一分钟
                         Constants.STEP, Constants.DISTANCE, Constants.CALORIE -> {
-                            if(read_len > 0) {
+                            if (read_len > 0) {
                                 max += 1
                             }
                         }
                         // 一个字节  一分钟  心率
                         Constants.HEART_RATE -> {
-                            if(read_len > 0) {
+                            if (read_len > 0) {
                                 max += 1
                             }
                         }
                         // 4字节 气压 单位帕  高度4字节浮点数  高度米 5分钟
                         Constants.AIR_PRESSURE -> {
-                            if(read_len > 0) {
+                            if (read_len > 0) {
                                 max += 1
                             }
                         }
                         // 8个字节数据 经纬度各占四个字节，带符号整形数据 然后在除 1000000  高精度 1s 低电量 1s或者5s
                         Constants.GPS -> {
-                            if(read_len > 0) {
+                            if (read_len > 0) {
                                 max += 1
                             }
                         }
                         Constants.SPEED -> {
-                            if(read_len > 0) {
+                            if (read_len > 0) {
                                 max += 1
                             }
                         }
@@ -778,19 +795,20 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
     }
-   private var requestTimes:Int =0  //发送次数
+
+    private var requestTimes: Int = 0  //发送次数
     private var mHandler = object : Handler() {
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 DYNAMIC_DATE -> {
                     Log.e("callBackBluetooth", "current_data_update....")
                     requestTimes++
-                    if (requestTimes<4){
+                    if (requestTimes < 4) {
                         myBleManager?.current_data_update()
                         sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
-                    }else{//动态数据同步失败
-                         removeMessages(DYNAMIC_DATE)
-                         requestTimes=0
+                    } else {//动态数据同步失败
+                        removeMessages(DYNAMIC_DATE)
+                        requestTimes = 0
                         showToast("当前数据同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
                     }
@@ -799,12 +817,12 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 MTU_DELAY -> {
                     Log.e("callBackBluetooth", "mtu_update....")
                     requestTimes++
-                    if (requestTimes<4){
+                    if (requestTimes < 4) {
                         myBleManager?.mtu_update()
                         sendEmptyMessageDelayed(MTU_DELAY, 3000)
-                    }else{
+                    } else {
                         removeMessages(MTU_DELAY)
-                        requestTimes=0
+                        requestTimes = 0
                         showToast("MTU同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
                     }
