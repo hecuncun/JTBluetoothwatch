@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.ble.ExtendedBluetoothDevice
@@ -31,7 +32,6 @@ class BleConnectService : Service() {
     private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
-    private var isConnecting=false //是否正在连接
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
     private var bleManager: BluetoothManager? = null
@@ -59,7 +59,33 @@ class BleConnectService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
         isConnecting=false
+        acquireWakeLock()
         return START_STICKY
+    }
+    private var wakeLock: PowerManager.WakeLock? = null
+    /**
+     * 获取电源锁，保持该服务在屏幕熄灭时仍然获取CPU时，保持运行
+     */
+    private fun acquireWakeLock() {
+        if (null == wakeLock) {
+            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
+                    or PowerManager.ON_AFTER_RELEASE, javaClass
+                    .canonicalName)
+            if (null != wakeLock) {
+                Log.i("WakeLock", "call acquireWakeLock")
+                wakeLock!!.acquire()
+            }
+        }
+    }
+
+    // 释放设备电源锁
+    private fun releaseWakeLock() {
+        if (null != wakeLock && wakeLock!!.isHeld) {
+            Log.i("WakeLock", "call releaseWakeLock")
+            wakeLock!!.release()
+            wakeLock = null
+        }
     }
 
     //开始扫描蓝牙的事件
@@ -105,10 +131,9 @@ class BleConnectService : Service() {
     fun hideDialog(event: HideDialogEvent) {
         if (event.success){
             Logger.e("数据同步数据成功")
-            isConnecting=false
-            loadingView?.dismiss()
         }
-
+        isConnecting=false
+        loadingView?.dismiss()
     }
 
 
@@ -207,9 +232,13 @@ class BleConnectService : Service() {
                                     if (App.getActivityContext()!=null){
                                         loadingView = LoadingView(App.getActivityContext())
                                         loadingView?.setLoadingTitle("连接中...")
-                                        loadingView?.show()
+
                                     }
                                 }
+                                if (App.getActivityContext()!=null){
+                                    loadingView?.show()
+                                }
+
                             }
 
 
@@ -285,6 +314,7 @@ class BleConnectService : Service() {
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         Logger.e("BleConnectService  onDestroy ")
+        releaseWakeLock()
         startService(Intent(App.context, BleConnectService::class.java))
         super.onDestroy()
     }

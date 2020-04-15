@@ -20,6 +20,7 @@ import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshEvent
+import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
@@ -242,6 +243,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onMtuUpdateResponse(response: ByteArray?) {
         Log.e("callBackBluetooth", "onMtuUpdateResponse....")
         mHandler.removeMessages(MTU_DELAY)
+        requestTimes=0
         response(response, Constants.MTU_RESPONSE_CODE) {
             myBleManager?.watch_time_update()
             Log.e("callBackBluetooth", "watch_time_update....")
@@ -470,12 +472,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     }
 
     override fun onCurrentDataUpdate(response: ByteArray?) {
-        mHandler.removeMessages(DYNAMIC_DATE)
         //  解析当前数据
         response?.let {
 //            Log.e("currentData", "currentdata  ${BaseUtils.byte2HexStr(response)}")
             Log.e("callBackBluetooth", "onCurrentDataUpdate....")
-            if (it[0] == Constants.CURRENT_DATA_UPDATE_RESPONSE_CODE) {
+            if (it[0] == Constants.CURRENT_DATA_UPDATE_RESPONSE_CODE &&it.size==25) {
+                mHandler.removeMessages(DYNAMIC_DATE)
+                requestTimes=0
                 CommOperation.deleteAll(CurrentDataBean::class.java)
                 val bean = CurrentDataBean.createBean(response)
                 bean?.let {
@@ -709,19 +712,37 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
     }
-
+   private var requestTimes:Int =0  //发送次数
     private var mHandler = object : Handler() {
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 DYNAMIC_DATE -> {
                     Log.e("callBackBluetooth", "current_data_update....")
-                    myBleManager?.current_data_update()
-                    sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
+                    requestTimes++
+                    if (requestTimes<4){
+                        myBleManager?.current_data_update()
+                        sendEmptyMessageDelayed(DYNAMIC_DATE, 3000)
+                    }else{//动态数据同步失败
+                         removeMessages(DYNAMIC_DATE)
+                         requestTimes=0
+                        showToast("当前数据同步失败")
+                        EventBus.getDefault().post(HideDialogEvent(false))
+                    }
+
                 }
                 MTU_DELAY -> {
                     Log.e("callBackBluetooth", "mtu_update....")
-                    myBleManager?.mtu_update()
-                    sendEmptyMessageDelayed(MTU_DELAY, 3000)
+                    requestTimes++
+                    if (requestTimes<4){
+                        myBleManager?.mtu_update()
+                        sendEmptyMessageDelayed(MTU_DELAY, 3000)
+                    }else{
+                        removeMessages(MTU_DELAY)
+                        requestTimes=0
+                        showToast("MTU同步失败")
+                        EventBus.getDefault().post(HideDialogEvent(false))
+                    }
+
                 }
             }
         }

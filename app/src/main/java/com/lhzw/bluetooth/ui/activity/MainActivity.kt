@@ -238,7 +238,6 @@ class MainActivity : BaseActivity() {
             Logger.e("MainActivity  同步数据成功")
         }
 
-        //   loadingView?.dismiss()
     }
 
 //    //自动扫描并且连接
