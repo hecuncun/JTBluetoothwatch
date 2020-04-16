@@ -198,8 +198,8 @@ class HomeFragment : BaseFragment() {
         //查询当天步数,cal
         val currentList = LitePal.findAll<CurrentDataBean>()
         if (currentList.isNotEmpty()) {
-            tv_step_num_total.text = currentList[0].dailyStepNumTotal.toString()
-            tv_cal_total.text = currentList[0].dailyCalTotal.toString()
+            tv_step_num_total.text = (currentList[0].dailyStepNumTotal+currentList[0].sportStepNumTotal).toString()
+            tv_cal_total.text = (currentList[0].dailyCalTotal+currentList[0].sportCalTotal).toString()
         }
         //获取当天24小时的信息list
         val dateNow = DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd")
@@ -216,14 +216,14 @@ class HomeFragment : BaseFragment() {
             val stepValues = ArrayList<BarEntry>()
             for (i in 0..23) {
                 //val num = (Math.random() * 1000).toFloat()
-                val num = dailyInfoList[i].daily_steps.toFloat()
+                val num = dailyInfoList[i].daily_steps.toFloat()+dailyInfoList[i].sport_steps.toFloat()
                 stepValues.add(BarEntry(i.toFloat(), num))
             }
             //初始化24小时cal表的值
             val calValues = ArrayList<BarEntry>()
             for (i in 0..23) {
                 //val num = (Math.random() * 1000).toFloat()
-                val num = dailyInfoList[i].daily_calorie.toFloat()
+                val num = dailyInfoList[i].daily_calorie.toFloat()+dailyInfoList[i].sport_calorie.toFloat()
                 calValues.add(BarEntry(i.toFloat(), num))
             }
             initBarData(bar_chart_step, stepValues, resources.getColor(R.color.blue_light), resources.getColor(R.color.green_circle))

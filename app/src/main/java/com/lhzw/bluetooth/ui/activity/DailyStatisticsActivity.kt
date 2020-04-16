@@ -58,12 +58,12 @@ class DailyStatisticsActivity : BaseActivity() {
         var sumCal=0
         if(dailyInfoList.isNotEmpty()){
             for (i in 0..23) {
-                sumStep+= dailyInfoList[i].daily_steps
+                sumStep+= (dailyInfoList[i].daily_steps+dailyInfoList[i].sport_distance)
             }
             //初始化24小时cal表的值
 
             for (i in 0..23) {
-                sumCal+= dailyInfoList[i].daily_calorie
+                sumCal+= (dailyInfoList[i].daily_calorie+dailyInfoList[i].sport_calorie)
             }
         }
         tv_step_num.text=sumStep.toString()
