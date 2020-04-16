@@ -8,7 +8,6 @@ import android.content.IntentFilter
 import android.os.IBinder
 import android.telephony.SmsMessage
 import android.text.TextUtils
-import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
@@ -44,7 +43,6 @@ class SmsAndPhoneService : Service() {
     override fun onDestroy() {
         Logger.e("SmsAndPhoneService----onDestroy----unregisterReceiver--------->$NLServerReceiver")
         unregisterReceiver(NLServerReceiver)
-        startService(Intent(App.context,SmsAndPhoneService::class.java))
         super.onDestroy()
     }
 

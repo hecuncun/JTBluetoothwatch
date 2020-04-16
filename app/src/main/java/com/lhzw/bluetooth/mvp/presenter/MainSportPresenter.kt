@@ -6,7 +6,10 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
 import com.amap.api.location.AMapLocation
-import com.amap.api.maps.*
+import com.amap.api.maps.AMap
+import com.amap.api.maps.CameraUpdateFactory
+import com.amap.api.maps.LocationSource
+import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.ClimbingSportBean
@@ -92,6 +95,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 //            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(Constants.LAT, Constants.LGT), Constants.ZOOM))
             locationUtils = LocationUtils()
             locationUtils?.setLocationCallBack(this@MainSportPresenter)
+
             //设置定位监听
             setLocationSource(this@MainSportPresenter);
             //设置缩放级别

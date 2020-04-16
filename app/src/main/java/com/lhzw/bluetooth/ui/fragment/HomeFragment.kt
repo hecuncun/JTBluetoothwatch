@@ -20,7 +20,6 @@ import com.lhzw.bluetooth.bean.DailyInfoDataBean
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.*
-import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.ui.activity.DailyStatisticsActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.XAxisValueFormatter
@@ -259,7 +258,7 @@ class HomeFragment : BaseFragment() {
         if (list.isNotEmpty()) {
             tv_goal_step_num.text = list[0].des_steps.toString()
         }
-        showToast("成功")
+       // showToast("成功")
 
     }
 

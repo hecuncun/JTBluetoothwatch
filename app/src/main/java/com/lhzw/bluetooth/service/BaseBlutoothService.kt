@@ -12,6 +12,7 @@ import android.os.Message
 import android.os.PowerManager
 import android.util.Log
 import android.view.Gravity
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.ble.*
 import com.lhzw.bluetooth.bus.RxBus
@@ -781,6 +782,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
+        App.setActivityContext(null)
         Logger.e("杀死进程")
         onClear()
         Log.e("BluetoothWatch", "onTaskRemoved ...");

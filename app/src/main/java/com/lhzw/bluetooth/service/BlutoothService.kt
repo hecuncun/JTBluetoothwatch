@@ -5,7 +5,6 @@ import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
-import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.BlutoothEvent
@@ -289,12 +288,12 @@ class BlutoothService : BaseBlutoothService() {
         connectState = false
         mContext = null
         Logger.e("重置connectState=false")
-        //  myBleManager?.device_disconnect()
+        myBleManager?.device_disconnect()
         acceptMsg = false
     }
 
     override fun onDestroy() {
-        startService(Intent(App.context, BlutoothService::class.java))
+        mContext=null
         super.onDestroy()
     }
 }

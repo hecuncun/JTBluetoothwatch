@@ -1,7 +1,6 @@
 package com.lhzw.bluetooth.base
 
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -59,7 +58,6 @@ abstract class BaseActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         super.onCreate(savedInstanceState)
-        App.setActivityContext(this@BaseActivity)
         setContentView(attachLayoutRes())
 //        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏
         if (useEventBus()) {
@@ -67,6 +65,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         //initToolBar()
         initView()
+        App.setActivityContext(this@BaseActivity)
         initListener()
         initData()
         initStateBarColor()
