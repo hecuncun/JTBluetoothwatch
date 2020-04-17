@@ -65,11 +65,16 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         //initToolBar()
         initView()
-        App.setActivityContext(this@BaseActivity)
+
         initListener()
         initData()
         initStateBarColor()
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        App.setActivityContext(this@BaseActivity)
     }
 
 //    private fun initToolBar() {
@@ -113,6 +118,12 @@ abstract class BaseActivity : AppCompatActivity() {
             supportFragmentManager.popBackStack()
         }
     }
+
+    override fun onPause() {
+        super.onPause()
+        App.setActivityContext(null)
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()

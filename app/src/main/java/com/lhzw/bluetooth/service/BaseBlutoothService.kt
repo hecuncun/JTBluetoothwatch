@@ -51,12 +51,12 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
+    private var isSyncAscending: Boolean by Preference(Constants.ISSYNCASCENDING, false)//缓存扫码的mac
     private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     private var ERROR = ""
     protected var mContext: Activity? = null
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
-    private var isSyncAscending = false
     private var hasSports = false
     private var progresssBar: SyncProgressBar? = null
     private var sportActivityBeanList = ArrayList<SportActivityBean>()
@@ -174,8 +174,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             CommOperation.deleteAll(SportInfoAddrBean::class.java)
 //            lastConnectedDevice = currentAddrss
             isSyncAscending = false
-        } else {
-            isSyncAscending = true
         }
         EventBus.getDefault().post(ConnectEvent(true))
         //1.连接成功  特征使能
@@ -253,6 +251,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     value.put("current_activity_mark", it.current_activity_mark)
                     CommOperation.update(SportActivityBean::class.java, value, it.id)
                 }
+                if(!isSyncAscending) {
+                    isSyncAscending = true
+                }
+                // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
                 cancelProgressBar()
             } else {
@@ -388,7 +390,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         if (request_code.toInt() == 0x0D) {
             response?.let {
                 if (response.size > 11) {
-                    progresssBar?.refleshProgressBar(0x02)
+                    if (mContext != null && !mContext!!.isFinishing) {
+                        progresssBar?.refleshProgressBar(0x02)
+                    }
                     if (readSportDetailMap.get(ID) == null) {
                         val detail = HashMap<Int, MutableList<Byte>>()
                         readSportDetailMap.put(ID, detail)
@@ -437,9 +441,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 } else {
                     val tmp = it.toList()
                     noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
-//                    if (noFlashMap.get(ID)!!.size == 836) {
-//                        Log.e("DailyData", "$ID : ${BaseUtils.byte2HexStr(noFlashMap.get(ID)!!.toByteArray())}")
-//                    }
                 }
                 if (readDailyBean.isOver) {
                     Thread {
@@ -555,10 +556,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             list[0].request_date = BaseUtils.byteToLong(readActivityBean.request_date.toList())
             list[0].current_activity_mark = readActivityBean.request_mark.toInt()
             sportActivityBeanList.add(list[0])
-//            var value = ContentValues()
-//            value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
-//            value.put("current_activity_mark", readActivityBean.request_mark.toInt())
-//            CommOperation.update(SportActivityBean::class.java, value, list[0].id)
             init_sport_detail_addr()
         } else {
             val bean = readActivityBean.list[readActivityBean.bean_index]
@@ -593,10 +590,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 list[0].request_date = BaseUtils.byteToLong(readActivityBean.request_date.toList())
                 list[0].current_activity_mark = readActivityBean.request_mark.toInt()
                 sportActivityBeanList.add(list[0])
-//                var value = ContentValues()
-//                value.put("request_date", BaseUtils.byteToLong(readActivityBean.request_date.toList()))
-//                value.put("current_activity_mark", readActivityBean.request_mark.toInt())
-//                CommOperation.update(SportActivityBean::class.java, value, list[0].id)
                 // 请求下一个bean 数据
                 readActivityBean.bean_index++
                 readActivityBean.activity_index = 0
@@ -691,7 +684,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
         showProgressBar()
-        progresssBar?.setProgressBarMax(max, 0x02)
+        if(mContext != null && !mContext!!.isFinishing) {
+            progresssBar?.setProgressBarMax(max, 0x02)
+        }
         readSportDetailBean()
     }
 
@@ -755,11 +750,15 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
             }
-            progresssBar?.setProgressBarMax(max, 0x01)
+            if(mContext != null && !mContext!!.isFinishing){
+                progresssBar?.setProgressBarMax(max, 0x01)
+            }
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
                     mContext?.runOnUiThread {
-                        progresssBar?.refleshProgressBar(0x01)
+                        if(!mContext!!.isFinishing){
+                            progresssBar?.refleshProgressBar(0x01)
+                        }
                     }
                 }
                 readSportDetailMap.clear()
@@ -777,7 +776,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             readSportDetailList.add(bean)
         }
     }
-
 
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
@@ -880,8 +878,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         //开始连接进入进度条,连接并初始化成功后再发成功
         hasSports = true
         EventBus.getDefault().post(HideDialogEvent(true))
-        Log.e("CancelDialog", "------------------------------------------   2")
-        if (mContext != null) {
+        if (mContext != null && !mContext!!.isFinishing) {
             if (progresssBar == null) {
                 progresssBar = SyncProgressBar(mContext!!)
             }
@@ -895,7 +892,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     private fun cancelProgressBar() {
         BaseUtils.ifNotNull(mContext, progresssBar) { it, p ->
-            progresssBar?.cancel()
+            if(!it.isFinishing) {
+                p.cancel()
+            }
         }
     }
 }
