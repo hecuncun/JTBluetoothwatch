@@ -58,34 +58,8 @@ class BleConnectService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
         isConnecting=false
-      //  acquireWakeLock()
         return START_STICKY
     }
-//    private var wakeLock: PowerManager.WakeLock? = null
-//    /**
-//     * 获取电源锁，保持该服务在屏幕熄灭时仍然获取CPU时，保持运行
-//     */
-//    private fun acquireWakeLock() {
-//        if (null == wakeLock) {
-//            val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-//            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK
-//                    or PowerManager.ON_AFTER_RELEASE, javaClass
-//                    .canonicalName)
-//            if (null != wakeLock) {
-//                Log.i("WakeLock", "call acquireWakeLock")
-//                wakeLock!!.acquire()
-//            }
-//        }
-//    }
-
-    // 释放设备电源锁
-//    private fun releaseWakeLock() {
-//        if (null != wakeLock && wakeLock!!.isHeld) {
-//            Log.i("WakeLock", "call releaseWakeLock")
-//            wakeLock!!.release()
-//            wakeLock = null
-//        }
-//    }
 
     //开始扫描蓝牙的事件
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -299,7 +273,6 @@ class BleConnectService : Service() {
 
         val filters = mutableListOf<ScanFilter>()//过滤器
         filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
-       // filters.add(ScanFilter.Builder().setServiceUuid(ParcelUuid.fromString("88660002-8866-8866-8866-78A901000000")).build())
         autoScanner?.startScan(filters, settings, scanCallback)
 
         isScanning = true
@@ -318,7 +291,6 @@ class BleConnectService : Service() {
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         Logger.e("BleConnectService  onDestroy ")
-        //releaseWakeLock()
         super.onDestroy()
     }
 }

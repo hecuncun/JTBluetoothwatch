@@ -33,8 +33,7 @@ class BlutoothService : BaseBlutoothService() {
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val flags = START_STICKY;
-        return super.onStartCommand(intent, flags!!, startId)
+        return START_STICKY;
     }
 
     //手动更新个人信息
