@@ -110,29 +110,35 @@ data class SportDetailInfobean(
         // 解析Gps数据 只存储大于0的数据
         private fun parserGps(mark: String, type: Int, interval: Int, sector_time: Int, content: List<Byte>, len: Int) {
             var isStart = false
-            var tmp = LatLng(0.0,0.0)
-            for (index in 0 until len / interval -1) {
+            var tmp = LatLng(0.0, 0.0)
+            var conter = 0
+            for (index in 0 until len / interval - 1) {
                 var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
                 var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
                 if (lat > 0.0 && lgt > 0) {
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
-                    if(!isStart) {
-                        isStart = true
-                        tmp = LatLng(start[0], start[1])
-                        val bean = SportDetailInfobean(
-                                mark,
-                                type,
-                                index,
-                                sector_time,
-                                0,
-                                0,
-                                start[0],
-                                start[1])
-                        CommOperation.insert(bean)
+                    if (!isStart) {
+                        if (conter > 0) {
+                            conter--
+                        } else {
+                            isStart = true
+                            tmp = LatLng(start[0], start[1])
+                            val bean = SportDetailInfobean(
+                                    mark,
+                                    type,
+                                    index,
+                                    sector_time,
+                                    0,
+                                    0,
+                                    start[0],
+                                    start[1])
+                            CommOperation.insert(bean)
+                        }
                     } else {
+
                         val latLng = LatLng(start[0], start[1])
                         val distance = AMapUtils.calculateLineDistance(latLng, tmp)
-                        if (distance > 3.0 && distance < 20) {
+                        if (distance > 3.0 && distance < 30.0) {
                             tmp = latLng
                             val bean = SportDetailInfobean(
                                     mark,
@@ -145,6 +151,11 @@ data class SportDetailInfobean(
                                     start[1])
                             CommOperation.insert(bean)
                         }
+                    }
+                } else {
+                    if (isStart) {
+                        isStart = false
+                        conter = Constants.FILTER_CONTER
                     }
                 }
             }

@@ -499,7 +499,7 @@
                     android:layout_alignBottom="@+id/tv_speed_heart_unit"
                     android:layout_marginRight="8dp"
                     android:layout_toLeftOf="@+id/tv_speed_heart_best"
-                    android:text="最佳"
+                    android:text="最大"
                     android:textColor="@color/gray_lite"
                     android:textSize="@dimen/sp_12" />
 

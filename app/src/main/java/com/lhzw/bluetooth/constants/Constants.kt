@@ -59,6 +59,8 @@ object Constants {
     const val AUTO_CONNECT = "auto_connect"
     const val ACCEPT_MSG = "accept_msg"
 
+    const val FILTER_CONTER = 4
+
 
     const val CONNECT_RESPONSE_CODE: Byte = 0x01//连接参数更新
     const val MTU_RESPONSE_CODE: Byte = 0x03//MTU更新
