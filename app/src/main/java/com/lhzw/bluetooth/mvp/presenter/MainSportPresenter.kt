@@ -11,6 +11,7 @@ import com.amap.api.maps.CameraUpdateFactory
 import com.amap.api.maps.LocationSource
 import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
+import com.amap.api.maps.model.LatLngBounds
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.ClimbingSportBean
 import com.lhzw.bluetooth.bean.FlatSportBean
@@ -161,7 +162,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         }
 //        activity.tv_step_num.text = "$step"
         // 平均步频
-        if(list!!.isNotEmpty()) {
+        if (list!!.isNotEmpty()) {
             activity.tv_step_frequency_av.text = "${step / list!!.size}"
             activity.tv_speed_walk_av.text = "${step / list!!.size}"
         } else {
@@ -222,24 +223,41 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     private fun drawPaths() {
         // 绘制轨迹
-        var conter = 0;
-        var lat = 0.0
-        var lgt = 0.0
+//        var conter = 0;
+        var minLat = 90.0
+        var maxlgt = 0.0
+        var maxLat = 0.0
+        var minLgt = 180.0
         var latLngs = model.queryData(mark, Constants.GPS)
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
             it.forEach {
                 var tmp = LatLng(it.gps_latitude, it.gps_longitude)
-                conter++
-                lat += it.gps_latitude
-                lgt += it.gps_longitude
+                if(it.gps_latitude < minLat) {
+                    minLat = it.gps_latitude
+                }
+                if(it.gps_longitude > maxlgt) {
+                    maxlgt = it.gps_longitude
+                }
+                if(it.gps_latitude > maxLat) {
+                    maxLat = it.gps_latitude
+                }
+                if(it.gps_longitude < minLgt) {
+                    minLgt = it.gps_longitude
+                }
                 list.add(tmp)
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {
                 locationUtils?.drawPath(amp, list)
 //                aMap?.animateCamera(CameraUpdateFactory.changeLatLng(LatLng(lat / conter, lgt / conter)),this)
-                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat / conter, lgt / conter), Constants.ZOOM));
+                var northeast = LatLng(minLat, maxlgt)
+                var southwest = LatLng(maxLat, minLgt)
+                var bounds = LatLngBounds.Builder().include(northeast)
+                        .include(southwest).build();
+                var cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
+                this.aMap?.animateCamera(cameraUpdate, 100L, null);
+//                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat / conter, lgt / conter), Constants.ZOOM));
             }
         }
     }

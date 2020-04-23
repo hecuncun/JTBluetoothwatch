@@ -135,7 +135,6 @@ data class SportDetailInfobean(
                             CommOperation.insert(bean)
                         }
                     } else {
-
                         val latLng = LatLng(start[0], start[1])
                         val distance = AMapUtils.calculateLineDistance(latLng, tmp)
                         if (distance > 3.0 && distance < 30.0) {
