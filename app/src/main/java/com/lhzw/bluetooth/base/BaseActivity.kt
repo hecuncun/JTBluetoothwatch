@@ -1,6 +1,8 @@
 package com.lhzw.bluetooth.base
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
@@ -55,11 +57,12 @@ abstract class BaseActivity : AppCompatActivity() {
     open fun useEventBus(): Boolean = false
 
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏
         setContentView(attachLayoutRes())
-//        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏
         if (useEventBus()) {
             EventBus.getDefault().register(this)
         }
