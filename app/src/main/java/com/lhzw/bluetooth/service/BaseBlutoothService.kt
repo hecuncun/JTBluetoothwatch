@@ -780,7 +780,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
-        App.setActivityContext(null)
+//        App.setActivityContext(null)
+        cancelProgressBar()
         Logger.e("杀死进程")
         onClear()
         Log.e("BluetoothWatch", "onTaskRemoved ...");
@@ -826,7 +827,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         showToast("MTU同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
                     }
-
                 }
             }
         }
@@ -883,7 +883,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 progresssBar = SyncProgressBar(mContext!!)
             }
             progresssBar?.show()
-            progresssBar?.getWindow()?.setGravity(Gravity.BOTTOM)
+            progresssBar?.window?.setGravity(Gravity.BOTTOM)
             var lp = progresssBar?.getWindow()?.attributes
             lp?.y = 110
             progresssBar?.window?.attributes = lp
@@ -894,6 +894,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         BaseUtils.ifNotNull(mContext, progresssBar) { it, p ->
             if(!it.isFinishing) {
                 p.cancel()
+                progresssBar = null
             }
         }
     }
