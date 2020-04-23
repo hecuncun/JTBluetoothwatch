@@ -255,7 +255,7 @@ class BleConnectService : Service() {
 
     //自动扫描并且连接
     private var autoScanner: BluetoothLeScannerCompat? = null
-    private var scannerDelayTime = 1000L//默认一秒
+    private var scannerDelayTime = 2000L//默认一秒
     private fun startAutoScanAndConnect() {
         scannerDelayTime *= 2
         if (scannerDelayTime > 4000L) {

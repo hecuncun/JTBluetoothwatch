@@ -311,6 +311,7 @@ class ConnectFragment : BaseFragment() {
                         if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
                             lastDeviceMacAddress = result.split(",")[2]
                             connectedDeviceName = result.split(",")[1]
+                            autoConnect=false //扫码成功就不自动连接,等连接成功后再设置为自动成功
                             //下面为连接流程
                             loadingView = LoadingView(activity)
                             loadingView?.setLoadingTitle("连接中...")
