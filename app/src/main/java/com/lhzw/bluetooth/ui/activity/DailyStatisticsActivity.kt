@@ -58,7 +58,7 @@ class DailyStatisticsActivity : BaseActivity() {
         var sumCal=0
         if(dailyInfoList.isNotEmpty()){
             for (i in 0..23) {
-                sumStep+= (dailyInfoList[i].daily_steps+dailyInfoList[i].sport_distance)
+                sumStep+= (dailyInfoList[i].daily_steps+dailyInfoList[i].sport_steps)
             }
             //初始化24小时cal表的值
 
