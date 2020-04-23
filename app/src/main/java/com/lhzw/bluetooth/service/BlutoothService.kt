@@ -249,6 +249,7 @@ class BlutoothService : BaseBlutoothService() {
             //  message_size_tmp=  message_size_string.toByteArray(charset("GBK"))
         } catch (e: java.io.UnsupportedEncodingException) {
             e.printStackTrace()
+
         }
 
         System.arraycopy(message_size_tmp, 0, message_size, 0, if (message_size_tmp.size > 4) (message_size.size) else message_size_tmp.size)
