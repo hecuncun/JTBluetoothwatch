@@ -284,6 +284,7 @@ class BleConnectService : Service() {
     }
 
 
+
     override fun onDestroy() {
         EventBus.getDefault().unregister(this)
         Logger.e("BleConnectService  onDestroy ")
