@@ -276,6 +276,7 @@ class BleConnectService : Service() {
             try {
                 if (isScanning) {
                     stopScan()
+
                 }
             } catch (e: Exception) {
                 Log.e("Bluetooth", "Bluetooth sync fail ...")
