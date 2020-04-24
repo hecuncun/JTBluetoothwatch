@@ -21,11 +21,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_16"
         android:layout_marginTop="10dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:duplicateParentState="true"
         android:text="@string/sport_duration"
-        android:textColor="@drawable/bg_selector_sport_tv"
+        android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
         app:layout_constraintLeft_toRightOf="@+id/im_portrait"
         app:layout_constraintTop_toTopOf="parent" />
@@ -175,11 +172,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/tv_ymt"
         app:layout_constraintTop_toTopOf="parent" />
+
     <View
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         android:layout_width="65dp"
-        android:layout_height="1dp" />
+        android:layout_height="1dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
         style="@style/horizontalRecyclerLine"

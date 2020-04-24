@@ -1,6 +1,9 @@
 package com.lhzw.bluetooth.adapter
 
 import android.annotation.SuppressLint
+import android.view.MotionEvent
+import android.view.View
+import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.lhzw.bluetooth.R
@@ -15,7 +18,7 @@ import com.lhzw.bluetooth.uitls.BaseUtils
 @date : 2019/11/18 11:10
  *
  */
-class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAddrBean, BaseViewHolder>(R.layout.item_sport_list, data) {
+class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAddrBean, BaseViewHolder>(R.layout.item_sport_list, data), View.OnTouchListener {
     @SuppressLint("ResourceType")
     override fun convert(helper: BaseViewHolder, item: SportInfoAddrBean?) {
         item?.apply {
@@ -34,8 +37,45 @@ class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAd
             helper.setText(R.id.tv_ymt, "${date[0]}")
             helper.setText(R.id.tv_time, "${date[1]}")
             helper.setText(R.id.tv_duration, "${date[2]}")
+            helper.convertView.setOnTouchListener(this@SportAdapter)
         }
     }
+
+    override fun onTouch(v: View?, event: MotionEvent?): Boolean {
+        event?.let {
+            when (it.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    v?.findViewById<TextView>(R.id.tv_duration_title)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_duration)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_calorie_title)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_calorie)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_allocation_speed_title)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_allocation_speed)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_steps_title)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                }
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                    v?.findViewById<TextView>(R.id.tv_duration_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_duration)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_calorie_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_calorie)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_allocation_speed_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_allocation_speed)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_steps_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                }
+                else -> {
+
+                }
+            }
+        }
+        return false
+    }
+
 }
 
 //class SportAdapter(val mContext: Context, var data: List<SportInfoAddrBean>?) : RecyclerView.Adapter<SportAdapter.Viewholder>(), View.OnClickListener {
