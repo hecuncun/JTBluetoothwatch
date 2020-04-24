@@ -7,4 +7,13 @@
         <item>燃脂</item>
         <item>热身</item>
     </string-array>
+
+    <string-array name="sport_type_list">
+        <item>徒步</item>
+        <item>跑步</item>
+        <item>室内跑</item>
+        <item>徒步</item>
+        <item>跑步</item>
+        <item>室内跑</item>
+    </string-array>
 </resources>

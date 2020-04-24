@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">疆泰户外救援</string>
     <string name="main_home">今天</string>
-    <string name="main_sport_record">运动记录</string>
+    <string name="main_sport_record">运动</string>
     <string name="main_setting">个人设置</string>
     <string name="main_connect">设备连接</string>
     <string name="average_speed_allocation">平均配速</string>
