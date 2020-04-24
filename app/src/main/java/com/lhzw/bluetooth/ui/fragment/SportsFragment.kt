@@ -62,7 +62,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         manager.orientation = LinearLayoutManager.HORIZONTAL
         recycler_title.layoutManager = manager
         BaseUtils.ifNotNull(activity, filter_list) { v, list ->
-            val titleAdapter = SportTypeAdapter(v, list, this@SportsFragment)
+            val titleAdapter = SportTypeAdapter(v, list, this@SportsFragment, recycler_title.layoutParams.height)
             recycler_title.adapter = titleAdapter
         }
 

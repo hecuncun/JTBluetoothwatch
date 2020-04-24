@@ -20,7 +20,7 @@ import com.lhzw.bluetooth.R
  *
  */
 
-class SportTypeAdapter(val activity: Activity, val list: Array<String>, val listener: OnItemClickListener?) : RecyclerView.Adapter<SportTypeAdapter.Viewholder>(), View.OnClickListener {
+class SportTypeAdapter(val activity: Activity, val list: Array<String>, val listener: OnItemClickListener?, val height: Int) : RecyclerView.Adapter<SportTypeAdapter.Viewholder>(), View.OnClickListener {
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val textView: TextView = itemView as TextView
     }
@@ -42,7 +42,7 @@ class SportTypeAdapter(val activity: Activity, val list: Array<String>, val list
         val metrics = DisplayMetrics()
         display.getMetrics(metrics)
         params.width = metrics.widthPixels / 3
-        params.height = metrics.heightPixels / 15
+        params.height = height
         params.gravity = Gravity.CENTER
         textview.layoutParams = params
         val holder = Viewholder(textview)

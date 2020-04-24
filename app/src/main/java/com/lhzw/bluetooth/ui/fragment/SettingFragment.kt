@@ -74,7 +74,6 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             et_target_cal_num.setText(data.des_calorie.toString())
             tv_name.text=nickName
 
-
             et_target_distance_num.setText(data.des_distance.toString())
             counter_max_heart.initNum=data.heart_rate
             tv_birthday.text=if (birthday!!.isEmpty()) "请选择 > " else  birthday

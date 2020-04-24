@@ -24,4 +24,6 @@
     <string name="action_share">分享</string>
     <string name="progress_update_content">运动数据已更新 @</string>
     <string name="progress_parser_content">数据已解析 @</string>
+    <string name="sport_duration">时长</string>
+    <string name="sport_calorie">热量</string>
 </resources>
