@@ -182,7 +182,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         int year = calendar.get(Calendar.YEAR) % 100;
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int weekDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        int weekDay = calendar.get(Calendar.DAY_OF_WEEK) -1;
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);

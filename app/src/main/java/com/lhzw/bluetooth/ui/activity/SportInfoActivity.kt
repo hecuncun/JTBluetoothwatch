@@ -10,11 +10,11 @@ import android.widget.LinearLayout
 import com.amap.api.maps.AMap
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.SportConstract
+import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BitmapUtil
 import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.ShareUtils
 import com.lhzw.kotlinmvp.base.BaseSportActivity
-import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.orhanobut.logger.Logger
 import com.umeng.socialize.UMShareAPI
 import kotlinx.android.synthetic.main.activity_sport_info.*
@@ -67,7 +67,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             finish()
         }
         toolbar_right_img.visibility = View.VISIBLE
-        toolbar_right_img.setBackgroundResource(com.lhzw.bluetooth.R.drawable.bg_share_selector)
+        toolbar_right_img.setBackgroundResource(com.lhzw.bluetooth.R.drawable.icon_share_def)
         toolbar_right_img.setOnClickListener {
             val bitmap = BitmapUtil.shotScrollView(scrollview)
             Logger.e("bitmap=$bitmap")

@@ -609,8 +609,8 @@
                 android:id="@+id/rl_step_stride"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/dp_168"
-                android:visibility="gone"
-                android:background="@color/colorPrimary">
+                android:background="@color/colorPrimary"
+                android:visibility="gone">
 
                 <TextView
                     android:id="@+id/tv_step_stride_title"
@@ -690,7 +690,7 @@
                     android:layout_marginBottom="@dimen/dp_5"></com.github.mikephil.charting.charts.LineChart>
             </RelativeLayout>
 
-<!--            <View style="@style/horizontalSportLine4" />-->
+            <!--            <View style="@style/horizontalSportLine4" />-->
 
             <!-- 心率区间 -->
 
