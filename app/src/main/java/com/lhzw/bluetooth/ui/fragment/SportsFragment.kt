@@ -31,6 +31,14 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     private var list: List<SportInfoAddrBean>? = null
     private var filter_list: Array<String>? = null
     private var adapter: SportAdapter? = null
+    private val SPORT_TYPES = arrayOf(
+            Constants.ACTIVITY_ALL,
+            Constants.ACTIVITY_HIKING,
+            Constants.ACTIVITY_RUNNING,
+            Constants.ACTIVITY_INDOOR,
+            Constants.ACTIVITY_CLIMBING,
+            Constants.ACTIVITY_REDING
+    )
 
     companion object {
         fun getInstance(): SportsFragment = SportsFragment()
@@ -52,7 +60,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         if (hasLoadData) {
             Log.e("Tag", "reflesh ...")
             adapter?.run {
-                setNewData(translateSportBeans())
+                setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
                 notifyDataSetChanged()
             }
         }
@@ -68,8 +76,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
             val titleAdapter = SportTypeAdapter(v, list, this@SportsFragment, recycler_title.layoutParams.height)
             recycler_title.adapter = titleAdapter
         }
-
-        adapter = SportAdapter(translateSportBeans())
+        adapter = SportAdapter(translateSportBeans(Constants.ACTIVITY_ALL))
         adapter?.openLoadAnimation { view ->
             arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
         }
@@ -80,16 +87,20 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         recyclerview.adapter = adapter
     }
 
-    private fun translateSportBeans() : MutableList<SportBean>{
+    private fun translateSportBeans(type: Int): MutableList<SportBean> {
         val sportBeans = ArrayList<SportBean>()
-        list = CommOperation.query(SportInfoAddrBean::class.java)
+        if (type == Constants.ACTIVITY_ALL) {
+            list = CommOperation.query(SportInfoAddrBean::class.java)
+        } else {
+            list = CommOperation.query(SportInfoAddrBean::class.java, "activity_type", "$type")
+        }
         list?.forEach {
             val date = BaseUtils.formatData(it.activity_start, it.activity_end)
             var allocation_speed = ""
             var calorie = 0
             var step = 0
             var distance = 0
-            if(it.activity_type == Constants.ACTIVITY_CLIMBING){
+            if (it.activity_type == Constants.ACTIVITY_CLIMBING) {
                 val detailList = CommOperation.query(ClimbingSportBean::class.java, "sport_detail_mark", it.sport_detail_mark)
                 detailList?.let {
                     calorie = it[0].calorie
@@ -152,6 +163,9 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(pos: Int) {
-        Log.e("Tag", "onClick pos  $pos")
+        adapter?.run {
+            setNewData(translateSportBeans(SPORT_TYPES[pos]))
+            notifyDataSetChanged()
+        }
     }
 }

@@ -16,9 +16,10 @@ object Constants {
     // 运动类型
     const val ACTIVITY_RUNNING = 0xB1  //跑步
     const val ACTIVITY_REDING = 0xB2    //骑车
-    const val ACTIVITY_HIKING = 0xB3    //徒步运动
-    const val ACTIVITY_CLIMBING = 0xB4    //徒步运动
-    const val ACTIVITY_INDOOR = 0xB5    //室内运动
+    const val ACTIVITY_HIKING = 0xB3    //徒步
+    const val ACTIVITY_CLIMBING = 0xB4    //登山
+    const val ACTIVITY_INDOOR = 0xB5    //室内跑
+    const val ACTIVITY_ALL = 0 //全部
 
     //如果设置了target > 28，需要增加这个权限，否则不会弹出"始终允许"这个选择框
     const val BACK_LOCATION_PERMISSION = "android.permission.ACCESS_BACKGROUND_LOCATION"
@@ -102,6 +103,7 @@ object Constants {
     val PI = 3.1415926535897932384626
     val A = 6378245.0
     val EE = 0.00669342162296594323
+
     //  活动列表
     val ACTIVITIES = arrayOf(
             ACTIVITY_RUNNING,
