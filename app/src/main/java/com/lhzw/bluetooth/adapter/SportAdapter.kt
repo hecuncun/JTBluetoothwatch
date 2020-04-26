@@ -1,15 +1,13 @@
 package com.lhzw.bluetooth.adapter
 
-import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import com.chad.library.adapter.base.BaseQuickAdapter
 import com.chad.library.adapter.base.BaseViewHolder
 import com.lhzw.bluetooth.R
-import com.lhzw.bluetooth.bean.SportInfoAddrBean
+import com.lhzw.bluetooth.bean.SportBean
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.uitls.BaseUtils
 
 /**
  *
@@ -18,11 +16,11 @@ import com.lhzw.bluetooth.uitls.BaseUtils
 @date : 2019/11/18 11:10
  *
  */
-class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAddrBean, BaseViewHolder>(R.layout.item_sport_list, data), View.OnTouchListener {
-    @SuppressLint("ResourceType")
-    override fun convert(helper: BaseViewHolder, item: SportInfoAddrBean?) {
+@Suppress("DEPRECATION")
+class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseViewHolder>(R.layout.item_sport_list, data), View.OnTouchListener {
+    override fun convert(helper: BaseViewHolder, item: SportBean?) {
         item?.apply {
-            when (activity_type) {
+            when (type) {
                 Constants.ACTIVITY_HIKING -> {
                     helper.setImageResource(R.id.im_portrait, R.mipmap.icon_hiking_sport)
                 }
@@ -32,11 +30,24 @@ class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAd
                 Constants.ACTIVITY_RUNNING -> {
                     helper.setImageResource(R.id.im_portrait, R.mipmap.icon_running_sport)
                 }
+                Constants.ACTIVITY_CLIMBING -> {
+
+                }
+                Constants.ACTIVITY_INDOOR -> {
+
+                }
             }
-            var date = BaseUtils.formatData(item.activity_start, item.activity_end)
-            helper.setText(R.id.tv_ymt, "${date[0]}")
-            helper.setText(R.id.tv_time, "${date[1]}")
-            helper.setText(R.id.tv_duration, "${date[2]}")
+            helper.setText(R.id.tv_duration, "${duration}")
+            helper.setText(R.id.tv_allocation_speed, "${allocation_speed}")
+            helper.setText(R.id.tv_calorie, "${calorie}")
+            helper.setText(R.id.tv_steps, "$step")
+            if (distance > 999) {
+                helper.setText(R.id.tv_distance, "${String.format("%.1f", distance.toFloat() / 1000)}km")
+                helper.getView<TextView>(R.id.tv_distance).textSize = 16f
+            } else {
+                helper.setText(R.id.tv_distance, "${distance}m")
+                helper.getView<TextView>(R.id.tv_distance).textSize = 24f
+            }
             helper.convertView.setOnTouchListener(this@SportAdapter)
         }
     }
@@ -69,13 +80,11 @@ class SportAdapter(data: List<SportInfoAddrBean>) : BaseQuickAdapter<SportInfoAd
                     v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                 }
                 else -> {
-
                 }
             }
         }
         return false
     }
-
 }
 
 //class SportAdapter(val mContext: Context, var data: List<SportInfoAddrBean>?) : RecyclerView.Adapter<SportAdapter.Viewholder>(), View.OnClickListener {

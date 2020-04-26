@@ -151,7 +151,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     override fun initView(activity: Activity) {
         // 步数
         val list = model.queryData(mark = mark, type = Constants.STEP)
-        val detail = model.queryData<FlatSportBean>(mark)
         var step = 0
         var step_max = 0
         list?.forEach {

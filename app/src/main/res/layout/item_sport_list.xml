@@ -119,12 +119,12 @@
         android:id="@+id/splite"
         android:layout_width="@dimen/dp_1"
         android:layout_height="0dp"
-        android:layout_marginLeft="@dimen/dp_18"
+        android:layout_marginLeft="@dimen/dp_70"
         android:layout_marginTop="@dimen/dp_20"
         android:layout_marginBottom="@dimen/dp_20"
         android:background="@color/gray"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/tv_steps"
+        app:layout_constraintLeft_toRightOf="@+id/tv_steps_title"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView

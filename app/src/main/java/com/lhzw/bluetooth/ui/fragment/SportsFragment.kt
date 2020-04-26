@@ -13,8 +13,12 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.adapter.SportAdapter
 import com.lhzw.bluetooth.adapter.SportTypeAdapter
 import com.lhzw.bluetooth.base.BaseFragment
+import com.lhzw.bluetooth.bean.ClimbingSportBean
+import com.lhzw.bluetooth.bean.FlatSportBean
+import com.lhzw.bluetooth.bean.SportBean
 import com.lhzw.bluetooth.bean.SportInfoAddrBean
 import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.ui.activity.SportInfoActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -47,9 +51,8 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     fun reflesh(str: String) {
         if (hasLoadData) {
             Log.e("Tag", "reflesh ...")
-            list = CommOperation.query(SportInfoAddrBean::class.java)
             adapter?.run {
-                setNewData(list)
+                setNewData(translateSportBeans())
                 notifyDataSetChanged()
             }
         }
@@ -66,8 +69,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
             recycler_title.adapter = titleAdapter
         }
 
-        list = CommOperation.query(SportInfoAddrBean::class.java)
-        adapter = SportAdapter(list!!)
+        adapter = SportAdapter(translateSportBeans())
         adapter?.openLoadAnimation { view ->
             arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
         }
@@ -76,6 +78,55 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         }
         recyclerview.layoutManager = LinearLayoutManager(context)
         recyclerview.adapter = adapter
+    }
+
+    private fun translateSportBeans() : MutableList<SportBean>{
+        val sportBeans = ArrayList<SportBean>()
+        list = CommOperation.query(SportInfoAddrBean::class.java)
+        list?.forEach {
+            val date = BaseUtils.formatData(it.activity_start, it.activity_end)
+            var allocation_speed = ""
+            var calorie = 0
+            var step = 0
+            var distance = 0
+            if(it.activity_type == Constants.ACTIVITY_CLIMBING){
+                val detailList = CommOperation.query(ClimbingSportBean::class.java, "sport_detail_mark", it.sport_detail_mark)
+                detailList?.let {
+                    calorie = it[0].calorie
+                    allocation_speed = "00\'00\""
+                    step = it[0].step_num
+                    distance = it[0].distance
+                }
+            } else {
+                val detailList = CommOperation.query(FlatSportBean::class.java, "sport_detail_mark", it.sport_detail_mark)
+                detailList?.let {
+                    calorie = it[0].calorie
+                    val speed_allocation_arr = BaseUtils.intToByteArray(it[0].speed)
+                    if (speed_allocation_arr[0] < 0x0A) {
+                        allocation_speed += "0"
+                    }
+                    allocation_speed += "${speed_allocation_arr[0].toInt() and 0xFF}${"\'"}"
+                    if (speed_allocation_arr[1] < 0x0A) {
+                        allocation_speed += "0"
+                    }
+                    allocation_speed += "${speed_allocation_arr[1].toInt() and 0xFF}${"\""}"
+                    step = it[0].step_num
+                    distance = it[0].distance
+                }
+            }
+            val bean = SportBean(
+                    it.activity_type,
+                    date[0],
+                    date[1],
+                    date[2],
+                    allocation_speed,
+                    calorie,
+                    step,
+                    distance
+            )
+            sportBeans.add(bean)
+        }
+        return sportBeans
     }
 
     private var body: (view: View, position: Int) -> Any = { _, position ->
@@ -95,6 +146,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     override fun onDestroy() {
         super.onDestroy()
         RxBus.getInstance().unregister(this)
+        filter_list = null
         list = null
         adapter = null
     }
