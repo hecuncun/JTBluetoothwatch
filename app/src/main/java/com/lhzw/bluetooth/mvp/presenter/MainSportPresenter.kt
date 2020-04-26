@@ -105,7 +105,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
-            drawPaths()
+            Thread{drawPaths()}.start()
         }
         return aMap!!
     }
@@ -222,7 +222,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     private fun drawPaths() {
         // 绘制轨迹
-//        var conter = 0;
         var minLat = 90.0
         var maxlgt = 0.0
         var maxLat = 0.0
@@ -248,7 +247,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {
-                locationUtils?.drawPath(amp, list)
 //                aMap?.animateCamera(CameraUpdateFactory.changeLatLng(LatLng(lat / conter, lgt / conter)),this)
                 var northeast = LatLng(minLat, maxlgt)
                 var southwest = LatLng(maxLat, minLgt)
@@ -257,6 +255,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 var cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
                 this.aMap?.animateCamera(cameraUpdate, 100L, null);
 //                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat / conter, lgt / conter), Constants.ZOOM));
+                locationUtils?.drawPath(amp, list)
             }
         }
     }
