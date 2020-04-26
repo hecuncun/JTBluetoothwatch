@@ -86,7 +86,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         aMap = model.initMap(mMapView)
         // 定位蓝点
         aMap?.apply {
-            mapType = AMap.MAP_TYPE_SATELLITE// 矢量地图模式
+            mapType = AMap.MAP_TYPE_NORMAL// 矢量地图模式
 //            uiSettings.isZoomControlsEnabled = false//隐藏放大缩小按钮
 //            uiSettings.isScrollGesturesEnabled = false
 //            uiSettings.isZoomGesturesEnabled = false
@@ -105,7 +105,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
-            Thread{drawPaths()}.start()
+            Thread { drawPaths() }.start()
         }
         return aMap!!
     }
@@ -227,23 +227,28 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         var maxLat = 0.0
         var minLgt = 180.0
         var latLngs = model.queryData(mark, Constants.GPS)
+        val flagLatlgt=
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
+            var tem = null
             var list = ArrayList<LatLng>()
             it.forEach {
                 var tmp = LatLng(it.gps_latitude, it.gps_longitude)
-                if(it.gps_latitude < minLat) {
+                if (it.gps_latitude < minLat) {
                     minLat = it.gps_latitude
                 }
-                if(it.gps_longitude > maxlgt) {
+                if (it.gps_longitude > maxlgt) {
                     maxlgt = it.gps_longitude
                 }
-                if(it.gps_latitude > maxLat) {
+                if (it.gps_latitude > maxLat) {
                     maxLat = it.gps_latitude
                 }
-                if(it.gps_longitude < minLgt) {
+                if (it.gps_longitude < minLgt) {
                     minLgt = it.gps_longitude
                 }
                 list.add(tmp)
+                if(tem == null){
+
+                }
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {
