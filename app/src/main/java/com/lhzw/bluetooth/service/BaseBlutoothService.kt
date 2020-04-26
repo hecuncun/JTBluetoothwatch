@@ -365,20 +365,25 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
             if (response[0].toInt() == 0x0C) {
                 DailyDataBean.parserDailyData(response, isSyncAscending) { datas ->
-                    if (datas.size > 0) {
-                        noFlashMap.clear()
-                    }
-                    // 从noFlash获取数据信息
-                    var len = Constants.MTU_MAX
-                    var isOver = false
-                    if (datas[0].data_len < Constants.MTU_MAX) {
-                        len = datas[0].data_len
-                        if (datas.size == 1) {
-                            isOver = true
+                    if(datas.size == 0) {
+                        // 设置手表蓝牙为低功耗
+                        myBleManager?.settinng_connect_parameter(false)
+                    }else {
+                        if (datas.size > 0) {
+                            noFlashMap.clear()
                         }
+                        // 从noFlash获取数据信息
+                        var len = Constants.MTU_MAX
+                        var isOver = false
+                        if (datas[0].data_len < Constants.MTU_MAX) {
+                            len = datas[0].data_len
+                            if (datas.size == 1) {
+                                isOver = true
+                            }
+                        }
+                        readDailyBean = ReadFlashBean(datas, 0, 0x0C, datas[0].start_addr, len, 1, isOver)
+                        readDailyNoFlash()
                     }
-                    readDailyBean = ReadFlashBean(datas, 0, 0x0C, datas[0].start_addr, len, 1, isOver)
-                    readDailyNoFlash()
                 }
             }
         }
