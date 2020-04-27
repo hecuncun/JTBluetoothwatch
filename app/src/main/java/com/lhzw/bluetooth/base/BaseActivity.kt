@@ -31,6 +31,7 @@ import java.util.*
  */
 abstract class BaseActivity : AppCompatActivity() {
     protected var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+
     /**
      * 布局文件id
      */
@@ -93,7 +94,7 @@ abstract class BaseActivity : AppCompatActivity() {
 //    }
 
     open fun initStateBarColor() {
-        val mThemeColor = App.context.resources.getColor(R.color.colorPrimary)//设置状态栏颜色
+        val mThemeColor = App.context.resources.getColor(R.color.gray_bg_color)//设置状态栏颜色
         StatusBarUtil.setColor(this, mThemeColor, 0)
         if (this.supportActionBar != null) {
             this.supportActionBar?.setBackgroundDrawable(ColorDrawable(mThemeColor))
