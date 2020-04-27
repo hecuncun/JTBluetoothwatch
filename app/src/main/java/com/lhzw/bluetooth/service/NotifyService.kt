@@ -2,6 +2,7 @@ package com.lhzw.bluetooth.service
 
 import android.service.notification.NotificationListenerService
 import android.service.notification.StatusBarNotification
+import android.util.Log
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.NotificationEvent
@@ -13,6 +14,17 @@ import com.orhanobut.logger.Logger
  */
 class NotifyService :NotificationListenerService() {
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+
+    override fun onListenerConnected() {
+        Log.e("NotifyService","通知服务已连接 onListenerConnected....")
+        super.onListenerConnected()
+    }
+
+    override fun onListenerDisconnected() {
+        Log.e("NotifyService","通知服务断开连接 onListenerConnected....")
+        super.onListenerDisconnected()
+    }
+
     override fun onNotificationPosted(sbn: StatusBarNotification?) {
         super.onNotificationPosted(sbn)
     }

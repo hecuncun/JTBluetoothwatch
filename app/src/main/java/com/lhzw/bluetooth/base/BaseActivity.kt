@@ -176,6 +176,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                Log.e("permission","$permission 没授权")
                 return false
             }
         }

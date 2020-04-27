@@ -106,7 +106,12 @@ class BleConnectService : Service() {
           showToast("数据同步成功")
         }
         isConnecting=false
-        loadingView?.dismiss()
+        try {
+            loadingView?.dismiss()
+        }catch (e:java.lang.Exception){
+            e.printStackTrace()
+        }
+
     }
 
 

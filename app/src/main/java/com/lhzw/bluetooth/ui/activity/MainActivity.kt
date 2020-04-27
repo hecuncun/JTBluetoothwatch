@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
 import android.support.design.bottomnavigation.LabelVisibilityMode
@@ -16,7 +17,7 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
-import com.lhzw.bluetooth.application.App
+import androidx.annotation.RequiresApi
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
@@ -61,12 +62,13 @@ class MainActivity : BaseActivity() {
 
     override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
-        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
+        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS,Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS,Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
             Logger.e("已获取监听电话短信权限")
         } else {
-            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
+            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
         }
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")

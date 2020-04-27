@@ -52,6 +52,7 @@ class SmsAndPhoneService : Service() {
             var name = ""
             val action = paramIntent.action ?: return
             if (action == "android.provider.Telephony.SMS_RECEIVED") {
+                Logger.e("SmsAndPhoneService服务收到短息==>Telephony.SMS_RECEIVED")
                 var msg = ""
                 //---接收传入的消息---
                 val bundle = paramIntent.extras
@@ -72,8 +73,8 @@ class SmsAndPhoneService : Service() {
                     Logger.e("SmsAndPhoneService服务收到短息==>$name($phoneNumber):$msg")
                     val message = name+phoneNumber+":"+msg
                     if (connectState) {
-                        Logger.e("SmsAndPhoneService发送来短信通知给手表==>$message")
-                        RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
+                        //Logger.e("SmsAndPhoneService发送来短信通知给手表==>$message")
+                       // RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
                     }
                 }
 
