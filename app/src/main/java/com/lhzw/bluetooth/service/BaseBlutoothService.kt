@@ -360,7 +360,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onDailyDataRequestResponse(response: ByteArray?) {
 //        Log.e("Tag", "onDailyDataRequestResponse ...  ${BaseUtils.byte2HexStr(response!!)}")
-        Log.e("callBackBluetooth", "onDailyDataRequestResponse....")
+        Log.e("callBackBluetooth", "onDailyDataRequestResponse.... ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
             if (response[0].toInt() == 0x0C) {
                 DailyDataBean.parserDailyData(response, isSyncAscending) { datas ->

@@ -183,6 +183,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
         int weekDay = calendar.get(Calendar.DAY_OF_WEEK) -1;
+        if(weekDay == 0) weekDay = 7;
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
@@ -195,6 +196,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         Logger.i(TAG, "minute : " + String.valueOf(minute));
         Logger.i(TAG, "second : " + String.valueOf(second));
         Logger.i(TAG, "zone : " + String.valueOf(zone));
+        Log.e("BLETime", "weakday  " + String.valueOf(weekDay));
         listByte.add((byte) year);
         listByte.add((byte) month);
         listByte.add((byte) day);
