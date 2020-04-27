@@ -15,6 +15,7 @@ import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.uitls.StringDealUtils
 import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
 
@@ -134,22 +135,24 @@ class BlutoothService : BaseBlutoothService() {
         for (i in title.indices) {
             title[i] = 0
         }
-
+      val msgString = StringDealUtils.dealBlankString(event.tickerText)
+        Logger.e("MSG==>$msgString")
         var title_string = ""
         var title_tmp = ByteArray(0)
-        val split = event.tickerText.split(":")
-        if (split.isNotEmpty()) {
-            title_string = split[0].trim()//来电姓名或号码
+        if (msgString.indexOf(":")!=-1){
+            title_string=msgString.substring(0,msgString.indexOf(":"))//来电姓名或号码
+        }else{
+            title_string=msgString
         }
+     Logger.e("title_string==>$title_string")
         try {
             title_string.forEach {
-                title_tmp = title_tmp.plus(it.toString().toByteArray(charset("GBK")))
                 // Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
-//                if (BaseUtils.isChinese(it)) {//是中文
-//                    title_tmp = title_tmp.plus(it.toString().toByteArray(charset("GBK")))
-//                } else {//不是中文
-//                    title_tmp = title_tmp.plus(it.toString().toByteArray(charset("US-ASCII")))
-//                }
+                if (BaseUtils.isChinese(it)) {//是中文
+                    title_tmp = title_tmp.plus(it.toString().toByteArray(charset("GBK")))
+                } else {//不是中文
+                    title_tmp = title_tmp.plus(it.toString().toByteArray(charset("US-ASCII")))
+                }
             }
             Logger.e("title_tmp byte[]==${BaseUtils.byte2HexStr(title_tmp)}")
             if (title_tmp.size >= 64) {
@@ -201,8 +204,8 @@ class BlutoothService : BaseBlutoothService() {
 
         var message_string = ""//短消息内容  最大96字节
         var message_tmp = ByteArray(0)
-        if (split.size > 1) {
-            message_string = split[1].trim()
+        if (title_string.length+1<msgString.length){
+            message_string= msgString.substring(title_string.length+1,msgString.length)
         }
         try {
 
