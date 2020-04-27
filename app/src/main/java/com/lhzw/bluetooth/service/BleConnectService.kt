@@ -103,7 +103,7 @@ class BleConnectService : Service() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
         if (event.success){
-            Logger.e("数据同步数据成功")
+          showToast("数据同步成功")
         }
         isConnecting=false
         loadingView?.dismiss()

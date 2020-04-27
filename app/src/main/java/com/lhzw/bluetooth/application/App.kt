@@ -21,6 +21,7 @@ import com.orhanobut.logger.PrettyFormatStrategy
 import com.simple.spiderman.SpiderMan
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
+import com.tencent.bugly.crashreport.CrashReport
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.socialize.PlatformConfig
@@ -99,6 +100,9 @@ class App : MultiDexApplication() {
         PlatformConfig.setQQZone("1110222616", "Q59lLBkXbLssHlK")
 
         MobclickAgent.setPageCollectionMode(MobclickAgent.PageMode.AUTO);
+
+        //BUGly初始化
+        CrashReport.initCrashReport(applicationContext, "9493728e5c", false)
     }
 
     private fun setupLeakCanary(): RefWatcher? {

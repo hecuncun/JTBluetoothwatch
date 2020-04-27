@@ -102,7 +102,6 @@ class ConnectFragment : BaseFragment() {
                 RxBus.getInstance().post("sync", SyncDataEvent("sync"))
                 if (loadingView == null) {
                     loadingView = LoadingView(activity)
-
                 }
                 loadingView?.setLoadingTitle("同步数据...")
                 loadingView?.show()

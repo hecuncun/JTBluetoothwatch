@@ -70,7 +70,8 @@ import java.util.Map;
 
 		synchronized (wrappers) {
 			if (wrappers.containsKey(callback)) {
-				throw new IllegalArgumentException("scanner already started with given callback");
+				//throw new IllegalArgumentException("scanner already started with given callback");
+				return;
 			}
 			wrapper = new ScanCallbackWrapperLollipop(offloadedBatchingSupported,
 					offloadedFilteringSupported, filters, settings, callback, handler);

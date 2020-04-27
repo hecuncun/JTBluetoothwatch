@@ -62,16 +62,17 @@ class SmsAndPhoneService : Service() {
                     for (i in msgs.indices) {
                         msgs[i] = SmsMessage.createFromPdu(pdus[i] as ByteArray)
                         if (i == 0) { //---获取发送者手机号---
-                            phoneNumber = msgs[i]?.getOriginatingAddress().toString()
-                            name=PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber)
+                            phoneNumber = msgs[i]?.getOriginatingAddress().toString().trim()
+                            name=PhoneUtil.getDisplayNameByPhone1(paramContext, phoneNumber).trim()
                         }
                         //---获取消息内容---
-                        msg = msgs[i]?.getMessageBody().toString()
+                        msg = msgs[i]?.getMessageBody().toString().trim()
                     }
                     //---显示SMS消息---
-                    Logger.e("收到短息==>$name($phoneNumber):$msg")
+                    Logger.e("SmsAndPhoneService服务收到短息==>$name($phoneNumber):$msg")
                     val message = name+phoneNumber+":"+msg
                     if (connectState) {
+                        Logger.e("SmsAndPhoneService发送来短信通知给手表==>$message")
                         RxBus.getInstance().post("notification", NotificationEvent(100, message, Constants.MMS))
                     }
                 }
@@ -90,8 +91,7 @@ class SmsAndPhoneService : Service() {
                         }catch (e:Exception){
                             e.printStackTrace()
                         }
-
-                        Logger.e("收到来电phoneNumber==$phoneNumber===name==$name")
+                        Logger.e("SmsAndPhoneService收到来电phoneNumber==$phoneNumber===name==$name")
                         if (connectState) {
                             RxBus.getInstance().post("notification", NotificationEvent(101, name + phoneNumber, Constants.CALL_COMING))
                         }

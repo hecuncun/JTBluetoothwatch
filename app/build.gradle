@@ -13,8 +13,8 @@ android {
         applicationId "com.lhzw.bluetooth"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 12
-        versionName "v2.2.2e"
+        versionCode 16
+        versionName "v2.2.6e"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -121,4 +121,6 @@ dependencies {
         exclude module: 'support-v4'
         exclude module: 'support-v7'
     }
+    //bugly
+    implementation 'com.tencent.bugly:crashreport:latest.release'
 }

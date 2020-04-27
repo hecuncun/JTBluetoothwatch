@@ -12,7 +12,6 @@ import android.os.Message
 import android.os.PowerManager
 import android.util.Log
 import android.view.Gravity
-import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.ble.*
 import com.lhzw.bluetooth.bus.RxBus
@@ -80,7 +79,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 有活动数据显示进度条
     override fun onActivityAddressRequestResponse(response: ByteArray?) {
-        Log.e("callBackBluetooth", "onActivityAddressRequestResponse....")
+        Log.e("callBackBluetooth", "onActivityAddressRequestResponse.... ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
             if (response[0].toInt() == 0x0E) {
                 if (sportActivityBeanList.size > 0) {
@@ -335,7 +334,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     // 获取活动数据
     override fun onSportsParamReadResponse(response: ByteArray?, ID: String) {
         response?.let {
-//            Log.e("readSport", "onSportsParamReadResponse ... ${BaseUtils.byte2HexStr(response)}")
+            Log.e("readSport", "onSportsParamReadResponse ... ${BaseUtils.byte2HexStr(response)}")
             Log.e("callBackBluetooth", "onSportsParamReadResponse.... $ID")
             if (response[0].toInt() == 0x0D && Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)) {
                 //解析当前活动

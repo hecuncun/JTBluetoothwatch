@@ -28,6 +28,9 @@ class NotifyService :NotificationListenerService() {
         if (connectState){//处于连接状态就推送消息
             sbn?.let {
                 if (sbn.notification.tickerText!=null){
+                    if(sbn.packageName==Constants.MMS){
+                        Logger.e("NotifyService发送来短信通知给手表")
+                    }
                     RxBus.getInstance().post("notification", NotificationEvent(sbn.id,sbn.notification.tickerText.toString(),sbn.packageName))
                 }
 
