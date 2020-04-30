@@ -32,7 +32,7 @@ class NotifyService :NotificationListenerService() {
     override fun onNotificationRemoved(sbn: StatusBarNotification?) {
         super.onNotificationRemoved(sbn)
     }
-
+     private var temp_mms=""
     override fun onNotificationPosted(sbn: StatusBarNotification?, rankingMap: RankingMap?) {//通知来时调用
         super.onNotificationPosted(sbn, rankingMap)
         //判断来源
@@ -41,6 +41,10 @@ class NotifyService :NotificationListenerService() {
             sbn?.let {
                 if (sbn.notification.tickerText!=null){
                     if(sbn.packageName==Constants.MMS){
+                        if (temp_mms==sbn.notification.tickerText.toString()){//过滤掉重复短信
+                            return
+                        }
+                        temp_mms=sbn.notification.tickerText.toString()
                         Logger.e("NotifyService发送来短信通知给手表")
                     }
                     RxBus.getInstance().post("notification", NotificationEvent(sbn.id,sbn.notification.tickerText.toString(),sbn.packageName))
