@@ -1,6 +1,7 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -8,12 +9,15 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Build
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.adapter.SportAdapter
 import com.lhzw.bluetooth.base.BaseShareActivity
 import com.lhzw.bluetooth.glide.GlideUtils
+import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.BitmapUtil
 import com.makeramen.roundedimageview.RoundedDrawable
 import kotlinx.android.synthetic.main.activity_intraday_ports.*
@@ -39,6 +43,20 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
         val blurBitmap = blurBitmap(this, bmp, 20f);
         im_background.setImageBitmap(blurBitmap);
         GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
+
+        // 获取 当天的活动
+        Log.e("ShareSport", "${BaseUtils.getCurrentData()}")
+        val adapter = SportAdapter(translateSportBeans())
+        adapter?.openLoadAnimation { view ->
+            arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
+        }
+        adapter?.setOnItemClickListener { _, view, position ->
+//            body(view, position)
+        }
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+
     }
 
     override fun initView() {
@@ -63,7 +81,8 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
                 R.id.im_back -> {
                     this.finish()
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
     }

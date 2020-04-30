@@ -1,8 +1,6 @@
 package com.lhzw.bluetooth.db
 
 import android.content.ContentValues
-import android.os.Build
-import androidx.annotation.RequiresApi
 import org.litepal.LitePal
 import org.litepal.crud.LitePalSupport
 
@@ -152,5 +150,15 @@ object CommOperation {
             }
         }
         return LitePal.where(sql, *conditions).order(order).find(clazz)
+    }
+
+    /**
+     * 模糊查询
+     */
+
+    inline fun <reified T : LitePalSupport> queryFuzzy(clazz: Class<T>, key: String, value: String): List<T>? {
+        val conditions = arrayOf("%$value%")
+        val sql = "$key like ?"
+        return LitePal.where(sql, *conditions).find(clazz)
     }
 }

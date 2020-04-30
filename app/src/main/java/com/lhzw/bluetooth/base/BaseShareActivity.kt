@@ -32,11 +32,13 @@ import android.view.View
 import android.view.WindowManager
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
+import com.lhzw.bluetooth.bean.ClimbingSportBean
+import com.lhzw.bluetooth.bean.FlatSportBean
+import com.lhzw.bluetooth.bean.SportBean
+import com.lhzw.bluetooth.bean.SportInfoAddrBean
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.uitls.CommonUtil
-import com.lhzw.bluetooth.uitls.KeyBoardUtil
-import com.lhzw.bluetooth.uitls.Preference
-import com.lhzw.bluetooth.uitls.StatusBarUtil
+import com.lhzw.bluetooth.db.CommOperation
+import com.lhzw.bluetooth.uitls.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
@@ -386,8 +388,8 @@ abstract class BaseShareActivity : AppCompatActivity() {
 
         // 由于RenderScript并没有使用VM来分配内存,所以需要使用Allocation类来创建和分配内存空间
         // 创建Allocation对象的时候其实内存是空的,需要使用copyTo()将数据填充进去
-        val tmpIn = Allocation . createFromBitmap (rs, inputBitmap);
-        val tmpOut = Allocation . createFromBitmap (rs, outputBitmap);
+        val tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        val tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
 
         // 设置渲染的模糊程度, 25f是最大模糊度
         blurScript.setRadius(blurRadius);
@@ -400,4 +402,54 @@ abstract class BaseShareActivity : AppCompatActivity() {
         tmpOut.copyTo(outputBitmap);
         return outputBitmap;
     }
+
+    protected fun translateSportBeans(): MutableList<SportBean> {
+        val sportBeans = ArrayList<SportBean>()
+        val list = CommOperation.queryFuzzy(SportInfoAddrBean::class.java, "daily_date_mark", BaseUtils.getCurrentData())
+        list?.forEach {
+            val date = BaseUtils.formatData(it.activity_start, it.activity_end)
+            var allocation_speed = ""
+            var calorie = 0
+            var step = 0
+            var distance = 0
+            if (it.activity_type == Constants.ACTIVITY_CLIMBING) {
+                val detailList = CommOperation.query(ClimbingSportBean::class.java, "sport_detail_mark", it.sport_detail_mark)
+                detailList?.let {
+                    calorie = it[0].calorie
+                    allocation_speed = "00\'00\""
+                    step = it[0].step_num
+                    distance = it[0].distance
+                }
+            } else {
+                val detailList = CommOperation.query(FlatSportBean::class.java, "sport_detail_mark", it.sport_detail_mark)
+                detailList?.let {
+                    calorie = it[0].calorie
+                    val speed_allocation_arr = BaseUtils.intToByteArray(it[0].speed)
+                    if (speed_allocation_arr[0] < 0x0A) {
+                        allocation_speed += "0"
+                    }
+                    allocation_speed += "${speed_allocation_arr[0].toInt() and 0xFF}${"\'"}"
+                    if (speed_allocation_arr[1] < 0x0A) {
+                        allocation_speed += "0"
+                    }
+                    allocation_speed += "${speed_allocation_arr[1].toInt() and 0xFF}${"\""}"
+                    step = it[0].step_num
+                    distance = it[0].distance
+                }
+            }
+            val bean = SportBean(
+                    it.activity_type,
+                    date[0],
+                    date[1],
+                    date[2],
+                    allocation_speed,
+                    calorie,
+                    step,
+                    distance
+            )
+            sportBeans.add(bean)
+        }
+        return sportBeans
+    }
+
 }
