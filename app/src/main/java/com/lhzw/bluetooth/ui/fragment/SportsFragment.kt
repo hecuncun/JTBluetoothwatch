@@ -20,6 +20,7 @@ import com.lhzw.bluetooth.bean.SportInfoAddrBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
+import com.lhzw.bluetooth.ui.activity.IntradaySportsActivity
 import com.lhzw.bluetooth.ui.activity.SportInfoActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import kotlinx.android.synthetic.main.fragment_sports.*
@@ -166,6 +167,9 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         adapter?.run {
             setNewData(translateSportBeans(SPORT_TYPES[pos]))
             notifyDataSetChanged()
+            if (pos == 5) {
+                startActivity(Intent(activity, IntradaySportsActivity::class.java))
+            }
         }
     }
 }

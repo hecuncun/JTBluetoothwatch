@@ -115,6 +115,8 @@ data class SportDetailInfobean(
             for (index in 0 until len / interval - 1) {
                 var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
                 var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
+
+                Log.e("GPS_LATLGT" , "mark  ${mark}  lat : ${lat}, lgt  ${lgt}")
                 if (lat > 0.0 && lgt > 0) {
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
                     if (!isStart) {

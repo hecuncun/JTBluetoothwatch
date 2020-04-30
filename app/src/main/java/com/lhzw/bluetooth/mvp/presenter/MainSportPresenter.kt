@@ -106,6 +106,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
             Thread { drawPaths() }.start()
+
         }
         return aMap!!
     }
@@ -227,9 +228,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         var maxLat = 0.0
         var minLgt = 180.0
         var latLngs = model.queryData(mark, Constants.GPS)
-        val flagLatlgt=
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
-            var tem = null
             var list = ArrayList<LatLng>()
             it.forEach {
                 var tmp = LatLng(it.gps_latitude, it.gps_longitude)
@@ -246,21 +245,18 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                     minLgt = it.gps_longitude
                 }
                 list.add(tmp)
-                if(tem == null){
-
-                }
             }
             Log.e("LatLon", "draw paths ....")
             if (list.size > 0) {
-//                aMap?.animateCamera(CameraUpdateFactory.changeLatLng(LatLng(lat / conter, lgt / conter)),this)
                 var northeast = LatLng(minLat, maxlgt)
                 var southwest = LatLng(maxLat, minLgt)
                 var bounds = LatLngBounds.Builder().include(northeast)
                         .include(southwest).build();
                 var cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, 100);
-                this.aMap?.animateCamera(cameraUpdate, 100L, null);
-//                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(lat / conter, lgt / conter), Constants.ZOOM));
+//                aMap?.animateCamera(cameraUpdate, 100L, null);
+                aMap?.moveCamera(cameraUpdate)
                 locationUtils?.drawPath(amp, list)
+//                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(list[0], Constants.ZOOM))
             }
         }
     }

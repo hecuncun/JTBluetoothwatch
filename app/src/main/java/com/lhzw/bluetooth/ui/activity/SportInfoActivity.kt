@@ -52,11 +52,11 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
             attachView(this@SportInfoActivity)
+            initChart(this@SportInfoActivity)
+            initView(this@SportInfoActivity)
             if (requirePermission(this@SportInfoActivity)) {
                 aMap = initMap(mMapView)
             }
-            initChart(this@SportInfoActivity)
-            initView(this@SportInfoActivity)
         }
     }
 
