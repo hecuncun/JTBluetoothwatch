@@ -180,6 +180,6 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        style="@style/horizontalRecyclerLine"
+        style="@style/horizontalsplite"
         tools:ignore="MissingConstraints" />
 </android.support.constraint.ConstraintLayout>
