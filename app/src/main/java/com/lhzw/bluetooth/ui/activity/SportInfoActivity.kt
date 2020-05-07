@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import com.amap.api.maps.AMap
+import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
@@ -17,6 +18,7 @@ import com.lhzw.bluetooth.uitls.ShareUtils
 import com.lhzw.kotlinmvp.base.BaseSportActivity
 import com.orhanobut.logger.Logger
 import com.umeng.socialize.UMShareAPI
+import com.xw.repo.supl.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_sport_info.*
 import kotlinx.android.synthetic.main.toolbar.*
 
@@ -29,7 +31,7 @@ import kotlinx.android.synthetic.main.toolbar.*
  *
  */
 
-class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View {
+class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener {
     private var aMap: AMap? = null
     override fun getLayoutId(): Int {
         return com.lhzw.bluetooth.R.layout.activity_sport_info
@@ -56,6 +58,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             initView(this@SportInfoActivity)
             if (requirePermission(this@SportInfoActivity)) {
                 aMap = initMap(mMapView)
+                aMap?.setOnMapClickListener(this@SportInfoActivity)
             }
         }
     }
@@ -83,6 +86,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             Constants.REQUESTCODE -> {
                 if (Build.VERSION.SDK_INT >= 23) {
                     aMap = mPresenter?.initMap(mMapView!!)
+                    aMap?.setOnMapClickListener(this@SportInfoActivity)
                 }
             }
         }
@@ -102,6 +106,15 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         super.onDestroy()
         aMap?.apply {
             aMap = null
+        }
+    }
+
+    override fun onMapClick(latLgt: LatLng?) {
+        Log.e("onMap", "onClick ....")
+        if (panelViewList[0].slideState == SlidingUpPanelLayout.COLLAPSED) {
+            sliding_up_panel_layout.hiddedPanel()
+        } else if (panelViewList[0].slideState == SlidingUpPanelLayout.HIDDEN) {
+            sliding_up_panel_layout.collapsePanel()
         }
     }
 }

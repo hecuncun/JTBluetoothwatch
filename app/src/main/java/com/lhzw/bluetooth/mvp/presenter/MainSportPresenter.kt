@@ -87,12 +87,12 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         // 定位蓝点
         aMap?.apply {
             mapType = AMap.MAP_TYPE_SATELLITE// 矢量地图模式
-//            uiSettings.isZoomControlsEnabled = false//隐藏放大缩小按钮
+            uiSettings.isZoomControlsEnabled = false//隐藏放大缩小按钮
 //            uiSettings.isScrollGesturesEnabled = false
 //            uiSettings.isZoomGesturesEnabled = false
-//            uiSettings.isRotateGesturesEnabled = false
+            uiSettings.isRotateGesturesEnabled = false
 //            uiSettings.isTiltGesturesEnabled = false
-            uiSettings.setAllGesturesEnabled(false)
+//            uiSettings.setAllGesturesEnabled(false)
 //            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(Constants.LAT, Constants.LGT), Constants.ZOOM))
             locationUtils = LocationUtils()
             locationUtils?.setLocationCallBack(this@MainSportPresenter)

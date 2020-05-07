@@ -9,6 +9,12 @@
     <color name="text_gray_color">#888888</color>
     <color name="white">#FFFFFF</color>
     <color name="orange">#F15A24</color>
+    <color name="gradient_left_start">#E85521</color>
+    <color name="gradient_left_end">#E58716</color>
+    <color name="gradient_medi_start">#E58716</color>
+    <color name="gradient_medi_end">#11AD41</color>
+    <color name="gradient_right_start">#11AD41</color>
+    <color name="gradient_right_end">#11837F</color>
     <color name="gray_bg_color">#313131</color>
     <color name="text_color">#0B0B0B</color>
     <!-- 浅浅蓝摁下 -->
