@@ -2,12 +2,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.lhzw.bluetooth">
+
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.READ_LOGS"
+    <uses-permission
+        android:name="android.permission.READ_LOGS"
         tools:ignore="ProtectedPermissions" />
+
     <application
         android:name=".application.App"
         android:allowBackup="true"
@@ -22,6 +25,7 @@
 
         <activity android:name=".ui.activity.MainActivity"></activity>
         <activity android:name=".ui.activity.IntradaySportsActivity"></activity>
+        <activity android:name=".ui.activity.SharePosterActivity"></activity>
 
         <activity
             android:name=".ui.activity.SplashActivity"
@@ -32,8 +36,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.activity.SportInfoActivity" />
+        <activity android:name=".ui.activity.SportInfoActivity" />
         <!--设计图大小-->
         <activity android:name=".ui.activity.DailyStatisticsActivity" />
         <activity
@@ -126,7 +129,7 @@
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </service>
-<!--       连接服务-->
+        <!--       连接服务-->
         <service android:name=".service.BleConnectService" />
 
     </application>
@@ -134,12 +137,13 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- 监听手机短信权限   -->
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
-    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_NUMBERS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_MMS"/>
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
+    <uses-permission
+        android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
@@ -201,11 +205,11 @@
     <!-- 用于读取手机当前的状态 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!--    读写通讯录-->
-    <uses-permission android:name="android.permission.READ_CONTACTS"/>
-    <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
-<!--防止休眠-->
+    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+    <!--防止休眠-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.DEVICE_POWER"/>
+    <uses-permission android:name="android.permission.DEVICE_POWER" />
     <!-- 友盟权限 -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />

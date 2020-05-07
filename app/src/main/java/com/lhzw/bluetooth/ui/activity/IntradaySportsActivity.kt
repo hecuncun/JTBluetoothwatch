@@ -16,6 +16,7 @@ import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.adapter.SportAdapter
 import com.lhzw.bluetooth.base.BaseShareActivity
+import com.lhzw.bluetooth.bean.ShareBgBean
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.BitmapUtil
@@ -32,15 +33,17 @@ import kotlinx.android.synthetic.main.activity_intraday_ports.*
  */
 class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     private val PICK_PHOTO = 0x00102
+
     override fun attachLayoutRes(): Int {
         return R.layout.activity_intraday_ports
     }
 
     override fun initData() {
         //拿到初始图
-        val bmp = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default);
+        sharBean = ShareBgBean(R.drawable.icon_share_default, null)
+        val bg = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
         //处理得到模糊效果的图
-        val blurBitmap = blurBitmap(this, bmp, 20f);
+        val blurBitmap = blurBitmap(this, bg, 20f);
         im_background.setImageBitmap(blurBitmap);
         GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
 
@@ -76,7 +79,9 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
                     requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 0x00099)
                 }
                 R.id.im_share -> {
-
+                    val intent = Intent(this, SharePosterActivity::class.java)
+                    intent.putExtra("bg_bitmap", sharBean)
+                    startActivity(intent)
                 }
                 R.id.im_back -> {
                     this.finish()
@@ -118,8 +123,9 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     private fun displayImage(path: String?) {
         if (path != null) {
             Log.e("ImagePath", "path : $path")
-            val bitmap = BitmapFactory.decodeFile(path)
-            val blurBitmap = blurBitmap(this, bitmap, 20f);
+            sharBean?.path = path
+            val bg = BitmapFactory.decodeFile(path)
+            val blurBitmap = blurBitmap(this, bg, 20f);
             im_background.setImageBitmap(blurBitmap);
         } else {
             Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();

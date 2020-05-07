@@ -64,7 +64,7 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
                     v?.findViewById<TextView>(R.id.tv_allocation_speed)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                     v?.findViewById<TextView>(R.id.tv_steps_title)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                     v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
-                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.white)!!)
+//                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.white)!!)
                     v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                 }
                 MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
@@ -76,7 +76,7 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
                     v?.findViewById<TextView>(R.id.tv_allocation_speed)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_steps_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
-                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.gray)!!)
+//                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                 }
                 else -> {

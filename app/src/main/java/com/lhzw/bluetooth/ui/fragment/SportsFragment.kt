@@ -114,11 +114,17 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
                 detailList?.let {
                     calorie = it[0].calorie
                     val speed_allocation_arr = BaseUtils.intToByteArray(it[0].speed)
-                    if (speed_allocation_arr[0] < 0x0A) {
+                    if(speed_allocation_arr[0].toInt() < 0){
+                        speed_allocation_arr[0] = 0
+                    }
+                    if (speed_allocation_arr[0].toInt() < 0x0A) {
                         allocation_speed += "0"
                     }
                     allocation_speed += "${speed_allocation_arr[0].toInt() and 0xFF}${"\'"}"
-                    if (speed_allocation_arr[1] < 0x0A) {
+                    if(speed_allocation_arr[1].toInt() < 0){
+                        speed_allocation_arr[1] = 0
+                    }
+                    if (speed_allocation_arr[1].toInt() < 0x0A) {
                         allocation_speed += "0"
                     }
                     allocation_speed += "${speed_allocation_arr[1].toInt() and 0xFF}${"\""}"

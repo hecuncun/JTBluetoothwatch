@@ -94,7 +94,7 @@ abstract class BaseActivity : AppCompatActivity() {
 //    }
 
     open fun initStateBarColor() {
-        val mThemeColor = App.context.resources.getColor(R.color.gray_bg_color)//设置状态栏颜色
+        val mThemeColor = App.context.resources.getColor(R.color.colorPrimary)//设置状态栏颜色
         StatusBarUtil.setColor(this, mThemeColor, 0)
         if (this.supportActionBar != null) {
             this.supportActionBar?.setBackgroundDrawable(ColorDrawable(mThemeColor))

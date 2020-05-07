@@ -32,10 +32,7 @@ import android.view.View
 import android.view.WindowManager
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
-import com.lhzw.bluetooth.bean.ClimbingSportBean
-import com.lhzw.bluetooth.bean.FlatSportBean
-import com.lhzw.bluetooth.bean.SportBean
-import com.lhzw.bluetooth.bean.SportInfoAddrBean
+import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.*
@@ -50,6 +47,7 @@ abstract class BaseShareActivity : AppCompatActivity() {
     private val MEDIA_DOCUMENTS = "com.android.providers.media.documents"
     private val DOWNLOAD_DOCUMENTS = "com.android.providers.downloads.documents"
     protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
+    protected var sharBean : ShareBgBean? = null
 
     /**
      * 布局文件id
@@ -147,6 +145,7 @@ abstract class BaseShareActivity : AppCompatActivity() {
         }
         CommonUtil.fixInputMethodManagerLeak(this)
         App.getRefWatcher(this)?.watch(this)//开始检测内存泄漏
+        sharBean = null
     }
 
 
@@ -425,10 +424,16 @@ abstract class BaseShareActivity : AppCompatActivity() {
                 detailList?.let {
                     calorie = it[0].calorie
                     val speed_allocation_arr = BaseUtils.intToByteArray(it[0].speed)
+                    if(speed_allocation_arr[0].toInt() < 0) {
+                        speed_allocation_arr[0] = 0
+                    }
                     if (speed_allocation_arr[0] < 0x0A) {
                         allocation_speed += "0"
                     }
                     allocation_speed += "${speed_allocation_arr[0].toInt() and 0xFF}${"\'"}"
+                    if(speed_allocation_arr[1].toInt() < 0) {
+                        speed_allocation_arr[1] = 0
+                    }
                     if (speed_allocation_arr[1] < 0x0A) {
                         allocation_speed += "0"
                     }
