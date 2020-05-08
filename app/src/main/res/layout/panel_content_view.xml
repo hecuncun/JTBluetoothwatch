@@ -8,32 +8,10 @@
     android:layout_marginLeft="6dp"
     android:layout_marginRight="6dp">
     <!-- 这是展开的头 -->
-    <RelativeLayout
+    <include
         android:id="@+id/panel_menu_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/dp_140"
-        android:background="@drawable/bg_shape_circular"
-        android:padding="0dp">
+        layout="@layout/panel_top_content_view" />
 
-        <ImageView
-            android:id="@+id/panel_collapse_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:padding="8dp" />
-
-        <ImageView
-            android:id="@+id/panel_settings_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_margin="4dp"
-            android:background="?attr/selectableItemBackground"
-            android:contentDescription="@null"
-            android:padding="8dp" />
-    </RelativeLayout>
     <!-- 这是内容主体 -->
     <android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -61,100 +39,13 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/v_splite">
-
-
+            <include
+                layout="@layout/panel_main_content_view" />
         </RelativeLayout>
+
     </android.support.constraint.ConstraintLayout>
     <!-- 这是底部卡片 -->
-    <RelativeLayout
+    <include
         android:id="@+id/panel_collapse_layout"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:alpha="0.0"
-        android:background="@android:color/transparent"
-        android:orientation="horizontal"
-        tools:alpha="1.0">
-
-        <RelativeLayout
-            android:id="@+id/rl_sport_data"
-            android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/bg_shape_up_circular">
-
-            <LinearLayout
-                android:id="@+id/ll_gradient_splite"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dp_50"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:weightSum="6">
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_shape_gradient_left" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp_3"
-                    android:text="慢"
-                    android:textColor="@color/red_dot_color"
-                    android:textSize="10sp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_weight="4"
-                    android:background="@drawable/bg_shape_gradient_medi" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/dp_3"
-                    android:text="快"
-                    android:textColor="@color/green_little"
-                    android:textSize="10sp" />
-
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_shape_gradient_right" />
-            </LinearLayout>
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/r1_head_photo"
-            android:layout_width="@dimen/dp_60"
-            android:layout_height="@dimen/dp_60"
-            android:layout_marginLeft="30dp"
-            android:background="@drawable/bg_shape_head_oval">
-
-            <ImageView
-                android:id="@+id/iv_head_photo"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center"
-                android:src="@drawable/pic_head" />
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/tv_per_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginRight="30dp"
-            android:text="港口的哨兵"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-    </RelativeLayout>
+        layout="@layout/panel_bottom_content_view" />
 </RelativeLayout>

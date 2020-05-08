@@ -60,7 +60,7 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
         override fun onCreateSlidingPanel(position: Int): ISlidingUpPanel<*> {
             val panel = panelViewList[position]
             panel.setFloor(mSize - position)
-            panel.setPanelHeight(if (position == 0) dp2px(300) else dp2px(80))
+            panel.setPanelHeight(if (position == 0) dp2px(280) else dp2px(80))
             panel.slideState = SlidingUpPanelLayout.COLLAPSED
             return panel
         }

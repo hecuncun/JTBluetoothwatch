@@ -31,6 +31,8 @@
     <color name="yellow_little">#E4994E</color>
     <color name="green_little">#0AA73E</color>
     <color name="orange_light">#F09824</color>
+    <color name="orange_light1">#FF6200</color>
+    <color name="purple">#A310CF</color>
     
     <color name="blue_light">#00FDFE</color>
     <color name="gray_transparent">#bb616161</color>
@@ -39,9 +41,10 @@
     <color name="yellow_little1">#FFCD55</color>
     <color name="green_little1">#00FF86</color>
     <color name="blue_little2">#00D1FF</color>
-
+    <color name="blue">#3291F8</color>
     <color name="red_dot_color">#E51C23</color>
     <color name="yellow_dot_color">#FF9800</color>
+    <color name="yellow">#FDE200</color>
     <color name="green_dot_color">#47FF00</color>
     <color name="blue_dot_color">#00D2FF</color>
 

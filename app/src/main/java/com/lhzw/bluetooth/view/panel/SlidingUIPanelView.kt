@@ -24,18 +24,12 @@ class SlidingUIPanelView(mContext: Context) : BaseSlidingUIPanelView(mContext) {
     private var mMenuLayout: View? = null
     private var mExpendLayout: View? = null
     private var mCollapseLayout: View? = null
-    private var mCollapseImg: ImageView? = null
-    private var mSettingsImg: ImageView? = null
 
     init {
         mContentLayout = findViewById(R.id.panel_content_layout)
         mMenuLayout = findViewById(R.id.panel_menu_layout)
         mExpendLayout = findViewById(R.id.panel_expend_layout)
         mCollapseLayout = findViewById(R.id.panel_collapse_layout)
-        mCollapseImg = findViewById(R.id.panel_collapse_img)
-        mSettingsImg = findViewById(R.id.panel_settings_img)
-//        mCollapseImg?.setOnClickListener(this@SlidingUIPanelView)
-//        mSettingsImg?.setOnClickListener(this@SlidingUIPanelView)
         checkVisibilityOfViews()
     }
 
