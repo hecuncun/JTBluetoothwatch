@@ -16,10 +16,12 @@ class CustomYVFormatter_Allocation_Speed(private var drawY: Boolean, private var
         if (drawY) {
             return valueOfY_format(value)
         } else {
-            if (value < 1) {
+            if (value <= 1 && value > 0) {
                 return "${String.format("%.2f", value)}"
-            } else {
+            } else if (value > 1) {
                 return "${String.format("%.1f", value)}"
+            } else {
+                return "0.0"
             }
             return value.toString()
         }
