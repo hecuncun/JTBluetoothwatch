@@ -6,6 +6,7 @@
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#000000</color>
     <color name="gray">#616161</color>
+    <color name="gray_bottom">#191919</color>
     <color name="text_gray_color">#888888</color>
     <color name="white">#FFFFFF</color>
     <color name="orange">#F15A24</color>
@@ -51,4 +52,6 @@
     <color name="progressbg">#88000000</color>
     <color name="transparent">#00000000</color>
     <color name="progresstext">#2FD2B3</color>
+    <color name="text_gray">#989898</color>
+    <color name="bar_bg">#12051F</color>
 </resources>

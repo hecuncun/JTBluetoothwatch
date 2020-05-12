@@ -35,12 +35,13 @@ abstract class BaseSlidingUIPanelView @JvmOverloads constructor(
     protected var mRealPanelHeight: Int = 0
     protected var mSlideState: Int = SlidingUpPanelLayout.COLLAPSED
     protected var mSlope: Float = 0.0f
+    private var convertView: View? = null
 
     init {
-        var view = LayoutInflater.from(context).inflate(R.layout.panel_content_view, this, true)
+        convertView = LayoutInflater.from(context).inflate(R.layout.panel_content_view, this, true)
         MAX_RADIUS = dp2px(0)
         radius = MAX_RADIUS.toFloat()
-        ViewCompat.setElevation(view, dp2px(16).toFloat())
+        ViewCompat.setElevation(convertView!!, dp2px(16).toFloat())
         setCardBackgroundColor(Color.TRANSPARENT)
     }
 
@@ -162,4 +163,6 @@ abstract class BaseSlidingUIPanelView @JvmOverloads constructor(
             }
         }
     }
+
+    fun getConvertView(): View? = convertView
 }

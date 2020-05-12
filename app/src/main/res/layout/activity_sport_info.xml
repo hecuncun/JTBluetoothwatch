@@ -802,7 +802,7 @@
                 <com.github.mikephil.charting.charts.HorizontalBarChart
                     android:id="@+id/horizontalbar"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="240dp"
                     android:layout_below="@+id/tv_heart_rate_range_title"
                     android:layout_marginLeft="15dp"
                     android:layout_marginTop="@dimen/dp_5"

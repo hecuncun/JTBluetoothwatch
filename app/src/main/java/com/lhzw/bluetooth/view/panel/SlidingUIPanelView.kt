@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.view.panel.base.BaseSlidingUIPanelView
 import com.xw.repo.supl.ISlidingUpPanel
@@ -34,6 +34,7 @@ class SlidingUIPanelView(mContext: Context) : BaseSlidingUIPanelView(mContext) {
     }
 
     override fun onSliding(panel: ISlidingUpPanel<*>, top: Int, dy: Int, slidedProgress: Float) {
+        Log.e("sliding", "sdkfjklsadjfklasdfj  ${panel}   ${R.id.panel_expend_layout}")
         if (dy < 0) { // 向上
             val radius = radius
             if (radius > 0 && MAX_RADIUS >= top) {
@@ -132,5 +133,4 @@ class SlidingUIPanelView(mContext: Context) : BaseSlidingUIPanelView(mContext) {
             mCollapseLayout!!.alpha = 0f
         }
     }
-
 }

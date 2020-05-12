@@ -250,6 +250,12 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        if (mSlidingUpPanel.getSlideState() == SlidingUpPanelLayout.EXPANDED) {
+            if (ev.getX() > 10 && ev.getX() < 1067 && ev.getY() > 500 && ev.getY() < 1580) {
+                mDragHelper.cancel();
+                return super.onInterceptTouchEvent(ev);
+            }
+        }
         if (!isEnabled() || !isSlidingEnabled()) {
             mDragHelper.cancel();
             return super.onInterceptTouchEvent(ev);
@@ -271,15 +277,19 @@ public class SlidingUpPanelLayout extends ViewGroup {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        if (mSlidingUpPanel.getSlideState() == SlidingUpPanelLayout.EXPANDED) {
+            if (ev.getX() > 10 && ev.getX() < 1067 && ev.getY() > 500 && ev.getY() < 1580) {
+                return super.onTouchEvent(ev);
+            }
+        }
+
         if (!isSlidingEnabled()) {
             return super.onTouchEvent(ev);
         }
         if (ev.getActionMasked() == MotionEvent.ACTION_UP) {
             performClick();
         }
-
         mDragHelper.processTouchEvent(ev);
-
         return true;
     }
 

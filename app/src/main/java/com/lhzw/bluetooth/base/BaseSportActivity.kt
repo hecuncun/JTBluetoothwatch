@@ -34,9 +34,9 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
-        initView()
         sliding_up_panel_layout.setPanelSlideListener(panelChangeAdapter)
         loadView()
+        initView()
         mMapView = map
         mMapView?.onCreate(savedInstanceState)
     }
