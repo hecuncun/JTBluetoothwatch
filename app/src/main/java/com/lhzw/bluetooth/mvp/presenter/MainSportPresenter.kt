@@ -4,6 +4,8 @@ import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMap
@@ -25,7 +27,6 @@ import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
 import kotlinx.android.synthetic.main.activity_sport_info.*
 import java.security.MessageDigest
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -105,8 +106,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
-            Thread { drawPaths() }.start()
-
+            mHandler.sendEmptyMessageDelayed(1, 150)
         }
         return aMap!!
     }
@@ -223,6 +223,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     private fun drawPaths() {
         // 绘制轨迹
+        /*
         var minLat = 90.0
         var maxlgt = 0.0
         var maxLat = 0.0
@@ -257,7 +258,27 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 aMap?.moveCamera(cameraUpdate)
                 locationUtils?.drawPath(amp, list)
 //                aMap?.animateCamera(CameraUpdateFactory.newLatLngZoom(list[0], Constants.ZOOM))
+
+    }
+    }
+     */
+        val b = LatLngBounds.builder()
+        var latLngs = model.queryData(mark, Constants.GPS)
+        if (latLngs == null || latLngs.isEmpty()) return
+        BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
+            var list = ArrayList<LatLng>()
+            it.forEach {
+                var tmp = LatLng(it.gps_latitude, it.gps_longitude)
+                b.include(tmp)
+                list.add(tmp)
             }
+            val bounds: LatLngBounds = b.build()
+            val top_padding: Int = BaseUtils.dip2px(20)
+            val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 80)
+            val left_right_padding: Int = BaseUtils.dip2px(20)
+            amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, null)
+//            amp.moveCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds,left_right_padding, left_right_padding, top_padding, bottom_padding))
+            locationUtils?.drawPath(amp, list)
         }
     }
 
@@ -275,5 +296,12 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     override fun onCancel() {
 
+    }
+
+    private val mHandler = object : Handler() {
+        override fun handleMessage(msg: Message?) {
+            super.handleMessage(msg)
+            Thread { drawPaths() }.start()
+        }
     }
 }

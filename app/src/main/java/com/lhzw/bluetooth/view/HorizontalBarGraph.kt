@@ -64,6 +64,14 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         val rectShape = RoundRectShape(rids, null, null)
         mDrawbles = ShapeDrawable(rectShape)
 
+        list.add(BarBean(0.7f, 0, "10'10\""))
+        list.add(BarBean(0.3f, 0, "09'23\""))
+        list.add(BarBean(0.9f, 0, "08'56\""))
+        list.add(BarBean(0.2f, 0, "06'34\""))
+        list.add(BarBean(0.1f, 0, "23'23\""))
+        list.add(BarBean(0.8f, 0, "07'25\""))
+        list.add(BarBean(0.5f, 0, "06'57\""))
+
         rect = Rect()
         // 公里值
         textPaint = Paint()
@@ -84,19 +92,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         barHeight = dp2px(17)
         textWith = dp2px(60)
         marginSpace = dp2px(25)
-        list.add(BarBean(0.7f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "255'255\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
-        list.add(BarBean(0.2f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
-        list.add(BarBean(0.6f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "02'10\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
-        list.add(BarBean(0.8f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
-        list.add(BarBean(0.9f, 0, "10'10\""))
-        list.add(BarBean(0.3f, 0, "10'10\""))
+
 
         barGaps = dp2px(4)
         titleGaps = dp2px(10)
@@ -109,10 +105,11 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         screen_width = getMySize(100, widthMeasureSpec)
 //        screen_height = getMySize(100, heightMeasureSpec)
         barTotalLen = screen_width - marginSpace * 2 - textWith
-        screen_height = textTitleHight.toInt() + barGaps.toInt()
+        screen_height = textTitleHight + barGaps
         list?.forEach {
-            screen_height += barHeight.toInt() + barGaps.toInt()
+            screen_height += barHeight + barGaps
         }
+        if (list.size == 0) screen_height += dp2px(80)
         setMeasuredDimension(screen_width, screen_height)
     }
 
@@ -135,7 +132,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 // 绘制bar背景
                 canvas.drawRect(allocation_speed_marginLef.toFloat(), (fisrebar_marginTop + counter * between_bar).toFloat(), bar_total.toFloat(),
                         (barHeight + fisrebar_marginTop + counter * between_bar).toFloat(), barPainBg)
-                textPaint?.getTextBounds("${counter + 1}", 0, 1, rect);
+                textPaint?.getTextBounds("${counter + 1}", 0, 1, rect)
                 if (counter > 8) {
                     distance_margin = textTitleMargin + textTitleWith / 2 - rect?.width()!! * 2
                 }
@@ -153,12 +150,21 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 mDrawbles?.draw(canvas)
 
                 // 绘制配速文本
-                speedPaint?.getTextBounds(it.speed, 0, it.speed.length, rect);
+                speedPaint?.getTextBounds(it.speed, 0, it.speed.length, rect)
                 canvas.drawText(it.speed, (allocation_speed_marginLef + bar_margin_text).toFloat(),
                         (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar).toFloat(), speedPaint)
                 canvas.drawText(it.speed, (bar_total - rect?.width()!! - bar_margin_text).toFloat(),
                         (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar).toFloat(), speedPaint)
                 counter++
+            }
+            if (list.size == 0) {
+                val paint = Paint()
+                paint.textSize = dp2px(12).toFloat()
+                paint.color = resources.getColor(R.color.text_yellow)
+                paint.isAntiAlias = true
+                val note = "No chart data available."
+                paint.getTextBounds(note, 0, note.length, rect);
+                canvas.drawText(note, (screen_width / 2 - rect?.width()!! / 2).toFloat(), (screen_height - rect?.height()!! / 2 - dp2px(20)).toFloat(), paint)
             }
         }
     }

@@ -323,7 +323,7 @@ object BaseUtils {
     }
 
     // 获取当前日期
-    fun getCurrentData() : String{
+    fun getCurrentData(): String {
         val date = Date()
         val calendar = Calendar.getInstance()
         calendar.time = date
@@ -331,5 +331,10 @@ object BaseUtils {
         val month = calendar[Calendar.MONTH] + 1
         val day = calendar[Calendar.DAY_OF_MONTH]
         return "$year-$month-$day"
+    }
+
+    fun dip2px(dpValue: Int): Int {
+        val scale = App.context.resources.displayMetrics.density
+        return (dpValue * scale + 0.5f).toInt()
     }
 }

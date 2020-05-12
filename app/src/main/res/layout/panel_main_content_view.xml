@@ -20,7 +20,7 @@
                 android:id="@+id/tv_allocation_speed_analyze"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
+                android:layout_marginLeft="15dp"
                 android:layout_marginTop="@dimen/dp_10"
                 android:text="配速分析"
                 android:textColor="@color/white"
@@ -249,13 +249,14 @@
             android:background="@drawable/bg_shape_up_circular_panel_share">
 
             <TextView
-                android:layout_width="160dp"
+                android:layout_width="110dp"
                 android:layout_height="45dp"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
+                android:background="@drawable/bg_shape_circular_share_def"
                 android:gravity="center"
                 android:text="生成海报"
-                android:textColor="@color/white"
+                android:textColor="@color/shate_text_color"
                 android:textSize="16sp" />
 
         </RelativeLayout>
