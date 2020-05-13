@@ -6,6 +6,7 @@ import android.graphics.Typeface
 import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.util.Log
+import android.view.View
 import com.amap.api.maps.AMap
 import com.amap.api.maps.MapView
 import com.github.mikephil.charting.charts.HorizontalBarChart
@@ -29,7 +30,6 @@ import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Allocation_Speed
 import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Speed_Walk
 import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Speed_heart
 import com.lhzw.bluetooth.xyformatter.HorizontalBarXYFormatter
-import kotlinx.android.synthetic.main.activity_sport_info.*
 import org.litepal.crud.LitePalSupport
 
 
@@ -72,7 +72,7 @@ class SportModel(var mark: String) : SportConstract.Model {
     }
 
     // 初始化图表
-    override fun initChart(activity: Activity) {
+    override fun initChart(activity: Activity, convertView: View) {
         // 配速
         val speed_list = queryData(mark = mark, type = Constants.SPEED)
         speed_list?.let {
@@ -84,7 +84,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 (1000000.0f / it.value)
             }
             tem_List.forEach {
-                if(max < it){
+                if (max < it) {
                     max = it
                 }
             }
@@ -93,9 +93,12 @@ class SportModel(var mark: String) : SportConstract.Model {
                 values.add(Entry(index, max - v))
                 index += 1
             }
-            setLineChart(activity.linechart_allocation_speed, values, R.drawable.gradient_allocation_speed, 6, 4,
+            setLineChart(convertView.findViewById(R.id.linechart_allocation_speed), values, R.drawable.gradient_allocation_speed, 6, 4,
                     CustomYVFormatter_Allocation_Speed(false, max), CustomYVFormatter_Allocation_Speed(true, max))
         }
+
+
+
 
         //心率
         val heart_list = queryData(mark = mark, type = Constants.HEART_RATE)
@@ -113,7 +116,7 @@ class SportModel(var mark: String) : SportConstract.Model {
             Entry(it.x, it.y / (axisMax / AXISEMax))
         }.toMutableList()
         value.clear()
-        setLineChart(activity.linechart_speed_heart, temValue, R.drawable.gradient_speed_heart, 6, 4,
+        setLineChart(convertView.findViewById(R.id.linechart_speed_heart), temValue, R.drawable.gradient_speed_heart, 6, 4,
                 CustomYVFormatter_Speed_heart(false, 0), CustomYVFormatter_Speed_heart(true, axisMax / AXISEMax))
 
         //步频
@@ -131,12 +134,8 @@ class SportModel(var mark: String) : SportConstract.Model {
         var temValue1 = value1.map {
             Entry(it.x, it.y / (axisMax / AXISEMax))
         }.toMutableList()
-        setLineChart(activity.linechart_speed_walk, temValue1, R.drawable.gradient_speed_walk, 6, 4,
+        setLineChart(convertView.findViewById(R.id.linechart_speed_walk), temValue1, R.drawable.gradient_speed_walk, 6, 4,
                 CustomYVFormatter_Speed_Walk(false, 0), CustomYVFormatter_Speed_Walk(true, axisMax / AXISEMax))
-
-//        //步幅
-//        setLineChart(activity.linechart_step_stride, values, R.drawable.gradient_step_stride,
-//                CustomYVFormatter_Step_Stride(false), CustomYVFormatter_Step_Stride((true)))
 
         // 横向柱状图
         var detail = queryData<FlatSportBean>(mark)
@@ -188,7 +187,7 @@ class SportModel(var mark: String) : SportConstract.Model {
             for (i in 0..count) {
                 yValus.add(BarEntry(i * spaceForBar, value[i], activity.resources.getDrawable(R.drawable.gradient_speed_heart)))
             }
-            setHorizontalBar(activity.horizontalbar, yValus, barWidth, HorizontalBarXYFormatter(false, lables), HorizontalBarXYFormatter(true, lables), colorBar, valueDescrip)
+            setHorizontalBar(convertView.findViewById(R.id.horizontalbar), yValus, barWidth, HorizontalBarXYFormatter(false, lables), HorizontalBarXYFormatter(true, lables), colorBar, valueDescrip)
         }
     }
 
@@ -223,7 +222,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 position = XAxis.XAxisPosition.BOTTOM;
                 textSize = 8f;
                 setDrawAxisLine(true);
-                setLabelCount(xLabelCount, false)
+                setLabelCount(6, true)
                 textColor = App.instance.resources.getColor(R.color.white)
                 //textColor = App.instance.resources.getColor(R.color.gray_transparent)
                 setDrawGridLines(false)
@@ -232,7 +231,7 @@ class SportModel(var mark: String) : SportConstract.Model {
             }
             axisLeft?.apply {
                 typeface = Typeface.createFromAsset(App.instance.assets, "OpenSans-Light.ttf")
-                setLabelCount(yLabelCount, false)
+                setLabelCount(4, true)
                 textSize = 8f
                 textColor = App.instance.resources.getColor(R.color.white)
                 //textColor = App.instance.resources.getColor(R.color.gray_transparent)

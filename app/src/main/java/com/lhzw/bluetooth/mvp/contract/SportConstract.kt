@@ -18,7 +18,7 @@ interface SportConstract {
     interface Model {
         fun initMap(mMapView: MapView?): AMap?
         fun checkPermissions(activity: Activity, permissions: Array<String>): Boolean
-        fun initChart(activity: Activity)
+        fun initChart(activity: Activity, convertView: android.view.View)
         fun queryData(mark: String, type: Int): List<SportDetailInfobean>?
         fun <T : LitePalSupport> queryData(mark: String): List<T>?
     }
@@ -31,8 +31,8 @@ interface SportConstract {
         fun getSha1(): String?
         fun initMap(mMapView: MapView?): AMap?
         fun requirePermission(activity: Activity): Boolean
-        fun initChart(activity: Activity)
+        fun initChart(activity: Activity, convertView: android.view.View)
         fun showSharePopuWindow(activity: Activity)
-        fun initView(activity: Activity)
+        fun initView(activity: Activity,convertView: android.view.View)
     }
 }

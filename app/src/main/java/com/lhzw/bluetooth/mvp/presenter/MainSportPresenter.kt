@@ -7,6 +7,9 @@ import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.util.Log
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
@@ -14,14 +17,17 @@ import com.amap.api.maps.LocationSource
 import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
+import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.ClimbingSportBean
 import com.lhzw.bluetooth.bean.FlatSportBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.model.SportModel
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LocationUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.ShareShareDialog
 import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
 import kotlinx.android.synthetic.main.activity_sport_info.*
@@ -41,6 +47,10 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private var mListener: LocationSource.OnLocationChangedListener? = null
     private var aMap: AMap? = null
     private var locationUtils: LocationUtils? = null
+    private val DRAWPATH = 0x0001
+    private val ANIMATION = 0x0005
+    private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
+    private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
 //        locationUtils?.startLocate()
@@ -106,7 +116,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
-            mHandler.sendEmptyMessageDelayed(1, 150)
+            mHandler.sendEmptyMessageDelayed(DRAWPATH, 150)
         }
         return aMap!!
     }
@@ -138,8 +148,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
 
     // 初始化图表
-    override fun initChart(activity: Activity) {
-        model.initChart(activity)
+    override fun initChart(activity: Activity, convertView: View) {
+        model.initChart(activity, convertView)
     }
 
     // 显示分享对话框
@@ -149,7 +159,12 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     }
 
-    override fun initView(activity: Activity) {
+    override fun initView(activity: Activity, convertView: View) {
+        // 更换头像
+        GlideUtils.showCircleWithBorder(convertView.findViewById<ImageView>(R.id.iv_head_photo),
+                photoPath, R.drawable.pic_head, activity.resources.getColor(R.color.white))
+        // 用户名
+        convertView.findViewById<TextView>(R.id.tv_per_name).text = nickName
         // 步数
         val list = model.queryData(mark = mark, type = Constants.STEP)
         var step = 0
@@ -160,30 +175,34 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 step_max = it.value
             }
         }
-//        activity.tv_step_num.text = "$step"
-        // 平均步频
-        if (list!!.isNotEmpty()) {
-            activity.tv_step_frequency_av.text = "${step / list!!.size}"
-            activity.tv_speed_walk_av.text = "${step / list!!.size}"
+        if (step == 0) {
+            convertView.findViewById<TextView>(R.id.tv_stride_frequency).text = "$step"
+            convertView.findViewById<TextView>(R.id.tv_stride_frequency_top).text = "$step"
+            convertView.findViewById<TextView>(R.id.tv_step_stride_av).text = "$step"
         } else {
-            activity.tv_step_frequency_av.text = "${step}"
-            activity.tv_speed_walk_av.text = "${step}"
+            convertView.findViewById<TextView>(R.id.tv_stride_frequency).text = "${step / list?.size!!}"
+            convertView.findViewById<TextView>(R.id.tv_stride_frequency_top).text = "${step / list?.size!!}"
+            convertView.findViewById<TextView>(R.id.tv_step_stride_av).text = "${step / list?.size!!}"
         }
+        convertView.findViewById<TextView>(R.id.tv_steps_num).text = "$step"
+        convertView.findViewById<TextView>(R.id.tv_steps_num).text = "$step"
         // 图表数据适配
-        activity.tv_speed_walk_best.text = "$step_max"
-        activity.tv_sport_time.text = duration
-        // 热量
-//        val list2 = model.queryData(mark, Constants.CALORIE)
+        convertView.findViewById<TextView>(R.id.tv_step_stride_best).text = "$step_max"
+
+        convertView.findViewById<TextView>(R.id.tv_duration).text = duration
+        convertView.findViewById<TextView>(R.id.tv_duration_top).text = duration
         if (type == Constants.ACTIVITY_CLIMBING) {
             val detail = model.queryData<ClimbingSportBean>(mark)
             // 暂时没有
         } else {
             val detail = model.queryData<FlatSportBean>(mark)
             detail?.let {
-                activity.tv_step_num.text = "${it[0].step_num}"
-                activity.tv_speed_heart_av.text = "${it[0].average_heart_rate}"
-                activity.tv_speed_heart1_av.text = "${it[0].average_heart_rate}"
-                activity.tv_speed_heart_best.text = "${it[0].max_heart_rate}"
+//                convertView.findViewById<TextView>(R.id.tv_step_num).text = "${it[0].step_num}"
+                activity.tv_distance.text = "${it[0].distance}"
+                convertView.findViewById<TextView>(R.id.tv_heart_rate).text = "${it[0].average_heart_rate}"
+                convertView.findViewById<TextView>(R.id.tv_heart_rate_top).text = "${it[0].average_heart_rate}"
+                convertView.findViewById<TextView>(R.id.tv_speed_heart_av).text = "${it[0].average_heart_rate}"
+                convertView.findViewById<TextView>(R.id.tv_speed_heart_best).text = "${it[0].max_heart_rate}"
                 if (it[0].distance < 100) {
                     activity.tv_distance.text = "${String.format("%.2f", it[0].distance.toFloat() / 1000)}"
                 } else {
@@ -200,8 +219,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                     av_all_speed += "0"
                 }
                 av_all_speed += "${speed_allocation_av[1].toInt() and 0xFF}${"\""}"
-                activity.tv_speed_allocation_av.text = av_all_speed
-                activity.tv_allocation_speed_av.text = av_all_speed
+                convertView.findViewById<TextView>(R.id.tv_allocation_speed).text = av_all_speed
+                convertView.findViewById<TextView>(R.id.tv_allocation_speed_top).text = av_all_speed
                 val speed_allocation_best = BaseUtils.intToByteArray(it[0].best_speed)
                 var best_all_speed = ""
                 if (speed_allocation_best[0] < 0x0A) {
@@ -212,11 +231,15 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                     best_all_speed += "0"
                 }
                 best_all_speed += "${speed_allocation_best[1].toInt() and 0xFF}${"\""}"
-                activity.tv_speed_allocation_best.text = best_all_speed
-                // 平均配速
-                activity.tv_allocation_speed_best.text = best_all_speed
+                // 最佳配速
+                convertView.findViewById<TextView>(R.id.tv_best_allocation_speed).text = best_all_speed
+                convertView.findViewById<TextView>(R.id.tv_best_allocation_speed_top).text = best_all_speed
                 // 热量
-                activity.tv_heat_quantity.text = "${it[0].calorie}"
+                if (it[0].calorie < 100) {
+                    activity.tv_calorie.text = "${String.format("%.2f", it[0].calorie.toFloat() / 1000)}"
+                } else {
+                    activity.tv_calorie.text = "${String.format("%.0f", it[0].calorie.toFloat() / 1000)}"
+                }
             }
         }
     }
@@ -300,8 +323,14 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     private val mHandler = object : Handler() {
         override fun handleMessage(msg: Message?) {
-            super.handleMessage(msg)
-            Thread { drawPaths() }.start()
+            when (msg?.what) {
+                DRAWPATH -> {
+                    Thread { drawPaths() }.start()
+                }
+                ANIMATION -> {
+
+                }
+            }
         }
     }
 }

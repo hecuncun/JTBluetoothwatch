@@ -231,7 +231,7 @@ public class SlidingUpPanelLayout extends ViewGroup {
                 mSlidingUpPanel = (ISlidingUpPanel) child;
 
                 if (event.getActionMasked() == MotionEvent.ACTION_UP) {
-                    v.performClick();
+//                    v.performClick();
                 }
                 return false;
             }

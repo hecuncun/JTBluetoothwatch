@@ -30,6 +30,7 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
     protected var mMapView: MapView? = null
     protected val panelViewList = ArrayList<BaseSlidingUIPanelView>()
     protected val mSize = 1
+    protected var convertView: View? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
@@ -52,7 +53,9 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
     }
 
     private fun loadView() {
-        panelViewList.add(SlidingUIPanelView(this))
+        val panel = SlidingUIPanelView(this)
+        convertView = panel.getConvertView()
+        panelViewList.add(panel)
         sliding_up_panel_layout.adapter = panelAdapter
     }
 
@@ -123,5 +126,6 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
             onDestroy()
             mMapView = null
         }
+        convertView = null
     }
 }

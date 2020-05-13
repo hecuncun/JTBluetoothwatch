@@ -84,7 +84,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         speedPaint?.run {
             color = resources.getColor(R.color.white)
             isAntiAlias = true
-            textSize = dp2px(16).toFloat()
+            textSize = dp2px(14).toFloat()
         }
 
         barPian = Paint()
@@ -142,7 +142,6 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 val lineGradient = LinearGradient(0.0f, 0.0f, barTotalLen * it.perent, 0.0f,
                         intArrayOf(Color.parseColor("#DF027F"), Color.parseColor("#6F4DAC"), Color.parseColor("#019FDE")),
                         floatArrayOf(0.0f, 0.5f, 1.0f), Shader.TileMode.CLAMP)
-
                 mDrawbles?.paint?.setShader(lineGradient)
                 mDrawbles?.paint?.style = Paint.Style.FILL
                 mDrawbles?.setBounds(allocation_speed_marginLef.toInt(), fisrebar_marginTop.toInt() + counter * between_bar,
@@ -152,9 +151,9 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 // 绘制配速文本
                 speedPaint?.getTextBounds(it.speed, 0, it.speed.length, rect)
                 canvas.drawText(it.speed, (allocation_speed_marginLef + bar_margin_text).toFloat(),
-                        (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar).toFloat(), speedPaint)
+                        (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar + 2).toFloat(), speedPaint)
                 canvas.drawText(it.speed, (bar_total - rect?.width()!! - bar_margin_text).toFloat(),
-                        (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar).toFloat(), speedPaint)
+                        (fisrebar_marginTop + rect?.height()!! + bar_margin_text + counter * between_bar + 2).toFloat(), speedPaint)
                 counter++
             }
             if (list.size == 0) {

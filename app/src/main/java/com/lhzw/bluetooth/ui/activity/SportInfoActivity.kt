@@ -6,14 +6,13 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
-import android.widget.LinearLayout
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.LatLng
+import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BitmapUtil
-import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.ShareUtils
 import com.lhzw.kotlinmvp.base.BaseSportActivity
 import com.orhanobut.logger.Logger
@@ -41,11 +40,11 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
 //        CommonUtil.setMaxAspect(this)
         initTileBar()
         // 设置高度
-        val params = rl_map.layoutParams
-        var bar = findViewById<LinearLayout>(com.lhzw.bluetooth.R.id.toolbar)
-        //  实际高度   =         屏幕高度                       -        标题栏高度  -     状态栏高度                               -  虚拟键盘高度
-        params.height = resources.displayMetrics.heightPixels - bar.measuredHeight - CommonUtil.getStatusBarHeight(this) - CommonUtil.getNavigationBarHeight(this)
-        rl_map.layoutParams = params
+//        val params = rl_map.layoutParams
+//        var bar = findViewById<LinearLayout>(com.lhzw.bluetooth.R.id.toolbar)
+//        //  实际高度   =         屏幕高度                       -        标题栏高度  -     状态栏高度                               -  虚拟键盘高度
+//        params.height = resources.displayMetrics.heightPixels - bar.measuredHeight - CommonUtil.getStatusBarHeight(this) - CommonUtil.getNavigationBarHeight(this)
+//        rl_map.layoutParams = params
         // 界面数据适配
         val mark = intent.getStringExtra("mark")
         val type = intent.getIntExtra("type", 0)
@@ -54,8 +53,8 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
             attachView(this@SportInfoActivity)
-            initChart(this@SportInfoActivity)
-            initView(this@SportInfoActivity)
+            initChart(this@SportInfoActivity, convertView!!)
+            initView(this@SportInfoActivity, convertView!!)
             if (requirePermission(this@SportInfoActivity)) {
                 aMap = initMap(mMapView)
                 aMap?.setOnMapClickListener(this@SportInfoActivity)
@@ -70,9 +69,9 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             finish()
         }
         toolbar_right_img.visibility = View.VISIBLE
-        toolbar_right_img.setBackgroundResource(com.lhzw.bluetooth.R.drawable.icon_share_def)
+        toolbar_right_img.setBackgroundResource(R.drawable.icon_share_def)
         toolbar_right_img.setOnClickListener {
-            val bitmap = BitmapUtil.shotScrollView(scrollview)
+            val bitmap = BitmapUtil.shotScrollView(convertView?.findViewById(R.id.scrollview))
             Logger.e("bitmap=$bitmap")
             val uri = Uri.parse(MediaStore.Images.Media.insertImage(contentResolver, bitmap, null, null))
             ShareUtils.shareImage(this, uri, "分享到")
