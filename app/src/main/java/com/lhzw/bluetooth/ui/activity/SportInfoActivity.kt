@@ -52,7 +52,6 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         // 活动图标
 
 
-
         mPresenter = MainSportPresenter(mark, "${duration}", type)
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
@@ -114,6 +113,19 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
 
     override fun onMapClick(latLgt: LatLng?) {
         Log.e("onMap", "onClick ....")
+        mPresenter?.getCurrentMarker()?.let {
+            if (it.isInfoWindowShown) {
+                it.hideInfoWindow()
+            } else {
+                dealPanelState()
+            }
+        }
+        if (mPresenter?.getCurrentMarker() == null) {
+            dealPanelState()
+        }
+    }
+
+    private fun dealPanelState() {
         if (panelViewList[0].slideState == SlidingUpPanelLayout.COLLAPSED) {
             sliding_up_panel_layout.hiddedPanel()
         } else if (panelViewList[0].slideState == SlidingUpPanelLayout.HIDDEN) {

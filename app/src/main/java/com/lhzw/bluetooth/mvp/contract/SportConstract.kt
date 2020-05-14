@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.mvp.contract
 import android.app.Activity
 import com.amap.api.maps.AMap
 import com.amap.api.maps.MapView
+import com.amap.api.maps.model.Marker
 import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.bean.SportDetailInfobean
 import org.litepal.crud.LitePalSupport
@@ -33,6 +34,7 @@ interface SportConstract {
         fun requirePermission(activity: Activity): Boolean
         fun initChart(activity: Activity, convertView: android.view.View)
         fun showSharePopuWindow(activity: Activity)
-        fun initView(activity: Activity,convertView: android.view.View)
+        fun initView(activity: Activity, convertView: android.view.View)
+        fun getCurrentMarker(): Marker?
     }
 }

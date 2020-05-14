@@ -17,6 +17,7 @@ import com.amap.api.maps.LocationSource
 import com.amap.api.maps.MapView
 import com.amap.api.maps.model.LatLng
 import com.amap.api.maps.model.LatLngBounds
+import com.amap.api.maps.model.Marker
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.ClimbingSportBean
@@ -51,6 +52,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private val ANIMATION = 0x0005
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
+    private var currentMarker: Marker? = null
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
 //        locationUtils?.startLocate()
@@ -107,7 +109,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 //            moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(Constants.LAT, Constants.LGT), Constants.ZOOM))
             locationUtils = LocationUtils()
             locationUtils?.setLocationCallBack(this@MainSportPresenter)
-
+            setOnMarkerClickListener(markerListner)
             //设置定位监听
             setLocationSource(this@MainSportPresenter);
             //设置缩放级别
@@ -243,6 +245,16 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         }
     }
 
+    override fun getCurrentMarker(): Marker? = currentMarker
+
+    private var markerListner: AMap.OnMarkerClickListener? = AMap.OnMarkerClickListener {
+        Log.e("onMap", "onClick ....  12")
+        locationUtils?.jumpPoint(it!!, aMap!!.projection)
+        it.showInfoWindow()
+        currentMarker = it
+        true
+    }
+
     private fun drawPaths() {
 
         // 绘制轨迹
@@ -296,9 +308,9 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 list.add(tmp)
             }
             val bounds: LatLngBounds = b.build()
-            val top_padding: Int = BaseUtils.dip2px(20)
+            val top_padding: Int = BaseUtils.dip2px(50)
             val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 80)
-            val left_right_padding: Int = BaseUtils.dip2px(20)
+            val left_right_padding: Int = BaseUtils.dip2px(50)
             amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, object : AMap.CancelableCallback {
                 override fun onFinish() {
                     Log.e("onMap", "draw path success ....")
@@ -318,6 +330,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         super.detachView()
         locationUtils?.detachCallBack()
         locationUtils = null
+        currentMarker = null
         aMap = null
     }
 
