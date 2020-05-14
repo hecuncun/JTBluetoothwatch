@@ -59,7 +59,7 @@
     <color name="yellow">#FDE200</color>
     <color name="green_dot_color">#47FF00</color>
     <color name="blue_dot_color">#00D2FF</color>
-
+    <color name="map_conver">#3f000000</color>
     <color name="progressbg">#88000000</color>
     <color name="transparent">#00000000</color>
     <color name="progresstext">#2FD2B3</color>

@@ -63,6 +63,9 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
                 aMap?.setOnMapClickListener(this@SportInfoActivity)
             }
         }
+        v_cover.setOnClickListener {
+            it.visibility = View.GONE
+        }
     }
 
     private fun initTileBar() {

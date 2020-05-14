@@ -17,11 +17,13 @@ import org.litepal.crud.LitePalSupport
  */
 interface SportConstract {
     interface Model {
+        fun detachView()
         fun initMap(mMapView: MapView?): AMap?
         fun checkPermissions(activity: Activity, permissions: Array<String>): Boolean
         fun initChart(activity: Activity, convertView: android.view.View)
         fun queryData(mark: String, type: Int): List<SportDetailInfobean>?
         fun <T : LitePalSupport> queryData(mark: String): List<T>?
+        fun  getDistanceMap(): MutableMap<Int, Int>?
     }
 
     interface View : BaseIView {

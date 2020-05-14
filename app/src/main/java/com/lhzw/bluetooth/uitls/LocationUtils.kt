@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.uitls
 
+import android.animation.ArgbEvaluator
 import android.graphics.Point
 import android.os.Handler
 import android.os.SystemClock
@@ -17,6 +18,7 @@ import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.Projection
 import com.amap.api.maps.model.*
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.application.App.Companion.context
 import com.lhzw.bluetooth.constants.Constants
 
@@ -97,7 +99,7 @@ class LocationUtils : AMapLocationListener {
         var markerOptions = MarkerOptions()
         markerOptions.icon(BitmapDescriptorFactory.fromResource(icon_id))
         markerOptions.position(latLng)
-        markerOptions.title(str)
+//        markerOptions.title(str)
 //        markerOptions.snippet("纬度:${latLng.latitude}   经度:${latLng.longitude}")
 //        markerOptions.period(100)
         return markerOptions
@@ -121,38 +123,39 @@ class LocationUtils : AMapLocationListener {
      * 绘制路径
      *
      */
-    fun drawPath(aMap: AMap, list: MutableList<LatLng>) {
+    fun drawPath(aMap: AMap, list: MutableList<LatLng>, distanceMap: MutableMap<Int, Int>?) {
         markers?.let {
             it.clear()
         }
         paths?.forEach {
             it.remove()
         }
-        val path_colors = arrayOf(R.color.red_path, R.color.yellow_path, R.color.green_path, R.color.cyan_path)
+
         if (list != null && list.size > 0) {
+            val path_colors = arrayOf(R.color.red_path, R.color.yellow_path, R.color.green_path, R.color.cyan_path)
             markers?.add(aMap.addMarker(getMarkerOption("起点", list[0], R.mipmap.location_start)))
             var oldLatLng: LatLng = list[0]
             var polyLineList = ArrayList<PolylineOptions>()
             var distance = 0.0f
             var counter = 0
-            mGradientHelper.retValue(-1)
-            mGradientHelper.retPoint(list.size)
+            val points = ArrayList<LatLng>()
+            val classify = classifyColor(distanceMap)
             list.forEach { it ->
-                val polylineOptions = PolylineOptions()
-                polylineOptions.width(15f);
-                polylineOptions.color(mGradientHelper.getGradient())
-                polylineOptions.useGradient(true)
-                polylineOptions.add(oldLatLng, it)
-                polyLineList.add(polylineOptions)
                 val tem = AMapUtils.calculateLineDistance(oldLatLng, it)
                 distance += tem
                 if (distance > 1000) {
                     distance = 0.0f
+                    polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
+                    points.clear()
                     counter++
                     markers?.add(aMap.addMarker(getMarkerOption(it, "$counter")))
+                } else {
+                    points.add(it)
                 }
                 oldLatLng = it;
-
+            }
+            if (points.size > 0) {
+                polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
             }
             polyLineList.forEach {
                 paths?.add(aMap.addPolyline(it))
@@ -213,5 +216,57 @@ class LocationUtils : AMapLocationListener {
                 }
             }
         })
+    }
+
+    fun calculateRoute(points: MutableList<LatLng>, startColor: Int, endColor: Int): PolylineOptions? {
+        if (points.size > 0) {
+            val argbEvaluator = ArgbEvaluator() //渐变色计算类
+            val colorStart: Int = App.instance.resources.getColor(startColor)
+            val colorEnd: Int = App.instance.resources.getColor(endColor)
+            val pathPointList: ArrayList<LatLng> = ArrayList()
+            val colorList: MutableList<Int> = ArrayList()
+            val size: Int = points.size //路径上所有的点
+            for (i in 0 until size) {
+                val latLng = points.get(i)
+                val currentColor = argbEvaluator.evaluate(i.toFloat() / size.toFloat(), colorStart, colorEnd) as Int //计算每个点需要的颜色值
+                colorList.add(currentColor)
+                pathPointList.add(latLng)
+            }
+            return PolylineOptions()
+                    .width(BaseUtils.dip2px(5).toFloat()) //                                .color(Color.parseColor("#FF5934"))
+                    .colorValues(colorList)
+                    .useGradient(true)
+                    .addAll(pathPointList)
+        }
+        return null
+    }
+
+    private fun classifyColor(distanceMap: MutableMap<Int, Int>?): IntArray {
+        var max = 0.0f
+        var min = Float.MAX_VALUE
+        val size = distanceMap?.size
+        val arry: IntArray = IntArray(size!!)
+        distanceMap?.forEach { (key, value) ->
+            if (value > max) {
+                max = value.toFloat()
+            }
+            if (min > value) {
+                min = value.toFloat()
+            }
+        }
+        val space = (max - min) / 3
+        for (index in 1..size) {
+            var pos = 0
+            var isOver = true
+            while (isOver) {
+                if (distanceMap!![index]!! > min + space * pos - 1 && distanceMap!![index]!! < min + space * (pos + 1) + 1) {
+                    isOver = false
+                    arry[index - 1] = pos
+                } else {
+                    pos++
+                }
+            }
+        }
+        return arry
     }
 }

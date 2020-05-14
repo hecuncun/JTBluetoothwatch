@@ -322,7 +322,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 }
             })
 //            amp.moveCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds,left_right_padding, left_right_padding, top_padding, bottom_padding))
-            locationUtils?.drawPath(amp, list)
+            locationUtils?.drawPath(amp, list, model?.getDistanceMap())
         }
     }
 

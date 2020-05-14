@@ -46,6 +46,7 @@ import org.litepal.crud.LitePalSupport
 
 class SportModel(var mark: String) : SportConstract.Model {
     val AXISEMax = 12
+    private var distance_map: MutableMap<Int, Int>? = null
     override fun checkPermissions(activity: Activity, permissions: Array<String>): Boolean {
         var isHash: Boolean = true
         try {
@@ -70,6 +71,13 @@ class SportModel(var mark: String) : SportConstract.Model {
         return isHash
     }
 
+    override fun detachView() {
+        distance_map?.let {
+            it.clear()
+        }
+        distance_map = null
+    }
+
     override fun initMap(mMapView: MapView?): AMap? {
         return mMapView?.map
     }
@@ -77,7 +85,7 @@ class SportModel(var mark: String) : SportConstract.Model {
     // 初始化图表
     override fun initChart(activity: Activity, convertView: View) {
         // 配速 横向图表
-        val distance_map = HashMap<Int, Int>()
+        distance_map = HashMap()
         val distance_list = queryData(mark = mark, type = Constants.DISTANCE)
         var total = 0
         var second = 0
@@ -87,18 +95,18 @@ class SportModel(var mark: String) : SportConstract.Model {
             total += it.value
             if (total == 100000) {
                 pos++
-                distance_map[pos] = second + 60
-                if (max < distance_map[pos]!!) {
-                    max = distance_map[pos]!!
+                distance_map!![pos] = second + 60
+                if (max < distance_map!![pos]!!) {
+                    max = distance_map!![pos]!!
                 }
                 total = 0
                 second = 0
             } else if (total > 100000) {
                 var perent = (it.value - (total - 100000)).toFloat() / it.value.toFloat()
                 pos++
-                distance_map[pos] = (second + 60.0f * (1.0f - perent)).toInt()
-                if (max < distance_map[pos]!!) {
-                    max = distance_map[pos]!!
+                distance_map!![pos] = (second + 60.0f * (1.0f - perent)).toInt()
+                if (max < distance_map!![pos]!!) {
+                    max = distance_map!![pos]!!
                 }
                 total = (it.value * perent).toInt()
                 second = (60.0f * perent).toInt()
@@ -278,6 +286,11 @@ class SportModel(var mark: String) : SportConstract.Model {
         return CommOperation.query(FlatSportBean::class.java, "sport_detail_mark", mark) as List<T>
     }
 
+    override fun getDistanceMap(): MutableMap<Int, Int>? {
+        return distance_map
+    }
+
+
     // 设置LineChart
     private fun setLineChart(lineChart: LineChart, values: MutableList<Entry>,
                              fillColor: Int, xLabelCount: Int, yLabelCount: Int, valueFormatter_X: ValueFormatter, valueFormatter_Y: ValueFormatter, lightColor: Int) {
@@ -335,7 +348,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 set1 = LineDataSet(values, "DataSet 1")
                 set1.enableDashedLine(10f, 0f, 0f);
 //                set1.highLightColor = App.instance.resources.getColor(lightColor)
-                set1.color= App.instance.resources.getColor(lightColor)
+                set1.color = App.instance.resources.getColor(lightColor)
                 set1.enableDashedHighlightLine(10f, 0f, 0f);
                 set1.mode = LineDataSet.Mode.CUBIC_BEZIER
                 set1.cubicIntensity = 0.2f
