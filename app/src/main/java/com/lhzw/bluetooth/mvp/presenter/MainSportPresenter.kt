@@ -156,7 +156,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     override fun showSharePopuWindow(activity: Activity) {
         var dialog = ShareShareDialog(activity)
         dialog.showDialog()
-
     }
 
     override fun initView(activity: Activity, convertView: View) {
@@ -245,6 +244,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     }
 
     private fun drawPaths() {
+
         // 绘制轨迹
         /*
         var minLat = 90.0
@@ -299,7 +299,16 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             val top_padding: Int = BaseUtils.dip2px(20)
             val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 80)
             val left_right_padding: Int = BaseUtils.dip2px(20)
-            amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, null)
+            amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, object : AMap.CancelableCallback {
+                override fun onFinish() {
+                    Log.e("onMap", "draw path success ....")
+                    mHandler.sendEmptyMessageDelayed(ANIMATION, 150)
+                }
+
+                override fun onCancel() {
+                    Log.e("onMap", "draw path fail ....")
+                }
+            })
 //            amp.moveCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds,left_right_padding, left_right_padding, top_padding, bottom_padding))
             locationUtils?.drawPath(amp, list)
         }
@@ -333,4 +342,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             }
         }
     }
+
+
 }

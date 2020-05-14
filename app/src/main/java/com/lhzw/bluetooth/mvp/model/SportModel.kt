@@ -7,6 +7,7 @@ import android.os.Build
 import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.view.View
+import android.widget.TextView
 import com.amap.api.maps.AMap
 import com.amap.api.maps.MapView
 import com.github.mikephil.charting.charts.HorizontalBarChart
@@ -30,6 +31,8 @@ import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Allocation_Speed
 import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Speed_Walk
 import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Speed_heart
 import com.lhzw.bluetooth.xyformatter.HorizontalBarXYFormatter
+import com.lhzw.dmotest.bean.BarBean
+import com.lhzw.dmotest.view.HorizontalBarGraph
 import org.litepal.crud.LitePalSupport
 
 
@@ -73,6 +76,80 @@ class SportModel(var mark: String) : SportConstract.Model {
 
     // 初始化图表
     override fun initChart(activity: Activity, convertView: View) {
+        // 配速 横向图表
+        val distance_map = HashMap<Int, Int>()
+        val distance_list = queryData(mark = mark, type = Constants.DISTANCE)
+        var total = 0
+        var second = 0
+        var pos = 0
+        var max = 0
+        distance_list?.forEach {
+            total += it.value
+            if (total == 100000) {
+                pos++
+                distance_map[pos] = second + 60
+                if (max < distance_map[pos]!!) {
+                    max = distance_map[pos]!!
+                }
+                total = 0
+                second = 0
+            } else if (total > 100000) {
+                var perent = (it.value - (total - 100000)).toFloat() / it.value.toFloat()
+                pos++
+                distance_map[pos] = (second + 60.0f * (1.0f - perent)).toInt()
+                if (max < distance_map[pos]!!) {
+                    max = distance_map[pos]!!
+                }
+                total = (it.value * perent).toInt()
+                second = (60.0f * perent).toInt()
+            } else {
+                second += 60
+            }
+        }
+        val bar_speed_list = ArrayList<BarBean>()
+        total = 0
+        distance_map?.also {
+            for (index in 1..pos) {
+                total += it[index]!!
+                val second = it[index]!! % 60
+                val minute = it[index]!! / 60
+                var speed = ""
+                if (minute < 0x0A) {
+                    speed += "0"
+                }
+                speed += "$minute\'"
+                if (second < 0x0A) {
+                    speed += "0"
+                }
+                speed += "$second\""
+                val bean = BarBean(it[index]?.toFloat()!! / max!!, 0, speed)
+                bar_speed_list.add(bean)
+            }
+        }
+        convertView?.findViewById<HorizontalBarGraph>(R.id.tv_hor_bar).setListUpdate(bar_speed_list)
+        val hour = total / 3600
+        val minute = (total % 3600) / 60
+        second = total % 60
+        if (total == 0) {
+            convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", "0").replace("T", "00:00:00")
+        } else {
+            var time = ""
+            if (hour < 0x0A) {
+                time += "0"
+            }
+            time += "$hour:"
+            if (minute < 0x0A) {
+                time += "0"
+            }
+            time += "$minute:"
+            if (second < 0x0A) {
+                time += "0"
+            }
+            time += "$second:"
+            convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", "${distance_map?.size}").replace("T", time)
+        }
+
+
         // 配速
         val speed_list = queryData(mark = mark, type = Constants.SPEED)
         speed_list?.let {
@@ -94,11 +171,8 @@ class SportModel(var mark: String) : SportConstract.Model {
                 index += 1
             }
             setLineChart(convertView.findViewById(R.id.linechart_allocation_speed), values, R.drawable.gradient_allocation_speed, 6, 4,
-                    CustomYVFormatter_Allocation_Speed(false, max), CustomYVFormatter_Allocation_Speed(true, max))
+                    CustomYVFormatter_Allocation_Speed(false, max), CustomYVFormatter_Allocation_Speed(true, max), R.color.light_color_speed)
         }
-
-
-
 
         //心率
         val heart_list = queryData(mark = mark, type = Constants.HEART_RATE)
@@ -117,7 +191,7 @@ class SportModel(var mark: String) : SportConstract.Model {
         }.toMutableList()
         value.clear()
         setLineChart(convertView.findViewById(R.id.linechart_speed_heart), temValue, R.drawable.gradient_speed_heart, 6, 4,
-                CustomYVFormatter_Speed_heart(false, 0), CustomYVFormatter_Speed_heart(true, axisMax / AXISEMax))
+                CustomYVFormatter_Speed_heart(false, 0), CustomYVFormatter_Speed_heart(true, axisMax / AXISEMax), R.color.light_color_heart_rate)
 
         //步频
         var value1 = ArrayList<Entry>()
@@ -135,7 +209,7 @@ class SportModel(var mark: String) : SportConstract.Model {
             Entry(it.x, it.y / (axisMax / AXISEMax))
         }.toMutableList()
         setLineChart(convertView.findViewById(R.id.linechart_speed_walk), temValue1, R.drawable.gradient_speed_walk, 6, 4,
-                CustomYVFormatter_Speed_Walk(false, 0), CustomYVFormatter_Speed_Walk(true, axisMax / AXISEMax))
+                CustomYVFormatter_Speed_Walk(false, 0), CustomYVFormatter_Speed_Walk(true, axisMax / AXISEMax), R.color.light_color_stride_rate)
 
         // 横向柱状图
         var detail = queryData<FlatSportBean>(mark)
@@ -206,7 +280,7 @@ class SportModel(var mark: String) : SportConstract.Model {
 
     // 设置LineChart
     private fun setLineChart(lineChart: LineChart, values: MutableList<Entry>,
-                             fillColor: Int, xLabelCount: Int, yLabelCount: Int, valueFormatter_X: ValueFormatter, valueFormatter_Y: ValueFormatter) {
+                             fillColor: Int, xLabelCount: Int, yLabelCount: Int, valueFormatter_X: ValueFormatter, valueFormatter_Y: ValueFormatter, lightColor: Int) {
         lineChart?.apply {
             setViewPortOffsets(120.toFloat(), 60.toFloat(), 60.toFloat(), 60.toFloat())
             description.isEnabled = false
@@ -214,8 +288,8 @@ class SportModel(var mark: String) : SportConstract.Model {
             isDragEnabled = false
             setScaleEnabled(false)
             setPinchZoom(false)
-            setDrawGridBackground(false)
-            setGridBackgroundColor(App.instance.resources.getColor(R.color.gray_transparent))
+            setDrawGridBackground(true)
+            setGridBackgroundColor(App.instance.resources.getColor(R.color.mp_char_bg))
             axisLeft.setStartAtZero(true)
             xAxis?.apply {
                 isEnabled = true
@@ -235,14 +309,16 @@ class SportModel(var mark: String) : SportConstract.Model {
                 textSize = 8f
                 textColor = App.instance.resources.getColor(R.color.white)
                 //textColor = App.instance.resources.getColor(R.color.gray_transparent)
-                setDrawGridLines(false)
+                setDrawGridLines(true)
+                gridColor = App.instance.resources.getColor(R.color.axsis_line)
+                gridLineWidth = 0.8f
+                setDrawGridLinesBehindData(false)
                 setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART)
                 axisLineColor = App.instance.resources.getColor(R.color.gray_lite)
                 axisLineWidth = 0.8f
                 setDrawZeroLine(false)
                 valueFormatter = valueFormatter_Y
             }
-
             axisRight.isEnabled = false;
             legend.isEnabled = false;
             animateXY(2000, 2000);
@@ -257,18 +333,20 @@ class SportModel(var mark: String) : SportConstract.Model {
             } else {
                 // create a dataset and give it a type
                 set1 = LineDataSet(values, "DataSet 1")
-                set1.enableDashedLine(10f, 5f, 0f);
-                set1.enableDashedHighlightLine(10f, 5f, 0f);
+                set1.enableDashedLine(10f, 0f, 0f);
+//                set1.highLightColor = App.instance.resources.getColor(lightColor)
+                set1.color= App.instance.resources.getColor(lightColor)
+                set1.enableDashedHighlightLine(10f, 0f, 0f);
                 set1.mode = LineDataSet.Mode.CUBIC_BEZIER
                 set1.cubicIntensity = 0.2f
                 set1.setDrawFilled(true)
                 set1.setDrawCircles(false)
-                set1.lineWidth = 0f
+                set1.lineWidth = 1f
                 set1.circleRadius = 4f
 //                set1.setCircleColor(App.instance.resources.getColor(R.color.btn_green_focused))
 //                set1.highLightColor = App.instance.resources.getColor(R.color.btn_green_focused)
 //                set1.color = App.instance.resources.getColor(fillColor)
-//                set1.fillColor = App.instance.resources.getColor(fillColor)
+//                set1.fillColor = App.instance.resources.getColor(R.color.gray_little1)
                 set1.fillDrawable = App.instance.resources.getDrawable(fillColor)
                 set1.fillAlpha = 255
 //                set1.setGradientColor(App.instance.getColor(R.color.gray_lite),fillColor)

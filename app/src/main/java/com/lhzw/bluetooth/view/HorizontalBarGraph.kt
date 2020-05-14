@@ -105,11 +105,11 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         screen_width = getMySize(100, widthMeasureSpec)
 //        screen_height = getMySize(100, heightMeasureSpec)
         barTotalLen = screen_width - marginSpace * 2 - textWith
-        screen_height = textTitleHight + barGaps
+        screen_height = textTitleHight + 2 * barGaps + barHeight
         list?.forEach {
             screen_height += barHeight + barGaps
         }
-        if (list.size == 0) screen_height += dp2px(80)
+        if (list.size == 0) screen_height += dp2px(60)
         setMeasuredDimension(screen_width, screen_height)
     }
 
@@ -140,7 +140,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                         rect?.height()!!.toFloat() + 2 * titleGaps + counter * between_bar, textPaint)
                 // 绘制柱状图
                 val lineGradient = LinearGradient(0.0f, 0.0f, barTotalLen * it.perent, 0.0f,
-                        intArrayOf(Color.parseColor("#DF027F"), Color.parseColor("#6F4DAC"), Color.parseColor("#019FDE")),
+                        intArrayOf(Color.parseColor("#CC0099"), Color.parseColor("#6F4DAC"), Color.parseColor("#0099FF")),
                         floatArrayOf(0.0f, 0.5f, 1.0f), Shader.TileMode.CLAMP)
                 mDrawbles?.paint?.setShader(lineGradient)
                 mDrawbles?.paint?.style = Paint.Style.FILL
@@ -163,7 +163,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 paint.isAntiAlias = true
                 val note = "No chart data available."
                 paint.getTextBounds(note, 0, note.length, rect);
-                canvas.drawText(note, (screen_width / 2 - rect?.width()!! / 2).toFloat(), (screen_height - rect?.height()!! / 2 - dp2px(20)).toFloat(), paint)
+                canvas.drawText(note, (screen_width / 2 - rect?.width()!! / 2).toFloat(), (screen_height - rect?.height()!! / 2 - dp2px(25)).toFloat(), paint)
             }
         }
     }
@@ -190,9 +190,11 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
         return mySize
     }
 
-    fun setListUpdate(beans: ArrayList<BarBean>) {
+    fun setListUpdate(beans: ArrayList<BarBean>?) {
         list.clear()
-        list.addAll(beans)
+        beans?.let {
+            list.addAll(it)
+        }
         requestLayout()
         postInvalidate()
     }

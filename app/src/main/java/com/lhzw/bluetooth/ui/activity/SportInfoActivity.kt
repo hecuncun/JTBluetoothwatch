@@ -33,7 +33,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener {
     private var aMap: AMap? = null
     override fun getLayoutId(): Int {
-        return com.lhzw.bluetooth.R.layout.activity_sport_info
+        return R.layout.activity_sport_info
     }
 
     override fun initView() {
@@ -49,6 +49,10 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         val mark = intent.getStringExtra("mark")
         val type = intent.getIntExtra("type", 0)
         val duration = intent.getStringExtra("duration")
+        // 活动图标
+
+
+
         mPresenter = MainSportPresenter(mark, "${duration}", type)
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {

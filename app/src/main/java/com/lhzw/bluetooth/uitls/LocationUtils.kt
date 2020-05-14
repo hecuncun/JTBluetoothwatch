@@ -108,6 +108,7 @@ class LocationUtils : AMapLocationListener {
         paths?.forEach {
             it.remove()
         }
+        val path_colors = arrayOf(R.color.red_path, R.color.yellow_path, R.color.green_path, R.color.cyan_path)
         if (list != null && list.size > 0) {
             start = aMap.addMarker(getMarkerOption("起点", list[0], R.mipmap.location_start))
             var oldLatLng: LatLng = list[0]
