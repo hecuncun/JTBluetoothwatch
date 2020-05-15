@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.mvp.presenter
 import android.Manifest
 import android.app.Activity
 import android.content.pm.PackageManager
+import android.graphics.Point
 import android.os.Build
 import android.os.Handler
 import android.os.Message
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.amap.api.location.AMapLocation
 import com.amap.api.maps.AMap
 import com.amap.api.maps.CameraUpdateFactory
@@ -29,7 +31,9 @@ import com.lhzw.bluetooth.mvp.model.SportModel
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LocationUtils
 import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.uitls.douglas.Douglas
 import com.lhzw.bluetooth.view.ShareShareDialog
+import com.lhzw.bluetooth.view.SportTrailView
 import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
 import kotlinx.android.synthetic.main.activity_sport_info.*
 import java.security.MessageDigest
@@ -95,7 +99,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     }
 
     //初始化地图
-    override fun initMap(mMapView: MapView?): AMap? {
+    override fun initMap(activity: Activity, mMapView: MapView?): AMap? {
         aMap = model.initMap(mMapView)
         // 定位蓝点
         aMap?.apply {
@@ -118,7 +122,10 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             isMyLocationEnabled = true
             Log.e("Tag", "drawPaths ....")
             // 绘制路径
-            mHandler.sendEmptyMessageDelayed(DRAWPATH, 150)
+            val msg = Message()
+            msg.what = DRAWPATH
+            msg.obj = activity
+            mHandler.sendMessageDelayed(msg, 150)
         }
         return aMap!!
     }
@@ -255,7 +262,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         true
     }
 
-    private fun drawPaths() {
+    private fun drawPaths(activity: Activity) {
 
         // 绘制轨迹
         /*
@@ -311,18 +318,35 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             val top_padding: Int = BaseUtils.dip2px(50)
             val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 80)
             val left_right_padding: Int = BaseUtils.dip2px(50)
+            var douglasList = Douglas(list, 3.0).compress()
             amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, object : AMap.CancelableCallback {
                 override fun onFinish() {
                     Log.e("onMap", "draw path success ....")
-                    mHandler.sendEmptyMessageDelayed(ANIMATION, 150)
+//                    mHandler.sendEmptyMessageDelayed(ANIMATION, 150)
+                    activity?.trailview.setOnClickListener {
+                        Toast.makeText(activity, "等待动画结束", Toast.LENGTH_LONG).show()
+                    }
+                    val screenPoints = ArrayList<Point>()
+                    douglasList?.forEach {
+                        screenPoints.add(amp.projection.toScreenLocation(it))
+                    }
+                    activity?.runOnUiThread {
+                        activity?.trailview?.drawSportLine(screenPoints, R.mipmap.location_start, R.drawable.icon_ball, object : SportTrailView.OnTrailChangeListener {
+                            override fun onFinish() {
+                                activity?.trailview?.visibility = View.GONE
+                                Thread { locationUtils?.drawPath(amp, list, model?.getDistanceMap()) }.start()
+                            }
+                        })
+                    }
                 }
 
                 override fun onCancel() {
                     Log.e("onMap", "draw path fail ....")
+                    activity?.trailview.visibility = View.GONE
                 }
             })
 //            amp.moveCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds,left_right_padding, left_right_padding, top_padding, bottom_padding))
-            locationUtils?.drawPath(amp, list, model?.getDistanceMap())
+//            locationUtils?.drawPath(amp, list, model?.getDistanceMap())
         }
     }
 
@@ -347,7 +371,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 DRAWPATH -> {
-                    Thread { drawPaths() }.start()
+                    val activity = msg.obj as Activity
+                    Thread { drawPaths(activity) }.start()
                 }
                 ANIMATION -> {
 

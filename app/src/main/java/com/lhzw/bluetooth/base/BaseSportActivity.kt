@@ -4,6 +4,7 @@ import android.content.pm.ActivityInfo
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import com.amap.api.maps.MapView
@@ -93,10 +94,12 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
     private val panelChangeAdapter = object : SlidingUpPanelLayout.PanelSlideListenerAdapter() {
         override fun onPanelExpanded(panel: ISlidingUpPanel<*>?) {
             super.onPanelExpanded(panel)
+            Log.e("panelChangeAdapter", "onPanelExpanded  -------------------- ${panel?.slideState}")
         }
 
         override fun onPanelCollapsed(panel: ISlidingUpPanel<*>?) {
             super.onPanelCollapsed(panel)
+            Log.e("panelChangeAdapter", "onPanelCollapsed  -------------------- ${panel?.slideState}")
         }
     }
 

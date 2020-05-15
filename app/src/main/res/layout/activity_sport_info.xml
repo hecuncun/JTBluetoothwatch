@@ -108,6 +108,13 @@
         </RelativeLayout>
     </com.xw.repo.supl.SlidingUpPanelLayout>
 
+    <com.lhzw.bluetooth.view.SportTrailView
+        android:id="@+id/trailview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="-10.5dp"
+        android:background="@color/map_conver" />
     <include
         android:id="@+id/toolbar"
         layout="@layout/toolbar" />

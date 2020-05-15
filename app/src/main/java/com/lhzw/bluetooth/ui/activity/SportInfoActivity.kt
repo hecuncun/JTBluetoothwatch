@@ -59,7 +59,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             initChart(this@SportInfoActivity, convertView!!)
             initView(this@SportInfoActivity, convertView!!)
             if (requirePermission(this@SportInfoActivity)) {
-                aMap = initMap(mMapView)
+                aMap = initMap(this@SportInfoActivity, mMapView)
                 aMap?.setOnMapClickListener(this@SportInfoActivity)
             }
         }
@@ -90,7 +90,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         when (requestCode) {
             Constants.REQUESTCODE -> {
                 if (Build.VERSION.SDK_INT >= 23) {
-                    aMap = mPresenter?.initMap(mMapView!!)
+                    aMap = mPresenter?.initMap(this@SportInfoActivity, mMapView!!)
                     aMap?.setOnMapClickListener(this@SportInfoActivity)
                 }
             }

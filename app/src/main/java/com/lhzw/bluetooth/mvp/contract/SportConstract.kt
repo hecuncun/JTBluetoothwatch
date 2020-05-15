@@ -32,7 +32,7 @@ interface SportConstract {
 
     interface Presenter {
         fun getSha1(): String?
-        fun initMap(mMapView: MapView?): AMap?
+        fun initMap(activity: Activity,mMapView: MapView?): AMap?
         fun requirePermission(activity: Activity): Boolean
         fun initChart(activity: Activity, convertView: android.view.View)
         fun showSharePopuWindow(activity: Activity)

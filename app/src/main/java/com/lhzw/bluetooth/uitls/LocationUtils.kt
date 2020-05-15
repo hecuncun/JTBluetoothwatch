@@ -218,7 +218,7 @@ class LocationUtils : AMapLocationListener {
         })
     }
 
-    fun calculateRoute(points: MutableList<LatLng>, startColor: Int, endColor: Int): PolylineOptions? {
+    private fun calculateRoute(points: MutableList<LatLng>, startColor: Int, endColor: Int): PolylineOptions? {
         if (points.size > 0) {
             val argbEvaluator = ArgbEvaluator() //渐变色计算类
             val colorStart: Int = App.instance.resources.getColor(startColor)
