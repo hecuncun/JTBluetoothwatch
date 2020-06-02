@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.bean
 
+import android.util.Log
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -99,6 +100,8 @@ data class SportInfoAddrBean(
                 val distance_point_end_addr = BaseUtils.byteToInt(content.copyOfRange(136, 140).toList())
                 //保留24个字节
                 val sport_detail_mark = "$ID-$activity_start-$activity_end"
+
+                Log.e("parserdetail", "$activity_mark  $  ${sport_detail_mark}  ${BaseUtils.byte2HexStr(content)}")
                 val bean = SportInfoAddrBean(
                         ID,
                         activity_type,

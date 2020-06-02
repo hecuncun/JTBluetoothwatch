@@ -1,6 +1,8 @@
 package com.lhzw.bluetooth.constants
 
 import android.graphics.Color
+import android.graphics.Typeface
+import com.lhzw.bluetooth.application.App
 
 /**
  *
@@ -112,4 +114,9 @@ object Constants {
             ACTIVITY_CLIMBING,
             ACTIVITY_INDOOR
     )
+
+    // 字体
+    val font_var = Typeface.createFromAsset(App.context.assets,"OpenSans-Light.ttf")
+    val font_val = Typeface.createFromAsset(App.context.assets,"fonts/Feather.ttf")
+    val font_zh = Typeface.createFromAsset(App.context.assets,"fonts/Feather.ttf")
 }

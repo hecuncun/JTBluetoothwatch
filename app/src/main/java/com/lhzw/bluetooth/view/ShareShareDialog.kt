@@ -1,18 +1,23 @@
 package com.lhzw.bluetooth.view
 
 import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.net.Uri
+import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.uitls.BaseUtils
-import com.umeng.socialize.ShareAction
 import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
-import kotlinx.android.synthetic.main.dialog_child_share.*
+import kotlinx.android.synthetic.main.child_share.*
+import java.io.File
 
 
 /**
@@ -24,59 +29,63 @@ import kotlinx.android.synthetic.main.dialog_child_share.*
  */
 
 
-class ShareShareDialog(private var mContext: Activity) : BottomSheetDialog(mContext), View.OnClickListener {
+class ShareShareDialog(private var mContext: Activity?, private var shareBitmap: Bitmap?) : BottomSheetDialog(mContext!!), View.OnClickListener {
+    private val WX_QUEST = 0x0001
+    private val QQ_QUEST = 0x0005
+    private var path: String? = "/sdcard/share/xxxxxx.jpg"
+    private var shareFile: File? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    private var convertview: View? = null
+
     init {
-        var view = LayoutInflater.from(mContext).inflate(R.layout.dialog_share_sheet, null)
-        view?.apply {
-            setContentView(view)
-            ll_qq.setOnClickListener(this@ShareShareDialog)
-            ll_weibo.setOnClickListener(this@ShareShareDialog)
-            ll_friends.setOnClickListener(this@ShareShareDialog)
-            ll_weixin.setOnClickListener(this@ShareShareDialog)
-            tv_share_cancel.setOnClickListener(this@ShareShareDialog)
+        convertview = LayoutInflater.from(mContext).inflate(R.layout.dialog_share_sheet, null)
+        convertview?.apply {
+            setContentView(convertview)
+            val parent = parent as ViewGroup
+            parent.setBackgroundResource(android.R.color.transparent)
+            im_qq.setOnClickListener(this@ShareShareDialog)
+            im_circle.setOnClickListener(this@ShareShareDialog)
+            im_weixin.setOnClickListener(this@ShareShareDialog)
+            im_cancel.setOnClickListener(this@ShareShareDialog)
         }
+        setOnDismissListener { onDetroy() }
     }
 
     override fun onClick(v: View?) {
         var platform: SHARE_MEDIA? = null
         if (!BaseUtils.isNetworkConnected()) {
-            Toast.makeText(mContext, mContext.getString(R.string.net_connect_error), Toast.LENGTH_LONG).show()
+            Toast.makeText(mContext!!, mContext?.getString(R.string.net_connect_error), Toast.LENGTH_LONG).show()
             return
         }
         when (v?.id) {
-            R.id.ll_qq -> {
+            R.id.im_qq -> {
                 if (!BaseUtils.isAppInstall(Constants.QQ)) {
-                    Toast.makeText(mContext, mContext.getString(R.string.app_installed_error), Toast.LENGTH_LONG).show()
+                    Toast.makeText(mContext!!, mContext?.getString(R.string.app_installed_error_qq), Toast.LENGTH_LONG).show()
                     this.dismiss()
                     return
                 }
                 platform = SHARE_MEDIA.QQ
             }
-            R.id.ll_friends -> {
+            R.id.im_circle -> {
                 if (!BaseUtils.isAppInstall(Constants.WEIXIN)) {
-                    Toast.makeText(mContext, mContext.getString(R.string.app_installed_error), Toast.LENGTH_LONG).show()
+                    Toast.makeText(mContext!!, mContext?.getString(R.string.app_installed_error_wx), Toast.LENGTH_LONG).show()
                     this.dismiss()
                     return
                 }
                 platform = SHARE_MEDIA.WEIXIN_CIRCLE
             }
-            R.id.ll_weixin -> {
+            R.id.im_weixin -> {
                 if (!BaseUtils.isAppInstall(Constants.WEIXIN)) {
-                    Toast.makeText(mContext, mContext.getString(R.string.app_installed_error), Toast.LENGTH_LONG).show()
+                    Toast.makeText(mContext!!, mContext?.getString(R.string.app_installed_error_wx), Toast.LENGTH_LONG).show()
                     this.dismiss()
                     return
                 }
                 platform = SHARE_MEDIA.WEIXIN
             }
-            R.id.ll_weibo -> {
-                if (!BaseUtils.isAppInstall(Constants.SINA)) {
-                    Toast.makeText(mContext, mContext.getString(R.string.app_installed_error), Toast.LENGTH_LONG).show()
-                    this.dismiss()
-                    return
-                }
-                platform = SHARE_MEDIA.SINA
-            }
-            R.id.tv_share_cancel -> {
+            R.id.im_cancel -> {
 
             }
         }
@@ -85,9 +94,36 @@ class ShareShareDialog(private var mContext: Activity) : BottomSheetDialog(mCont
     }
 
     private fun shareContent(platform: SHARE_MEDIA?) {
-        //        ShareAction(mContext).setDisplayList(SHARE_MEDIA.WEIXIN).withText("hello").setCallback(shareListener).open()
+        saveShareUI2Bitmap()
         platform?.let {
-            ShareAction(mContext).setPlatform(it).withText("hello").setCallback(shareListener).share()
+            when (platform) {
+                SHARE_MEDIA.QQ -> {
+                    val send = Intent()
+                    send.setAction(Intent.ACTION_SEND)
+                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                    send.setType("image/*");
+                    send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
+                    mContext?.startActivityForResult(send, WX_QUEST);
+                }
+                SHARE_MEDIA.WEIXIN_CIRCLE -> {
+                    val send = Intent()
+                    send.setAction(Intent.ACTION_SEND)
+                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                    send.setType("image/*");
+                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
+                    mContext?.startActivityForResult(send, WX_QUEST);
+                }
+                SHARE_MEDIA.WEIXIN -> {
+                    val send = Intent()
+                    send.setAction(Intent.ACTION_SEND)
+                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                    send.setType("image/*");
+                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
+                    mContext?.startActivityForResult(send, WX_QUEST);
+                }
+                else -> {
+                }
+            }
         }
 
     }
@@ -110,7 +146,23 @@ class ShareShareDialog(private var mContext: Activity) : BottomSheetDialog(mCont
         }
     }
 
+    private fun saveShareUI2Bitmap() {
+        if (shareFile == null) {
+            shareFile = BaseUtils.saveBitmapFile(shareBitmap!!, path)!!
+        }
+    }
+
     fun showDialog() {
         this.show()
+    }
+
+    fun getView() = convertview
+
+    private fun onDetroy() {
+        mContext = null
+        convertview = null
+        path = null
+        shareFile = null
+        shareBitmap = null
     }
 }

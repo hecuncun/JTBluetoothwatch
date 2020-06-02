@@ -23,6 +23,7 @@ import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.KeyBoardUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.uitls.StatusBarUtil
+import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 
@@ -99,6 +100,7 @@ abstract class BaseActivity : AppCompatActivity() {
         if (this.supportActionBar != null) {
             this.supportActionBar?.setBackgroundDrawable(ColorDrawable(mThemeColor))
         }
+
     }
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
@@ -176,7 +178,7 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                Log.e("permission","$permission 没授权")
+                Log.e("permission", "$permission 没授权")
                 return false
             }
         }

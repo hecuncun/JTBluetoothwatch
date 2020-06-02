@@ -1,13 +1,15 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Paint
+import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -17,12 +19,10 @@ import com.lhzw.bluetooth.bean.ShareBgBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.glide.BlurBitmapUtil
 import com.lhzw.bluetooth.glide.GlideUtils
+import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
 import kotlinx.android.synthetic.main.activity_share_poster.*
-import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.text.SimpleDateFormat
 
 
@@ -35,6 +35,10 @@ import java.text.SimpleDateFormat
  */
 class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTouchListener {
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
+    private val WX_QUEST = 0x0001
+    private val QQ_QUEST = 0x0005
+    private var path: String? = "/sdcard/share/xxxxxx.jpg"
+    private var shareFile: File? = null
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,10 +49,29 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
         initView()
         setListener()
         initData()
+        initPhotoError()
+    }
+
+    private fun saveShareUI2Bitmap() {
+        if(shareFile == null) {
+            rl_share_poster.isDrawingCacheEnabled = true
+            rl_share_poster.buildDrawingCache()
+            val bitmap = rl_share_poster.getDrawingCache()
+            shareFile = BaseUtils.saveBitmapFile(bitmap, path)!!
+            rl_share_poster.destroyDrawingCache()
+        }
+    }
+
+    private fun initPhotoError() {
+        // android 7.0系统解决拍照的问题
+        val builder = VmPolicy.Builder()
+        StrictMode.setVmPolicy(builder.build())
+        builder.detectFileUriExposure()
     }
 
     private fun initView() {
-
+        tv_save_poster.paint.flags = Paint.UNDERLINE_TEXT_FLAG //下划线
+        tv_save_poster.paint.isAntiAlias = true//抗锯齿
     }
 
     private fun setListener() {
@@ -83,24 +106,57 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     }
 
     override fun onClick(v: View?) {
+        saveShareUI2Bitmap()
         when (v?.id) {
             R.id.tv_save_poster -> {
                 rl_share_poster.isDrawingCacheEnabled = true
                 rl_share_poster.buildDrawingCache()
                 val bmp = rl_share_poster.getDrawingCache()
                 val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-                savePicture(bmp, "${formatter.format(System.currentTimeMillis())}.jpg")
+                if (BaseUtils.savePicture(bmp, "${formatter.format(System.currentTimeMillis())}.jpg")) {
+                    Toast.makeText(this, "保存成功!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "保存失败!", Toast.LENGTH_SHORT).show()
+                }
+
                 rl_share_poster.destroyDrawingCache()
                 finish()
             }
             R.id.im_weixin -> {
-
+                if (!BaseUtils.isAppInstall(this@SharePosterActivity, "com.tencent.mm")) {
+                    Toast.makeText(this, "微信未安装", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val send = Intent()
+                send.setAction(Intent.ACTION_SEND)
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                send.setType("image/*");
+                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
+                startActivityForResult(send, WX_QUEST);
             }
             R.id.im_circle -> {
-
+                if (!BaseUtils.isAppInstall(this@SharePosterActivity, "com.tencent.mm")) {
+                    Toast.makeText(this, "微信未安装", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val send = Intent()
+                send.setAction(Intent.ACTION_SEND)
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                send.setType("image/*");
+                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
+                startActivityForResult(send, WX_QUEST);
             }
             R.id.im_qq -> {
-
+                if (!BaseUtils.isAppInstall(this@SharePosterActivity, "com.tencent.mobileqq")) {
+                    Toast.makeText(this, "QQ未安装", Toast.LENGTH_SHORT).show()
+                    return
+                }
+                val send = Intent()
+                send.setAction(Intent.ACTION_SEND)
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                send.setType("image/*");
+                send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
+                startActivityForResult(send, WX_QUEST);
             }
             R.id.im_cancel -> {
                 finish()
@@ -125,29 +181,15 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
         return false
     }
 
-    fun savePicture(bm: Bitmap?, fileName: String?) {
-        Log.i("xing", "savePicture: ------------------------")
-        if (null == bm) {
-            Log.i("xing", "savePicture: ------------------图片为空------")
-            return
-        }
-        val foder = File(Environment.getExternalStorageDirectory().absolutePath.toString() + "/share")
-        if (!foder.exists()) {
-            foder.mkdirs()
-        }
-        val myCaptureFile = File(foder, fileName)
-        try {
-            if (!myCaptureFile.exists()) {
-                myCaptureFile.createNewFile()
+    override fun onDestroy() {
+        super.onDestroy()
+        photoPath = null
+        shareFile?.let {
+            if(it.isFile && it.exists()) {
+                it.delete()
             }
-            val bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
-            //压缩保存到本地
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bos)
-            bos.flush()
-            bos.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
         }
-        Toast.makeText(this, "保存成功!", Toast.LENGTH_SHORT).show()
+        shareFile = null
+        path = null;
     }
 }

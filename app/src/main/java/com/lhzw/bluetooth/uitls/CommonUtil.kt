@@ -9,6 +9,7 @@ import android.os.Build
 import android.provider.Settings
 import android.text.TextUtils
 import android.util.TypedValue
+import android.view.Display
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import java.io.BufferedReader
@@ -59,7 +60,7 @@ object CommonUtil {
      * @return
      */
     fun getNavigationBarHeight(activity: Activity): Int {
-        if (isNavigationBarShow(activity)) {
+        if (!isNavigationBarShow(activity)) {
             return 0
         }
         val resources = activity.resources
@@ -75,9 +76,9 @@ object CommonUtil {
      * @param context
      * @return
      */
-    private fun isNavigationBarShow(context: Context): Boolean {
-        val `val` = Settings.Global.getInt(context.contentResolver, getDeviceInfo(), 0)
-        return `val` != 0
+    fun isNavigationBarShow(context: Context): Boolean {
+        val value = Settings.Global.getInt(context.contentResolver, getDeviceInfo(), 0)
+        return value != 0
     }
 
     fun setMaxAspect(mContext: Context) {
@@ -100,7 +101,7 @@ object CommonUtil {
      *
      * @return
      */
-    private fun getDeviceInfo(): String {
+     fun getDeviceInfo(): String {
         val brand = Build.BRAND
         if (TextUtils.isEmpty(brand)) return "navigationbar_is_min"
         return if (brand.equals("HUAWEI", ignoreCase = true)) {
@@ -189,6 +190,11 @@ object CommonUtil {
             }
         }
         return ""
+    }
+
+    fun getScreenHeight(activity: Activity) : Int{
+        return activity.windowManager.defaultDisplay.width
+
     }
 
 }

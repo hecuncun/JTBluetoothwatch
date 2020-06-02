@@ -84,9 +84,10 @@ public class BitmapUtil {
         Bitmap bitmap = null;
         for (int i = 0; i < scrollView.getChildCount(); i++) {
             h += scrollView.getChildAt(i).getHeight();
-            scrollView.getChildAt(i).setBackgroundColor(Color.parseColor("#000000"));
+            scrollView.getChildAt(i).setBackgroundColor(Color.parseColor("#00000000"));
         }
-        bitmap = Bitmap.createBitmap(scrollView.getWidth(), h, Bitmap.Config.RGB_565);
+        bitmap = Bitmap.createBitmap(scrollView.getWidth(), h, Bitmap.Config.ARGB_8888);
+        bitmap.setHasAlpha(true);
         final Canvas canvas = new Canvas(bitmap);
         scrollView.draw(canvas);
         return bitmap;
@@ -300,5 +301,18 @@ public class BitmapUtil {
 
         return (bitmap);
     }
+
+
+    /**
+     *
+     * @param bitmap
+     * @return
+     */
+    private Bitmap cropBitmap(Bitmap bitmap, int with, int height) {
+        int w = bitmap.getWidth(); // 得到图片的宽，高
+        int h = bitmap.getHeight();
+        return Bitmap.createBitmap(bitmap, 0, 0, with, height, null, false);
+    }
+
 
 }

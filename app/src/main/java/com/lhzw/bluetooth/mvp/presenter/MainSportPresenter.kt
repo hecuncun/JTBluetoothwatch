@@ -2,13 +2,16 @@ package com.lhzw.bluetooth.mvp.presenter
 
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Point
 import android.os.Build
 import android.os.Handler
 import android.os.Message
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -28,6 +31,7 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.model.SportModel
+import com.lhzw.bluetooth.ui.activity.ShareMapPosterActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LocationUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -54,9 +58,11 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private var locationUtils: LocationUtils? = null
     private val DRAWPATH = 0x0001
     private val ANIMATION = 0x0005
+    private val SHOTSCREEN = 0x0010
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
     private var currentMarker: Marker? = null
+    private var isOver = false
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {
         mListener = onLocationChangedListener;
 //        locationUtils?.startLocate()
@@ -151,7 +157,6 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             // TODO Auto-generated catch block
             e.printStackTrace()
         }
-
         return null
     }
 
@@ -162,12 +167,33 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     }
 
     // 显示分享对话框
-    override fun showSharePopuWindow(activity: Activity) {
-        var dialog = ShareShareDialog(activity)
+    override fun showSharePopuWindow(activity: Activity, stareBitmap: Bitmap?) {
+        var dialog = ShareShareDialog(activity, stareBitmap)
+        dialog.getWindow().decorView.setBackgroundResource(R.color.transparent)
         dialog.showDialog()
+
+
+        val windowManager = activity.windowManager as WindowManager
+        val display = windowManager.defaultDisplay
+        val lp = dialog.window.attributes as WindowManager.LayoutParams
+        lp.width = (display.getWidth()) - BaseUtils.dip2px(12)//设置宽度
+        dialog.window.attributes = lp;
     }
 
+    // 跳转分享acitivity
+    override fun startShareActivity(activity: Activity?, path: String?) {
+        activity?.let {
+            val intent = Intent(it, ShareMapPosterActivity::class.java)
+            intent.putExtra("mark", mark)
+            intent.putExtra("type", type)
+            it.startActivity(intent)
+        }
+    }
+
+
     override fun initView(activity: Activity, convertView: View) {
+        // 修改字体
+        model.initFont(activity, convertView)
         // 更换头像
         GlideUtils.showCircleWithBorder(convertView.findViewById<ImageView>(R.id.iv_head_photo),
                 photoPath, R.drawable.pic_head, activity.resources.getColor(R.color.white))
@@ -218,11 +244,13 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 }
 
                 val speed_allocation_av = BaseUtils.intToByteArray(it[0].speed)
+                if (speed_allocation_av[0] < 0) speed_allocation_av[0] = 0
                 var av_all_speed = ""
                 if (speed_allocation_av[0] < 0x0A) {
                     av_all_speed += "0"
                 }
                 av_all_speed += "${speed_allocation_av[0].toInt() and 0xFF}${"\'"}"
+                if (speed_allocation_av[1] < 0) speed_allocation_av[1] = 0
                 if (speed_allocation_av[1] < 0x0A) {
                     av_all_speed += "0"
                 }
@@ -231,10 +259,12 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 convertView.findViewById<TextView>(R.id.tv_allocation_speed_top).text = av_all_speed
                 val speed_allocation_best = BaseUtils.intToByteArray(it[0].best_speed)
                 var best_all_speed = ""
+                if (speed_allocation_best[0] < 0) speed_allocation_best[0] = 0
                 if (speed_allocation_best[0] < 0x0A) {
                     best_all_speed += "0"
                 }
                 best_all_speed += "${speed_allocation_best[0].toInt() and 0xFF}${"\'"}"
+                if (speed_allocation_best[1] < 0) speed_allocation_best[1] = 0
                 if (speed_allocation_best[1] < 0x0A) {
                     best_all_speed += "0"
                 }
@@ -306,7 +336,10 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
      */
         val b = LatLngBounds.builder()
         var latLngs = model.queryData(mark, Constants.GPS)
-        if (latLngs == null || latLngs.isEmpty()) return
+        if (latLngs == null || latLngs.isEmpty()) {
+            isOver = true
+            return
+        }
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
             it.forEach {
@@ -334,7 +367,13 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                         activity?.trailview?.drawSportLine(screenPoints, R.mipmap.location_start, R.drawable.icon_ball, object : SportTrailView.OnTrailChangeListener {
                             override fun onFinish() {
                                 activity?.trailview?.visibility = View.GONE
-                                Thread { locationUtils?.drawPath(amp, list, model?.getDistanceMap()) }.start()
+                                Thread {
+                                    locationUtils?.drawPath(amp, list, model?.getDistanceMap())
+                                    val msg = Message()
+                                    msg.what = SHOTSCREEN
+                                    msg.obj = activity
+                                    mHandler.sendMessageDelayed(msg, 200)
+                                }.start()
                             }
                         })
                     }
@@ -377,9 +416,19 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 ANIMATION -> {
 
                 }
+                SHOTSCREEN -> {
+                    var listener = msg.obj as AMap.OnMapScreenShotListener
+                    aMap?.getMapScreenShot(listener)
+                }
             }
         }
     }
 
+    fun setAnimationState(state: Boolean) {
+        isOver = state
+    }
 
+    fun getAnimationState(): Boolean {
+        return isOver
+    }
 }

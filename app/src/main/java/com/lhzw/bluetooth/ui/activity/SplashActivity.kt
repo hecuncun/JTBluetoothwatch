@@ -28,6 +28,7 @@ class SplashActivity : BaseActivity() {
 
                 override fun onAnimationEnd(p0: Animation?) {
                     jumpToMain()
+
                 }
 
                 override fun onAnimationStart(p0: Animation?) {

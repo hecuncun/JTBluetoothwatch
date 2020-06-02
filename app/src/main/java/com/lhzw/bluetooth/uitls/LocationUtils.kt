@@ -138,6 +138,7 @@ class LocationUtils : AMapLocationListener {
             var polyLineList = ArrayList<PolylineOptions>()
             var distance = 0.0f
             var counter = 0
+            var lastColorId = -1
             val points = ArrayList<LatLng>()
             val classify = classifyColor(distanceMap)
             list.forEach { it ->
@@ -145,8 +146,17 @@ class LocationUtils : AMapLocationListener {
                 distance += tem
                 if (distance > 1000) {
                     distance = 0.0f
-                    polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
+                    points.add(it)
+                    if(lastColorId == -1) {
+                        lastColorId = classify[counter] + 1
+                        polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
+                    } else {
+                        polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[classify[counter] + 1])!!)
+                        lastColorId = classify[counter] + 1
+                    }
+//                    polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
                     points.clear()
+                    points.add(it)
                     counter++
                     markers?.add(aMap.addMarker(getMarkerOption(it, "$counter")))
                 } else {
@@ -155,7 +165,11 @@ class LocationUtils : AMapLocationListener {
                 oldLatLng = it;
             }
             if (points.size > 0) {
-                polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
+                if(lastColorId == -1){
+                    polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
+                } else {
+                    polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[path_colors.size - 1])!!)
+                }
             }
             polyLineList.forEach {
                 paths?.add(aMap.addPolyline(it))

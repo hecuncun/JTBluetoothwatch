@@ -1,6 +1,5 @@
 package com.lhzw.bluetooth.bean
 
-import android.util.Log
 import com.amap.api.maps.AMapUtils
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.constants.Constants
@@ -40,7 +39,6 @@ data class SportDetailInfobean(
             map.forEach { (mark, data) ->
                 deleteData(mark) //如果数据表中有该mark数据，进行删除
                 data.forEach { (type, content) ->
-                    Log.e("parserdetail", "$mark  $type  ${content.size}  ${BaseUtils.byte2HexStr(content.toByteArray())}")
                     val read_len = content.size
                     when (type) {
                         // 除了Gps 4字节数据  活动步数 单位步 1分钟 活动距离 单位 cm  热量 单位 卡 一分钟 速度 单位 m/s 一分钟
@@ -60,6 +58,7 @@ data class SportDetailInfobean(
                         }
                         // 8个字节数据 经纬度各占四个字节，带符号整形数据 然后在除 1000000  高精度 1s 低电量 1s或者5s
                         Constants.GPS -> {
+//                            Log.e("parserdetail", "$mark  $type  ${content.size}  ${BaseUtils.byte2HexStr(content.toByteArray())}")
                             parserGps(mark, type, 8, 1, content, read_len)
                             body()
                         }
@@ -75,7 +74,7 @@ data class SportDetailInfobean(
         // 解析通用数据
         private fun parserData(mark: String, type: Int, interval: Int, sector_time: Int, content: List<Byte>, len: Int) {
             for (index in 0 until len / interval) {
-                Log.e("parserData", "type : $type  ${BaseUtils.byte2HexStr(content.subList(index * interval, (index + 1) * interval).toByteArray())}")
+//                Log.e("parserData", "type : $type  ${BaseUtils.byte2HexStr(content.subList(index * interval, (index + 1) * interval).toByteArray())}")
                 val bean = SportDetailInfobean(
                         mark,
                         type,
@@ -112,11 +111,12 @@ data class SportDetailInfobean(
             var isStart = false
             var tmp = LatLng(0.0, 0.0)
             var conter = 0
-            for (index in 0 until len / interval - 1) {
+            val total = len / interval
+            for (index in 0 until total - 1) {
                 var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
                 var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
 
-                Log.e("GPS_LATLGT" , "mark  ${mark}  lat : ${lat}, lgt  ${lgt}")
+//                Log.e("GPS_LATLGT", "mark  ${mark}  lat : ${lat}, lgt  ${lgt}")
                 if (lat > 0.0 && lgt > 0) {
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
                     if (!isStart) {
@@ -151,6 +151,36 @@ data class SportDetailInfobean(
                                     start[0],
                                     start[1])
                             CommOperation.insert(bean)
+                        } else {
+                            var conter = 4
+                            if (index + 4 < total) {
+                                var currentPos = index + 1
+                                var isGreater = true
+                                while (conter > 0) {
+                                    var lat = BaseUtils.byteToInt(content.subList(currentPos * interval + interval / 2, (currentPos + 1) * interval)).toDouble()
+                                    var lgt = BaseUtils.byteToInt(content.subList(currentPos * interval, currentPos * interval + interval / 2)).toDouble()
+                                    val latLng = LatLng(start[0], start[1])
+                                    val distance = AMapUtils.calculateLineDistance(latLng, tmp)
+                                    if (distance < 30.0) {
+                                        isGreater = false;
+                                    }
+                                    conter--
+                                    currentPos++
+                                }
+                                if (isGreater) {
+                                    tmp = latLng
+                                    val bean = SportDetailInfobean(
+                                            mark,
+                                            type,
+                                            index,
+                                            sector_time,
+                                            0,
+                                            0,
+                                            start[0],
+                                            start[1])
+                                    CommOperation.insert(bean)
+                                }
+                            }
                         }
                     }
                 } else {

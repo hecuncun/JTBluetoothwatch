@@ -49,17 +49,20 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
 
         // 获取 当天的活动
         Log.e("ShareSport", "${BaseUtils.getCurrentData()}")
-        val adapter = SportAdapter(translateSportBeans())
-        adapter?.openLoadAnimation { view ->
-            arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
-        }
-        adapter?.setOnItemClickListener { _, view, position ->
+        val list = translateSportBeans()
+        if (list == null || list.size == 0) {
+            Iv_no_data.visibility = View.VISIBLE
+        } else {
+            val adapter = SportAdapter(list)
+            adapter?.openLoadAnimation { view ->
+                arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
+            }
+            adapter?.setOnItemClickListener { _, view, position ->
 //            body(view, position)
+            }
+            recyclerView.layoutManager = LinearLayoutManager(this)
+            recyclerView.adapter = adapter
         }
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
-
     }
 
     override fun initView() {

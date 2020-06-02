@@ -261,6 +261,7 @@
             android:background="@drawable/bg_shape_up_circular_panel_share">
 
             <TextView
+                android:id="@+id/tv_share_poster"
                 android:layout_width="110dp"
                 android:layout_height="45dp"
                 android:layout_centerHorizontal="true"

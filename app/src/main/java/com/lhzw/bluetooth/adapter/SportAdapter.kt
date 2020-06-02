@@ -22,13 +22,13 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
         item?.apply {
             when (type) {
                 Constants.ACTIVITY_HIKING -> {
-                    helper.setImageResource(R.id.im_portrait, R.mipmap.icon_hiking_sport)
+                    helper.setImageResource(R.id.im_portrait, R.mipmap.sport_waking)
                 }
                 Constants.ACTIVITY_INDOOR -> {
-                    helper.setImageResource(R.id.im_portrait, R.mipmap.icon_indoor_sport)
+                    helper.setImageResource(R.id.im_portrait, R.mipmap.sport_indoor)
                 }
                 Constants.ACTIVITY_RUNNING -> {
-                    helper.setImageResource(R.id.im_portrait, R.mipmap.icon_running_sport)
+                    helper.setImageResource(R.id.im_portrait, R.mipmap.sport_running)
                 }
                 Constants.ACTIVITY_CLIMBING -> {
 

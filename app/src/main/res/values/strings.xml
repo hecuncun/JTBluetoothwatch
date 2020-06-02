@@ -21,7 +21,8 @@
     <string name="heart_rate_range">心率区间</string>
     <string name="dialog_transpond">转发至</string>
     <string name="net_connect_error">网络连接异常</string>
-    <string name="app_installed_error">该应用未安装！</string>
+    <string name="app_installed_error_qq">QQ应用未安装！</string>
+    <string name="app_installed_error_wx">微信应用未安装！</string>
     <string name="OK">OK</string>
     <string name="action_share">分享</string>
     <string name="progress_update_content">运动数据已更新 @</string>

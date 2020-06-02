@@ -2,13 +2,24 @@
 
 package com.lhzw.bluetooth.uitls
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
+import android.graphics.Bitmap
 import android.net.ConnectivityManager
+import android.os.Build
+import android.os.Environment
 import android.util.Log
+import android.view.ViewConfiguration
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.constants.Constants
+import java.io.BufferedOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.lang.reflect.Method
 import java.util.*
 import java.util.regex.Pattern
 
@@ -336,5 +347,109 @@ object BaseUtils {
     fun dip2px(dpValue: Int): Int {
         val scale = App.context.resources.displayMetrics.density
         return (dpValue * scale + 0.5f).toInt()
+    }
+
+
+    fun hasNavBar(context: Context): Boolean {
+        val res: Resources = context.resources
+        val resourceId: Int = res.getIdentifier("config_showNavigationBar", "bool", "android")
+        return if (resourceId != 0) {
+            var hasNav: Boolean = res.getBoolean(resourceId)
+            // check override flag
+            val sNavBarOverride: String = getNavBarOverride()
+            if ("1" == sNavBarOverride) {
+                hasNav = false
+            } else if ("0" == sNavBarOverride) {
+                hasNav = true
+            }
+            hasNav
+        } else { // fallback
+            !ViewConfiguration.get(context).hasPermanentMenuKey()
+        }
+    }
+
+    /**
+     * 判断虚拟按键栏是否重写
+     * @return
+     */
+    private fun getNavBarOverride(): String {
+        var sNavBarOverride: String? = null
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                val c = Class.forName("android.os.SystemProperties")
+                val m: Method = c.getDeclaredMethod("get", String::class.java)
+                m.setAccessible(true)
+                sNavBarOverride = m.invoke(null, "qemu.hw.mainkeys").toString()
+            } catch (e: Throwable) {
+            }
+        }
+        return sNavBarOverride!!
+    }
+
+    fun getNavBarHeight(context: Activity) : Int{
+        if(!hasNavBar(context)) return 0
+        return CommonUtil.getNavigationBarHeight(context)
+    }
+
+    /**
+     * 保存成图片
+     */
+    fun savePicture(bm: Bitmap?, fileName: String?) : Boolean{
+        if (null == bm) {
+            return false
+        }
+        val foder = File(Environment.getExternalStorageDirectory().absolutePath.toString() + "/share/")
+        if (!foder.exists()) {
+            foder.mkdirs()
+        }
+        val myCaptureFile = File(foder, fileName)
+        try {
+            if (!myCaptureFile.exists()) {
+                myCaptureFile.createNewFile()
+            }
+            val bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
+            //压缩保存到本地
+            bm.compress(Bitmap.CompressFormat.JPEG, 90, bos)
+            bos.flush()
+            bos.close()
+            return true
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return false
+    }
+
+    fun saveBitmapFile(bitmap: Bitmap, filepath: String?): File? {
+        val file = File(filepath) //将要保存图片的路径
+        try {
+            val bos = BufferedOutputStream(FileOutputStream(file))
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos)
+            bos.flush()
+            bos.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
+    /**
+     * 检测手机是否安装某个应用
+     *
+     * @param context
+     * @param appPackageName 应用包名
+     * @return true-安装，false-未安装
+     */
+    fun isAppInstall(context: Context, appPackageName: String): Boolean {
+        val packageManager = context.packageManager // 获取packagemanager
+        val pinfo = packageManager.getInstalledPackages(0) // 获取所有已安装程序的包信息
+        if (pinfo != null) {
+            for (i in pinfo.indices) {
+                val pn = pinfo[i].packageName
+                if (appPackageName == pn) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 }

@@ -33,6 +33,7 @@ import com.lhzw.bluetooth.xyformatter.CustomYVFormatter_Speed_heart
 import com.lhzw.bluetooth.xyformatter.HorizontalBarXYFormatter
 import com.lhzw.dmotest.bean.BarBean
 import com.lhzw.dmotest.view.HorizontalBarGraph
+import kotlinx.android.synthetic.main.activity_sport_info.*
 import org.litepal.crud.LitePalSupport
 
 
@@ -288,6 +289,13 @@ class SportModel(var mark: String) : SportConstract.Model {
 
     override fun getDistanceMap(): MutableMap<Int, Int>? {
         return distance_map
+    }
+
+    override fun initFont(activity: Activity, convertView: View) {
+        activity?.let {
+            it.tv_distance.typeface = Constants.font_var
+            it.tv_calorie.typeface = Constants.font_var
+        }
     }
 
 
