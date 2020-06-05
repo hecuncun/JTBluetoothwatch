@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@color/colorPrimary"
-              android:orientation="vertical">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="140dp">
+        android:layout_height="140dp"
+        android:layout_marginTop="10.5dp">
 
         <TextView
             android:id="@+id/tv_ble_state_tip"
@@ -20,7 +21,7 @@
             android:text="蓝牙关闭"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_normal"
-            android:visibility="visible"/>
+            android:visibility="visible" />
 
         <RelativeLayout
             android:id="@+id/rl_step_num_container"
@@ -35,9 +36,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:text="--"
-                android:textSize="25sp"
                 android:textColor="@color/white"
-                android:textStyle="bold"/>
+                android:textSize="25sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/tv_goal_step_num"
@@ -47,46 +48,51 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/dp_4"
                 android:text="10000"
-                android:textColor="@color/gray"/>
+                android:textColor="@color/gray" />
         </RelativeLayout>
     </RelativeLayout>
 
-    <View style="@style/horizontalOrangeLine"/>
+    <View style="@style/horizontalOrangeLine" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
-                android:padding="@dimen/dp_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/dp_10"
+                android:text="24小时步数"
                 android:textColor="@color/blue_light"
-                android:textSize="@dimen/text_size_normal"
-                android:text="24小时步数"/>
+                android:textSize="@dimen/text_size_normal" />
+
             <TextView
                 android:id="@+id/tv_step_num_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/bu"
                 android:paddingTop="@dimen/dp_10"
                 android:paddingBottom="@dimen/dp_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_normal"
+                android:text="--"
                 android:textColor="@color/white"
-                android:text="--"/>
+                android:textSize="@dimen/text_size_normal" />
+
             <TextView
                 android:id="@+id/bu"
-                android:padding="@dimen/dp_10"
-                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="@dimen/dp_10"
+                android:text="步"
                 android:textColor="@color/blue_light"
-                android:textSize="@dimen/text_size_normal"
-                android:text="步"/>
+                android:textSize="@dimen/text_size_normal" />
         </RelativeLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -102,43 +108,47 @@
             </com.github.mikephil.charting.charts.BarChart>
         </FrameLayout>
 
-        <View
-            style="@style/horizontalOrangeLine"/>
+        <View style="@style/horizontalOrangeLine" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <TextView
-                android:padding="@dimen/dp_10"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:padding="@dimen/dp_10"
+                android:text="24小时热量"
                 android:textColor="@color/orange"
-                android:textSize="@dimen/text_size_normal"
-                android:text="24小时热量"/>
+                android:textSize="@dimen/text_size_normal" />
+
             <TextView
                 android:id="@+id/tv_cal_total"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_toLeftOf="@+id/ka"
                 android:paddingTop="@dimen/dp_10"
                 android:paddingBottom="@dimen/dp_10"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="@dimen/text_size_normal"
+                android:text="--"
                 android:textColor="@color/white"
-                android:text="--"/>
+                android:textSize="@dimen/text_size_normal" />
+
             <TextView
                 android:id="@+id/ka"
-                android:padding="@dimen/dp_10"
-                android:layout_alignParentEnd="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:padding="@dimen/dp_10"
+                android:text="卡"
                 android:textColor="@color/orange"
-                android:textSize="@dimen/text_size_normal"
-                android:text="卡"/>
+                android:textSize="@dimen/text_size_normal" />
         </RelativeLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/bar_chart_cal"
                 android:layout_width="match_parent"

@@ -17,6 +17,7 @@ import com.amap.api.maps.MapView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.constants.ShareBgBitmap
+import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -80,6 +81,10 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
         panelViewList.add(panel)
         sliding_up_panel_layout.adapter = panelAdapter
         convertView?.findViewById<TextView>(R.id.tv_share_poster)?.setOnClickListener {
+            if(scBitmapMap == null) {
+                showToast("没有轨迹")
+                return@setOnClickListener
+            }
             ShareBgBitmap.bg_bitmap = scBitmapShot
             mPresenter?.startShareActivity(this@BaseSportActivity, scMapShotPath)
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,19 +8,21 @@
     android:orientation="vertical"
     tools:context=".ui.activity.MainActivity">
 
-    <include
-        android:id="@+id/main_bar"
-        layout="@layout/toolbar" />
-
     <!--    <View style="@style/horizontalOrangeLine"/>-->
 
     <FrameLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_navigation"
+        android:layout_below="@+id/title_toolbar"
+        android:layout_marginTop="-10.5dp">
 
     </FrameLayout>
+
+    <include
+        android:id="@+id/title_toolbar"
+        layout="@layout/toolbar" />
 
     <View style="@style/horizontalOrangeLine" />
 
@@ -29,11 +31,11 @@
         style="@style/Widget.Design.BottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray_bottom"
         app:elevation="16dp"
         app:itemIconTint="@drawable/nav_item_color_state"
         app:itemTextColor="@drawable/nav_item_color_state"
         app:menu="@menu/bottom_navigation_main" />
 
-</LinearLayout>
+</RelativeLayout>

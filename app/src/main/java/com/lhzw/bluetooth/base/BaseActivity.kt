@@ -23,7 +23,6 @@ import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.KeyBoardUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.uitls.StatusBarUtil
-import kotlinx.android.synthetic.main.activity_main.*
 import org.greenrobot.eventbus.EventBus
 import java.util.*
 

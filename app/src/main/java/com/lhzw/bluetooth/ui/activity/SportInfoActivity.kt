@@ -14,6 +14,7 @@ import com.amap.api.maps.AMap
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -117,6 +118,11 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             if (!getAnimationState()) {
                 return@setOnClickListener
             }
+            if(scBitmapMap == null){
+                showToast("没有轨迹")
+                return@setOnClickListener
+            }
+
             sliding_up_panel_layout.hiddedPanel()
 
             title_toolbar.isDrawingCacheEnabled = true

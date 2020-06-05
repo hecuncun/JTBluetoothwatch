@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.widget.TextView
 import android.widget.Toast
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -17,11 +18,11 @@ import java.util.*
  */
 
 fun Fragment.showToast(content: String) {
-    Toast.makeText(this.activity?.applicationContext,content,Toast.LENGTH_SHORT).show()
+    Toast.makeText(App.context, content, Toast.LENGTH_SHORT).show()
 }
 
 fun Context.showToast(content: String) {
-    Toast.makeText(this,content,Toast.LENGTH_SHORT).show()
+    Toast.makeText(App.context, content, Toast.LENGTH_SHORT).show()
 }
 
 fun Activity.showSnackMsg(msg: String) {

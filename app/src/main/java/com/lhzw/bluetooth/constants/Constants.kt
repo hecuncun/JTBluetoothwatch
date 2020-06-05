@@ -116,7 +116,11 @@ object Constants {
     )
 
     // 字体
-    val font_var = Typeface.createFromAsset(App.context.assets,"OpenSans-Light.ttf")
-    val font_val = Typeface.createFromAsset(App.context.assets,"fonts/Feather.ttf")
-    val font_zh = Typeface.createFromAsset(App.context.assets,"fonts/Feather.ttf")
+    val font_var = Typeface.createFromAsset(App.context.assets, "OpenSans-Light.ttf")
+    val font_val = Typeface.createFromAsset(App.context.assets, "fonts/Feather.ttf")
+    val font_zh = Typeface.createFromAsset(App.context.assets, "fonts/Feather.ttf")
+
+    const val IP_ADD = "http://192.168.1.168:8070/"
+    const val HTTP_TOOKEN = "x-access-token"
+    const val FIREST_LOGIN = "FIREST_LOGIN"
 }
