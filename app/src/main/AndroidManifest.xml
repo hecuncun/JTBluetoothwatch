@@ -28,6 +28,7 @@
         <activity android:name=".ui.activity.SharePosterActivity"></activity>
         <activity android:name=".ui.activity.ShareMapPosterActivity"></activity>
         <activity android:name=".ui.activity.LoginActivity"></activity>
+        <activity android:name=".ui.activity.BLEWatchListActivity"></activity>
 
         <activity
             android:name=".ui.activity.SplashActivity"

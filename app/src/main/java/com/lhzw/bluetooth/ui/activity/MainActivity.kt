@@ -18,6 +18,7 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
@@ -38,7 +39,7 @@ import org.litepal.LitePal
 import org.litepal.extension.find
 
 
-class MainActivity : BaseActivity() {
+class MainActivity : BaseActivity(), View.OnClickListener {
 
     private val FRAGMENT_HOME = 0x01
     private val FRAGMENT_SPORTS = 0X02
@@ -53,6 +54,8 @@ class MainActivity : BaseActivity() {
     private var mConnectFragment: ConnectFragment? = null
     private val PERMISS_REQUEST_CODE = 0x100
     private val PERMISS_REQUEST_CODE_PHONE = 0x101
+    private var tapId = Constants.TAP_HOME;
+
 
     private var bleStateChangeReceiver: BleStateChangeReceiver? = null
 
@@ -65,10 +68,10 @@ class MainActivity : BaseActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
-        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS,Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS,Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
+        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS))) {
             Logger.e("已获取监听电话短信权限")
         } else {
-            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS,Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
+            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_MMS, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS), PERMISS_REQUEST_CODE_PHONE)
         }
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")
@@ -97,7 +100,7 @@ class MainActivity : BaseActivity() {
         if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {
             EventBus.getDefault().post(ScanBleEvent())
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 //        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
 //         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
 //         wakeLock?.acquire()
@@ -360,9 +363,9 @@ class MainActivity : BaseActivity() {
         }
         toolbar_title.text = "首页"
         showFragment(mIndex)
-        showFragment(mIndex)
-        showFragment(mIndex)
-        showFragment(mIndex)
+//        showFragment(mIndex)
+//        showFragment(mIndex)
+//        showFragment(mIndex)
 
         //获取蓝牙状态
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -372,6 +375,11 @@ class MainActivity : BaseActivity() {
             toolbar_right_img.setImageResource(if (state) com.lhzw.bluetooth.R.drawable.icon_ble_open else com.lhzw.bluetooth.R.drawable.icon_ble_close)
         }
 
+        ll_home.setOnClickListener(this)
+        ll_sport.setOnClickListener(this)
+        ll_setting.setOnClickListener(this)
+        ll_watch.setOnClickListener(this)
+        ll_me.setOnClickListener(this)
     }
 
     private val REQUEST_ENABLE_BLE = 101
@@ -405,7 +413,7 @@ class MainActivity : BaseActivity() {
 
                 if (mHomeFragment == null) {
                     mHomeFragment = HomeFragment.getInstance()
-                    transaction.add(com.lhzw.bluetooth.R.id.container, mHomeFragment!!, "home")
+                    transaction.add(R.id.container, mHomeFragment!!, "home")
                 } else {
                     transaction.show(mHomeFragment!!)
                 }
@@ -464,22 +472,22 @@ class MainActivity : BaseActivity() {
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         return@OnNavigationItemSelectedListener when (item.itemId) {
-            com.lhzw.bluetooth.R.id.action_home -> {
+            R.id.action_home -> {
                 showFragment(FRAGMENT_HOME)
                 true
             }
 
-            com.lhzw.bluetooth.R.id.action_sports -> {
+            R.id.action_sports -> {
                 showFragment(FRAGMENT_SPORTS)
                 true
             }
 
-            com.lhzw.bluetooth.R.id.action_setting -> {
+            R.id.action_setting -> {
                 showFragment(FRAGMENT_SETTING)
                 true
             }
 
-            com.lhzw.bluetooth.R.id.action_connect -> {
+            R.id.action_connect -> {
                 showFragment(FRAGMENT_CONNECT)
                 true
             }
@@ -542,4 +550,87 @@ class MainActivity : BaseActivity() {
             }
         }
     }
+
+    override fun onClick(v: View?) {
+        when (v?.id) {
+            R.id.ll_home -> {
+                if (judgeTab(Constants.TAP_HOME)) {
+                    return
+                }
+                iv_home.setImageResource(R.drawable.home_selected)
+                iv_sport.setImageResource(R.drawable.sports_unselected)
+                iv_setting.setImageResource(R.drawable.setting_unselected)
+                iv_me.setImageResource(R.drawable.me_unselected)
+
+                tv_home.setTextColor(getColor(R.color.white))
+                tv_sport.setTextColor(getColor(R.color.tab_unselected))
+                tv_setting.setTextColor(getColor(R.color.tab_unselected))
+                tv_me.setTextColor(getColor(R.color.tab_unselected))
+                showFragment(FRAGMENT_HOME)
+                tapId = Constants.TAP_HOME;
+            }
+            R.id.ll_sport -> {
+                if (judgeTab(Constants.TAP_SPORTS)) {
+                    return
+                }
+                iv_home.setImageResource(R.drawable.home_unselected)
+                iv_sport.setImageResource(R.drawable.sports_selected)
+                iv_setting.setImageResource(R.drawable.setting_unselected)
+                iv_me.setImageResource(R.drawable.me_unselected)
+
+                tv_home.setTextColor(getColor(R.color.tab_unselected))
+                tv_sport.setTextColor(getColor(R.color.white))
+                tv_setting.setTextColor(getColor(R.color.tab_unselected))
+                tv_me.setTextColor(getColor(R.color.tab_unselected))
+                showFragment(FRAGMENT_SPORTS)
+                tapId = Constants.TAP_SPORTS;
+            }
+            R.id.ll_watch -> {
+                startActivity(Intent(this, BLEWatchListActivity::class.java))
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
+            R.id.ll_setting -> {
+                if (judgeTab(Constants.TAP_SETTING)) {
+                    return
+                }
+
+                iv_home.setImageResource(R.drawable.home_unselected)
+                iv_sport.setImageResource(R.drawable.sports_unselected)
+                iv_setting.setImageResource(R.drawable.setting_selected)
+                iv_me.setImageResource(R.drawable.me_unselected)
+
+                tv_home.setTextColor(getColor(R.color.tab_unselected))
+                tv_sport.setTextColor(getColor(R.color.tab_unselected))
+                tv_setting.setTextColor(getColor(R.color.white))
+                tv_me.setTextColor(getColor(R.color.tab_unselected))
+                showFragment(FRAGMENT_SETTING)
+                tapId = Constants.TAP_SETTING;
+            }
+            R.id.ll_me -> {
+                if (judgeTab(Constants.TAP_ME)) {
+                    return
+                }
+
+                iv_home.setImageResource(R.drawable.home_unselected)
+                iv_sport.setImageResource(R.drawable.sports_unselected)
+                iv_setting.setImageResource(R.drawable.setting_unselected)
+                iv_me.setImageResource(R.drawable.me_selected)
+
+                tv_home.setTextColor(getColor(R.color.tab_unselected))
+                tv_sport.setTextColor(getColor(R.color.tab_unselected))
+                tv_setting.setTextColor(getColor(R.color.tab_unselected))
+                tv_me.setTextColor(getColor(R.color.white))
+                showFragment(FRAGMENT_CONNECT)
+                tapId = Constants.TAP_ME;
+            }
+        }
+    }
+
+    private fun judgeTab(tabId: Int): Boolean {
+        if (tabId == this.tapId) {
+            return true
+        }
+        return false
+    }
+
 }

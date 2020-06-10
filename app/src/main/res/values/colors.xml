@@ -72,6 +72,8 @@
     <color name="light_color_speed">#0099FF</color>
     <color name="light_color_heart_rate">#EDE015</color>
     <color name="light_color_stride_rate">#00FD00</color>
+    <color name="tab_unselected">#6E6E6E</color>
+    <color name="tab_selected">#ffffff</color>
 
 
 </resources>
