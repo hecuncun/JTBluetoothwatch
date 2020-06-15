@@ -84,8 +84,8 @@
 
             <ImageView
                 android:id="@+id/iv_sport"
-                android:layout_width="@dimen/dp_25"
-                android:layout_height="@dimen/dp_25"
+                android:layout_width="@dimen/dp_23"
+                android:layout_height="@dimen/dp_23"
                 android:src="@drawable/sports_unselected" />
 
             <TextView

@@ -1,9 +1,8 @@
 package com.lhzw.bluetooth.ui.activity
 
-import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import kotlinx.android.synthetic.main.activity_ble_watchs.*
 
 /**
  * Date： 2020/6/10 0010
@@ -24,7 +23,9 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     override fun initListener() {
-
+        im_back.setOnClickListener {
+            this.finish()
+        }
     }
 
 }
