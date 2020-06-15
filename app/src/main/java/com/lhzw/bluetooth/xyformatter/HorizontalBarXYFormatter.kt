@@ -13,6 +13,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 class HorizontalBarXYFormatter(private var drawY: Boolean, private var lables : Array<String>) : ValueFormatter() {
     override fun getFormattedValue(value: Float): String {
         if(drawY) {
+
             Log.e("Tag", "y : ${value}")
             return "${value.toInt()}%"
         } else {
