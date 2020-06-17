@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.item_sw_watch_info.view.*
  * Created by xtqb.
  */
 
-class WatchAdapter(val mContext: Context, var list: MutableList<ConnectWatchBean>?) : RecyclerView.Adapter<WatchAdapter.Viewholder>() {
+class WatchAdapter(val mContext: Context, var list: MutableList<ConnectWatchBean>?) : RecyclerView.Adapter<WatchAdapter.Viewholder>(), View.OnClickListener {
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val tv_name: TextView = itemView.tv_name
         val tv_watch_type: TextView = itemView.tv_watch_type
@@ -43,5 +43,11 @@ class WatchAdapter(val mContext: Context, var list: MutableList<ConnectWatchBean
             holder.tv_watch_note.text = it.get(position).content
             holder.tv_watch_func.text = it.get(position).func
         }
+        holder.itemView.setTag(position)
+        holder.itemView.setOnClickListener(this)
+    }
+
+    override fun onClick(v: View?) {
+
     }
 }

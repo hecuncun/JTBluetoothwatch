@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_shape_watch_circular">
+    android:background="@drawable/item_ripple_bg">
 
     <TextView
         android:id="@+id/tv_name"
