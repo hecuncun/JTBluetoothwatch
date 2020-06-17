@@ -368,6 +368,9 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                             override fun onFinish() {
                                 activity?.trailview?.visibility = View.GONE
                                 Thread {
+                                    model?.getDistanceMap()?.forEach { (t, u) ->
+                                        Log.e("DistanceMap", "t  " + t + "  u  " + u)
+                                    }
                                     locationUtils?.drawPath(amp, list, model?.getDistanceMap())
                                     val msg = Message()
                                     msg.what = SHOTSCREEN

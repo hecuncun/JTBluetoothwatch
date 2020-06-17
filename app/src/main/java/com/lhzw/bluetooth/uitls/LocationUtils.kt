@@ -141,35 +141,42 @@ class LocationUtils : AMapLocationListener {
             var lastColorId = -1
             val points = ArrayList<LatLng>()
             val classify = classifyColor(distanceMap)
-            list.forEach { it ->
-                val tem = AMapUtils.calculateLineDistance(oldLatLng, it)
-                distance += tem
-                if (distance > 1000) {
-                    distance = 0.0f
-                    points.add(it)
-                    if(lastColorId == -1) {
-                        lastColorId = classify[counter] + 1
-                        polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
-                    } else {
-                        polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[classify[counter] + 1])!!)
-                        lastColorId = classify[counter] + 1
-                    }
+            if(classify != null && classify.size > 0) {
+                list.forEach { it ->
+                    val tem = AMapUtils.calculateLineDistance(oldLatLng, it)
+                    distance += tem
+                    if (distance > 1000) {
+                        distance = 0.0f
+                        points.add(it)
+                        if (lastColorId == -1) {
+                            lastColorId = classify[counter] + 1
+                            polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
+                        } else {
+                            if (counter >= classify.size) {
+                                counter = 0
+                            }
+                            polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[classify[counter] + 1])!!)
+                            lastColorId = classify[counter] + 1
+                        }
 //                    polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
-                    points.clear()
-                    points.add(it)
-                    counter++
-                    markers?.add(aMap.addMarker(getMarkerOption(it, "$counter")))
-                } else {
-                    points.add(it)
+                        points.clear()
+                        points.add(it)
+                        counter++
+                        markers?.add(aMap.addMarker(getMarkerOption(it, "$counter")))
+                    } else {
+                        points.add(it)
+                    }
+                    oldLatLng = it;
                 }
-                oldLatLng = it;
-            }
-            if (points.size > 0) {
-                if(lastColorId == -1){
-                    polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
-                } else {
-                    polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[path_colors.size - 1])!!)
+                if (points.size > 0) {
+                    if (lastColorId == -1) {
+                        polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
+                    } else {
+                        polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[path_colors.size - 1])!!)
+                    }
                 }
+            } else {
+                polyLineList.add(calculateRoute(list, path_colors[0], path_colors[path_colors.size - 1])!!)
             }
             polyLineList.forEach {
                 paths?.add(aMap.addPolyline(it))
@@ -273,13 +280,19 @@ class LocationUtils : AMapLocationListener {
             var pos = 0
             var isOver = true
             while (isOver) {
-                if (distanceMap!![index]!! > min + space * pos - 1 && distanceMap!![index]!! < min + space * (pos + 1) + 1) {
+                if (distanceMap!![index]!! >= min + space * pos && distanceMap!![index]!! < min + space * (pos + 1) + 1) {
                     isOver = false
                     arry[index - 1] = pos
                 } else {
                     pos++
                 }
             }
+        }
+        distanceMap.forEach { (t, u) ->
+            Log.e("COLORS", "value   t   " + t + "   u   " + u)
+        }
+        arry.forEach {
+            Log.e("COLORS", "value   -----------   " + it)
         }
         return arry
     }

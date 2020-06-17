@@ -92,7 +92,9 @@ class SportModel(var mark: String) : SportConstract.Model {
         var second = 0
         var pos = 0
         var max = 0
+        Log.e("Distance", "---------------------------------1  " + distance_list?.size)
         distance_list?.forEach {
+            Log.e("Distance", "--------------------------------- 2  " +it.value)
             total += it.value
             if (total == 100000) {
                 pos++
@@ -103,7 +105,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 total = 0
                 second = 0
             } else if (total > 100000) {
-                var perent = (it.value - (total - 100000)).toFloat() / it.value.toFloat()
+                var perent = 1 - (total - 100000).toFloat() / it.value.toFloat()
                 pos++
                 distance_map!![pos] = (second + 60.0f * (1.0f - perent)).toInt()
                 if (max < distance_map!![pos]!!) {
