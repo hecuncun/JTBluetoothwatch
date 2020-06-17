@@ -74,6 +74,8 @@
     <color name="light_color_stride_rate">#00FD00</color>
     <color name="tab_unselected">#6E6E6E</color>
     <color name="tab_selected">#ffffff</color>
+    <color name="bg_item_watch">#181818</color>
+    <color name="item_watch_text">#3B3B3B</color>
 
 
 </resources>

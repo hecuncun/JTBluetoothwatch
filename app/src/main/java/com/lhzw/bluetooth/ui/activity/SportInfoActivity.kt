@@ -118,7 +118,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             if (!getAnimationState()) {
                 return@setOnClickListener
             }
-            if(scBitmapMap == null){
+            if (scBitmapMap == null) {
                 showToast("没有轨迹")
                 return@setOnClickListener
             }
