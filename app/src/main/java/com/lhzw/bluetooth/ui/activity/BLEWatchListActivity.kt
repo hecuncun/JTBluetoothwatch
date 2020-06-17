@@ -113,7 +113,6 @@ class BLEWatchListActivity : BaseActivity() {
         registerReceiver(receiver, filter1)
     }
 
-
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             // 收到的广播类型
