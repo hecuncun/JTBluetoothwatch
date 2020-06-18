@@ -295,8 +295,8 @@ class SportModel(var mark: String) : SportConstract.Model {
 
     override fun initFont(activity: Activity, convertView: View) {
         activity?.let {
-            it.tv_distance.typeface = Constants.font_var
-            it.tv_calorie.typeface = Constants.font_var
+            it.tv_distance.typeface = Constants.font_normal
+            it.tv_calorie.typeface = Constants.font_normal
         }
     }
 
