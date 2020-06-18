@@ -29,6 +29,8 @@
         <activity android:name=".ui.activity.ShareMapPosterActivity"></activity>
         <activity android:name=".ui.activity.LoginActivity"></activity>
         <activity android:name=".ui.activity.BLEWatchListActivity"></activity>
+        <activity android:name=".ui.activity.AboutUsActivity"></activity>
+        <activity android:name=".ui.activity.UpdateFuncActivity"></activity>
 
         <activity
             android:name=".ui.activity.SplashActivity"

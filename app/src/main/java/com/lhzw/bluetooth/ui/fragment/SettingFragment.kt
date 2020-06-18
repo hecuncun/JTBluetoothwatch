@@ -15,6 +15,8 @@ import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SettingContract
 import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
+import com.lhzw.bluetooth.ui.activity.AboutUsActivity
+import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.EditNameDialog
@@ -42,7 +44,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
-    override fun useEventBus()=true
+    override fun useEventBus() = true
 
     companion object {
         fun getInstance(): SettingFragment = SettingFragment()
@@ -65,18 +67,18 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             } else {
                 rg_btn_women.isChecked = true
             }
-          //  Logger.e("显示个人信息身高=="+ data.height)
+            //  Logger.e("显示个人信息身高=="+ data.height)
 
             counter_height.initNum = data.height
             et_weight.setText(data.weight.toString())
-            counter_step_length.initNum=data.step_len
+            counter_step_length.initNum = data.step_len
             et_target_step_num.setText(data.des_steps.toString())
             et_target_cal_num.setText(data.des_calorie.toString())
-            tv_name.text=nickName
+            tv_name.text = nickName
 
             et_target_distance_num.setText(data.des_distance.toString())
-            counter_max_heart.initNum=data.heart_rate
-            tv_birthday.text=if (birthday!!.isEmpty()) "请选择 > " else  birthday
+            counter_max_heart.initNum = data.heart_rate
+            tv_birthday.text = if (birthday!!.isEmpty()) "请选择 > " else birthday
 
             nuan_shen.text = "区间[${data.heart_rate.times(0.5).toInt()}-${data.heart_rate.times(0.6).toInt() - 1}]"
             ran_zhi.text = "区间[${data.heart_rate.times(0.6).toInt()}-${data.heart_rate.times(0.7).toInt() - 1}]"
@@ -97,12 +99,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
 
     }
-//初始化消息接收状态
+
+    //初始化消息接收状态
     private fun initIvState() {
-        iv_phone.setImageResource(if (enablePhone) R.drawable.icon_phone else R.drawable.icon_phone_normal )
-        iv_msg.setImageResource(if (enableMsg) R.drawable.icon_msg else R.drawable.icon_msg_normal )
-        iv_qq.setImageResource(if (enableQQ) R.drawable.icon_qq else R.drawable.icon_qq_normal )
-        iv_wx.setImageResource(if (enableWx) R.drawable.icon_wx else R.drawable.icon_wx_normal )
+        iv_phone.setImageResource(if (enablePhone) R.drawable.icon_phone else R.drawable.icon_phone_normal)
+        iv_msg.setImageResource(if (enableMsg) R.drawable.icon_msg else R.drawable.icon_msg_normal)
+        iv_qq.setImageResource(if (enableQQ) R.drawable.icon_qq else R.drawable.icon_qq_normal)
+        iv_wx.setImageResource(if (enableWx) R.drawable.icon_wx else R.drawable.icon_wx_normal)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -124,7 +127,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         if (connectState) {
             //已连接才能保存
             LitePal.deleteAll(PersonalInfoBean::class.java)
-            tv_birthday.text=birthday
+            tv_birthday.text = birthday
             personalInfoBean.save()
 
             //计算显示心率区间
@@ -200,7 +203,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                 override fun onConfirm(name: String) {
                     dialog.dismiss()
                     nickName = name
-                    tv_name.text=nickName
+                    tv_name.text = nickName
                 }
             })
         }
@@ -210,14 +213,24 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
         }
 
+        ll_about_us.setOnClickListener {
+            startActivity(Intent(activity, AboutUsActivity::class.java))
+            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+
+        ll_update_sortware.setOnClickListener {
+            startActivity(Intent(activity, UpdateFuncActivity::class.java))
+            activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+
         //消息通知开关
         iv_phone.setOnClickListener {
-           enablePhone=!enablePhone
+            enablePhone = !enablePhone
             initIvState()
         }
 
         iv_msg.setOnClickListener {
-            enableMsg =!enableMsg
+            enableMsg = !enableMsg
             initIvState()
         }
 
@@ -227,10 +240,9 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
 
         iv_wx.setOnClickListener {
-            enableWx =!enableWx
+            enableWx = !enableWx
             initIvState()
         }
-
 
 
     }
@@ -289,8 +301,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                     .synOrAsy(true)//同步true或异步false 压缩 默认同步
                     .rotateEnabled(true) // 裁剪是否可旋转图片 true or false
                     .scaleEnabled(true).// 裁剪是否可放大缩小图片 true or false
-                            isDragFrame(false).// 是否可拖动裁剪框(固定)
-                            forResult(PictureConfig.CHOOSE_REQUEST)
+                    isDragFrame(false).// 是否可拖动裁剪框(固定)
+                    forResult(PictureConfig.CHOOSE_REQUEST)
         }
     }
 
