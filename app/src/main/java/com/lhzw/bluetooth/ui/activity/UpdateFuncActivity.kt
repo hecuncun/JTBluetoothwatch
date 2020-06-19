@@ -28,7 +28,7 @@ class UpdateFuncActivity : BaseActivity(), DfuConfigCallBack {
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
     override fun initData() {
-
+        checkVersion()
     }
 
     override fun initView() {

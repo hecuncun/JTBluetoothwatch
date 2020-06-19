@@ -135,16 +135,16 @@ class BlutoothService : BaseBlutoothService() {
         for (i in title.indices) {
             title[i] = 0
         }
-      val msgString = StringDealUtils.dealBlankString(event.tickerText)
+        val msgString = StringDealUtils.dealBlankString(event.tickerText)
         Logger.e("MSG==>$msgString")
         var title_string = ""
         var title_tmp = ByteArray(0)
-        if (msgString.indexOf(":")!=-1){
-            title_string=msgString.substring(0,msgString.indexOf(":"))//来电姓名或号码
-        }else{
-            title_string=msgString
+        if (msgString.indexOf(":") != -1) {
+            title_string = msgString.substring(0, msgString.indexOf(":"))//来电姓名或号码
+        } else {
+            title_string = msgString
         }
-     Logger.e("title_string==>$title_string")
+        Logger.e("title_string==>$title_string")
         try {
             title_string.forEach {
                 // Logger.e("${it}是中文==${BaseUtils.isChinese(it)}")
@@ -204,8 +204,8 @@ class BlutoothService : BaseBlutoothService() {
 
         var message_string = ""//短消息内容  最大96字节
         var message_tmp = ByteArray(0)
-        if (title_string.length+1<msgString.length){
-            message_string= msgString.substring(title_string.length+1,msgString.length)
+        if (title_string.length + 1 < msgString.length) {
+            message_string = msgString.substring(title_string.length + 1, msgString.length)
         }
         try {
 
@@ -285,6 +285,16 @@ class BlutoothService : BaseBlutoothService() {
         }
     }
 
+    /*************************     OTA升级       ****************************************************/
+    override fun onDfuProgress(progress: Int) {
+
+    }
+
+    override fun onDfuStatus(message: String?) {
+
+    }
+
+
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
 
     // 清理数据
@@ -297,7 +307,7 @@ class BlutoothService : BaseBlutoothService() {
     }
 
     override fun onDestroy() {
-        mContext=null
+        mContext = null
         super.onDestroy()
     }
 }
