@@ -88,7 +88,7 @@ class UpdateFuncActivity : BaseActivity(), DfuConfigCallBack {
     override fun initListener() {
         startProgress()
 
-        startProgress1()
+//        startProgress1()
 
         im_back.setOnClickListener {
             this.finish()
