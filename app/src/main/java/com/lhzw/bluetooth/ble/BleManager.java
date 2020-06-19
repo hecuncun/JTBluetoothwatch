@@ -354,4 +354,6 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
+
+
 }
