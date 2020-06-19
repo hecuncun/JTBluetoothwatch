@@ -3,10 +3,15 @@ package com.lhzw.bluetooth.ui.activity
 import android.Manifest
 import android.os.Environment
 import android.util.Log
+import com.hwangjr.rxbus.annotation.Subscribe
+import com.hwangjr.rxbus.annotation.Tag
+import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.dfu.DfuBeanEvent
 import com.lhzw.bluetooth.dfu.DfuConfigCallBack
-import com.lhzw.bluetooth.dfu.DfuUtils
+import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_update_func_list.*
 
 /**
@@ -15,19 +20,18 @@ import kotlinx.android.synthetic.main.activity_update_func_list.*
  * Created by xtqb.
  */
 
-class UpdateFuncActivity : BaseActivity(), DfuConfigCallBack {
-    // duf 文件路径
-    private val DFU_PATH by lazy {
-        Environment.getExternalStorageDirectory().toString() + "/dfu_file"
-    }
+@Suppress("SpellCheckingInspection")
+class UpdateFuncActivity : BaseActivity() {
     private val TAG = UpdateFuncActivity::class.java.simpleName
     private val PERMISS_REQUEST_CODE = 0x0001
     private val UPDATE_APP = 0x0010
     private val UPDATE_WATCH = 0x0015
     private var update_type = UPDATE_APP
+    private var loadingView: LoadingView? = null
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
     override fun initData() {
+        RxBus.getInstance().register(this)
         checkVersion()
     }
 
@@ -69,12 +73,13 @@ class UpdateFuncActivity : BaseActivity(), DfuConfigCallBack {
      * 腕表版本校验  判断是否升级
      */
     private fun updateWatch() {
-        val duf = DfuUtils(this, "${DFU_PATH}/dfu.zip", DFU_PATH)
+        progesss_watch.progress = 0
+        progesss_watch.max = 100
+//        tv_update_watch_status.text = "进行解压数据..."
+        showLoadingView()
+        RxBus.getInstance().post("reconnet", "")
 
-        Log.e(TAG, "${duf.getApolloBinSize()}  ${duf.getApolloBinPath()}\n " +
-                "${duf.getApolloDatSize()}   ${duf.getApolloBootSettingPath()}\n" +
-                "${duf.getNrf52BinSize()}   ${duf.getNrf52BinPath()}\n" +
-                "${duf.getNrf52DatSize()}   ${duf.getNrf52BootSettingPath()}")
+        Log.e("UPDATEWATCH", "updateWatch ---------  ++++")
     }
 
     /**
@@ -142,7 +147,50 @@ class UpdateFuncActivity : BaseActivity(), DfuConfigCallBack {
         }.start()
     }
 
-    override fun onDfuConfigCallback(response: String) {
-        Log.e(TAG, "解压成功 ---------------------------------------")
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdateprogress")])
+    fun onUpdateProgress(progress: String) {
+        val value = progress.toInt()
+        if (value > 0) {
+            canncelLoadingView()
+        }
+        progesss_watch.progress = value
+        Log.e("UPDATEWATCH", "onUpdateProgress ---------  ++++")
     }
+
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdatestatus")])
+    fun onUpdateStatus(status: String) {
+        tv_update_watch_status.text = status
+        Log.e("UPDATEWATCH", "onUpdateStatus ---------  ++++")
+    }
+
+    private fun showLoadingView() {
+        if (loadingView == null) {
+            loadingView = LoadingView(this)
+        }
+        loadingView?.let {
+            it.setLoadingTitle("设置腕表连接参数")
+            it.show()
+        }
+    }
+
+    private fun canncelLoadingView() {
+        loadingView?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        RxBus.getInstance().unregister(this)
+        loadingView?.let {
+            if (it.isShowing) {
+                it.dismiss()
+            }
+        }
+        loadingView = null
+    }
+
+
 }

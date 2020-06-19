@@ -45,4 +45,8 @@ public interface BleManagerCallbacks extends no.nordicsemi.android.ble.BleManage
     void onDfuStatus(String message);
 
     void onDfuProgress(int progress);
+
+    void onReconnectResponse(byte[] response);
+
+    void _onMtuUpdateResponse(byte[] response);
 }

@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.lhzw.bluetooth.dfu.DfuUtils;
+import com.lhzw.bluetooth.dfu.DfuBeanEvent;
 import com.lhzw.bluetooth.dfu.uitls.CRC32;
 import com.lhzw.bluetooth.dfu.uitls.FileHelper;
 import com.orhanobut.logger.Logger;
@@ -25,7 +25,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private final static UUID COMM_SERVICE_UUID = UUID.fromString("88660001-8866-8866-8866-78A901000000");
     private final static UUID COMM_SERVICE_TXRX_CHAR_UUID = UUID.fromString("88660002-8866-8866-8866-78A901000000");
 
-    private DfuUtils dfuFile;
+    private DfuBeanEvent dfuFile;
     private BluetoothGattCharacteristic mCommTXRXCharacteristic = null;
     private BleManagerCallbacks bleManagerCallbacks;
 
@@ -133,6 +133,15 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         return 0;
     }
 
+    public int _mtu_update() {
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            bleManagerCallbacks._onMtuUpdateResponse(data.getValue());
+        });
+        byte[] data = new byte[]{0x03};
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
     // 跟新连接参数
     public int connection_update(Boolean fast) {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -162,6 +171,16 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
             writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
 
         }
+        return 0;
+    }
+
+    // 跟新连接参数
+    public int connection_update() {
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            bleManagerCallbacks.onReconnectResponse(data.getValue());
+        });
+        byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
@@ -364,7 +383,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private int dfuImageDataSize = 0;
     private int dfuImageDataCrc = 0;
 
-    public int dfu_start(DfuUtils dfuFile) {
+    public int dfu_start(DfuBeanEvent dfuFile) {
         this.dfuFile = dfuFile;
         dfu_cmd_start();
         return 0;
@@ -522,7 +541,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
 
     private int dfu_cmd_image_data_write_apollo() {
 
-        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA WRITE");
+//        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA WRITE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
@@ -717,7 +736,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
 
     private int dfu_cmd_image_data_write_nrf52() {
 
-        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA WRITE");
+//        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA WRITE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));

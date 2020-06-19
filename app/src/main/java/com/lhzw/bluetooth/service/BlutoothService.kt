@@ -1,12 +1,15 @@
 package com.lhzw.bluetooth.service
 
 import android.content.Intent
+import android.os.Environment
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.dfu.DfuBeanEvent
+import com.lhzw.bluetooth.dfu.DfuConfigCallBack
 import com.lhzw.bluetooth.event.BlutoothEvent
 import com.lhzw.bluetooth.event.NotificationEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
@@ -28,14 +31,18 @@ import org.greenrobot.eventbus.EventBus
  *
  */
 
-class BlutoothService : BaseBlutoothService() {
+class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY;
+    }
+
+    // duf 文件路径
+    private val DFU_PATH by lazy {
+        Environment.getExternalStorageDirectory().toString() + "/dfu_file"
     }
 
     //手动更新个人信息
@@ -286,14 +293,49 @@ class BlutoothService : BaseBlutoothService() {
     }
 
     /*************************     OTA升级       ****************************************************/
-    override fun onDfuProgress(progress: Int) {
 
+    @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("reconnet")])
+    fun reconnet(str: String) {
+        Log.e("UPDATEWATCH", "reconnect ---------  ++++")
+        dfuBean = DfuBeanEvent(this, "${DFU_PATH}/dfu.zip", DFU_PATH)
+        Log.e("UPDATEWATCH", "${dfuBean?.getApolloBinSize()}  ${dfuBean?.getApolloBinPath()}\n " +
+                "${dfuBean?.getApolloDatSize()}   ${dfuBean?.getApolloBootSettingPath()}\n" +
+                "${dfuBean?.getNrf52BinSize()}   ${dfuBean?.getNrf52BinPath()}\n" +
+                "${dfuBean?.getNrf52DatSize()}   ${dfuBean?.getNrf52BootSettingPath()}")
+    }
+
+    override fun onDfuProgress(progress: Int) {
+        Log.e("UPDATEWATCH", "onDfuProgress ---------  ++++")
+        com.lhzw.bluetooth.bus.RxBus.getInstance().post("onupdateprogress", progress.toString())
+    }
+
+    override fun onReconnectResponse(response: ByteArray?) {
+        Log.e("UPDATEWATCH", "onReconnectResponse ---------  ++++")
+        response(response, Constants.CONNECT_RESPONSE_CODE) {
+            requestTimes = 0;
+            mHandler.sendEmptyMessage(MTU_UPDATE_DELAY)
+        }
+    }
+
+    override fun _onMtuUpdateResponse(response: ByteArray?) {
+        Log.e("UPDATEWATCH", "_onMtuUpdateResponse ---------  ++++")
+        response(response, Constants.MTU_RESPONSE_CODE) {
+            myBleManager?.dfu_start(dfuBean);
+        }
     }
 
     override fun onDfuStatus(message: String?) {
-
+        Log.e("UPDATEWATCH", "onDfuStatus ---------  ++++")
+        com.lhzw.bluetooth.bus.RxBus.getInstance().post("onupdatestatus", message)
     }
 
+    override fun onDfuConfigCallback(response: String) {
+//        tv_update_watch_status.text = "解压完成，等待升级..."
+        myBleManager?.connection_update()
+        Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
+    }
+
+    /*************************     OTA升级       ****************************************************/
 
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
 
@@ -304,6 +346,7 @@ class BlutoothService : BaseBlutoothService() {
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
         acceptMsg = false
+        dfuBean = null
     }
 
     override fun onDestroy() {

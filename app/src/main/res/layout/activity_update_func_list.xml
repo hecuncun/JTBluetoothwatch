@@ -96,6 +96,17 @@
             android:textSize="13sp"
             android:visibility="gone" />
 
+        <TextView
+            android:id="@+id/tv_update_app_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_app_update_date"
+            android:layout_alignLeft="@+id/progesss_app"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="下载中"
+            android:textColor="@color/blue_light"
+            android:textSize="14sp" />
+
         <ProgressBar
             android:id="@+id/progesss_app"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -104,7 +115,7 @@
             android:layout_below="@+id/tv_app_version"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="35dp"
             android:layout_marginRight="30dp"
             android:background="@drawable/myprogressbar"
             android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
@@ -121,12 +132,12 @@
             android:layout_below="@+id/progesss_app"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:text="更新"
-            android:paddingBottom="@dimen/dp_5"
-            android:paddingTop="@dimen/dp_5"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
             android:background="@drawable/bg_shape_update_circular"
+            android:paddingLeft="25dp"
+            android:paddingTop="@dimen/dp_5"
+            android:paddingRight="25dp"
+            android:paddingBottom="@dimen/dp_5"
+            android:text="更新"
             android:textColor="@color/yellow"
             android:textSize="16sp" />
     </RelativeLayout>
@@ -191,6 +202,18 @@
             android:textSize="13sp"
             android:visibility="gone" />
 
+
+        <TextView
+            android:id="@+id/tv_update_watch_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_watch_update_date"
+            android:layout_alignLeft="@+id/progesss_watch"
+            android:layout_marginTop="@dimen/dp_8"
+            android:text="升级完成"
+            android:textColor="@color/blue_light"
+            android:textSize="14sp" />
+
         <ProgressBar
             android:id="@+id/progesss_watch"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -199,7 +222,7 @@
             android:layout_below="@+id/tv_watch_update_date"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="30dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginTop="35dp"
             android:layout_marginRight="30dp"
             android:background="@drawable/myprogressbar"
             android:indeterminateDrawable="@android:drawable/progress_indeterminate_horizontal"
@@ -216,12 +239,12 @@
             android:layout_below="@+id/progesss_watch"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:text="更新"
-            android:paddingBottom="@dimen/dp_5"
-            android:paddingTop="@dimen/dp_5"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
             android:background="@drawable/bg_shape_update_circular"
+            android:paddingLeft="25dp"
+            android:paddingTop="@dimen/dp_5"
+            android:paddingRight="25dp"
+            android:paddingBottom="@dimen/dp_5"
+            android:text="更新"
             android:textColor="@color/yellow"
             android:textSize="16sp" />
     </RelativeLayout>

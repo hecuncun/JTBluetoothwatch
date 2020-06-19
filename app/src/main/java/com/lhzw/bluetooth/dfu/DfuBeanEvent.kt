@@ -13,7 +13,7 @@ import java.io.File
  * Created by xtqb.
  */
 
-class DfuUtils(val mContext: Context, val filePath: String, val path: String) {
+class DfuBeanEvent(val mContext: Context, val filePath: String, val path: String) {
     private var apolloConfig: String? = null
     private var apolloBinSize: Int = 0
     private var apolloBinPath: String? = null
@@ -24,10 +24,9 @@ class DfuUtils(val mContext: Context, val filePath: String, val path: String) {
     private var nrf52BinSize = 0
     private var nrf52BinPath: String? = null
     private var nrf52DatSize = 0
-    private val TAG = DfuUtils::class.java.simpleName
+    private val TAG = DfuBeanEvent::class.java.simpleName
     private var dfuConfigCallbacks: DfuConfigCallBack? = null
     private var nrf52BootSettingPath: String? = null
-
 
 
     init {
@@ -46,6 +45,7 @@ class DfuUtils(val mContext: Context, val filePath: String, val path: String) {
 
     private fun createDfuFileFolder(file: File) {
         apolloConfig = null
+        nrf52Config = null
         if (file.mkdir()) {
             try {
                 ZipHelper.UnZipFolder(filePath, file.absolutePath)
@@ -96,8 +96,8 @@ class DfuUtils(val mContext: Context, val filePath: String, val path: String) {
                     }
                 }
                 BaseUtils.ifNotNull(apolloConfig, nrf52Config) { apollo, nrf52 ->
-                    if (apollo?.length > 0 && nrf52?.length > 0) {
-                        dfuConfigCallbacks?.onDfuConfigCallback("升级包：\r\nAPOLLO:\r\n" + apolloConfig + "\r\nNRF52832:\r\n" + nrf52Config)
+                    if (apollo.isNotEmpty() && nrf52.isNotEmpty()) {
+                        dfuConfigCallbacks?.onDfuConfigCallback("升级包：\r\nAPOLLO:\r\n$apolloConfig\r\nNRF52832:\r\n$nrf52Config")
                     }
                 }
             } catch (e: Exception) {

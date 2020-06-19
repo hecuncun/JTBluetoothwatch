@@ -17,6 +17,7 @@ import com.lhzw.bluetooth.ble.*
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
+import com.lhzw.bluetooth.dfu.DfuBeanEvent
 import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.NotificationEvent
@@ -47,6 +48,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var readSportInfoBeanList = ArrayList<SportInfoAddrBean>()
     private val DYNAMIC_DATE = 0x01
     private val MTU_DELAY = 0x02
+    protected val MTU_UPDATE_DELAY = 0x03
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
@@ -59,6 +61,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var hasSports = false
     private var progresssBar: SyncProgressBar? = null
     private var sportActivityBeanList = ArrayList<SportActivityBean>()
+    protected var dfuBean: DfuBeanEvent? = null
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
@@ -250,7 +253,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     value.put("current_activity_mark", it.current_activity_mark)
                     CommOperation.update(SportActivityBean::class.java, value, it.id)
                 }
-                if(!isSyncAscending) {
+                if (!isSyncAscending) {
                     isSyncAscending = true
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
@@ -364,10 +367,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
             if (response[0].toInt() == 0x0C) {
                 DailyDataBean.parserDailyData(response, isSyncAscending) { datas ->
-                    if(datas.size == 0) {
+                    if (datas.size == 0) {
                         // 设置手表蓝牙为低功耗
                         myBleManager?.settinng_connect_parameter(false)
-                    }else {
+                    } else {
                         if (datas.size > 0) {
                             noFlashMap.clear()
                         }
@@ -688,7 +691,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
         showProgressBar()
-        if(mContext != null && !mContext!!.isFinishing) {
+        if (mContext != null && !mContext!!.isFinishing) {
             progresssBar?.setProgressBarMax(max, 0x02)
         }
         readSportDetailBean()
@@ -754,13 +757,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
             }
-            if(mContext != null && !mContext!!.isFinishing){
+            if (mContext != null && !mContext!!.isFinishing) {
                 progresssBar?.setProgressBarMax(max, 0x01)
             }
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
                     mContext?.runOnUiThread {
-                        if(!mContext!!.isFinishing){
+                        if (!mContext!!.isFinishing) {
                             progresssBar?.refleshProgressBar(0x01)
                         }
                     }
@@ -801,8 +804,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         }
     }
 
-    private var requestTimes: Int = 0  //发送次数
-    private var mHandler = object : Handler() {
+    protected var requestTimes: Int = 0  //发送次数
+    protected var mHandler = object : Handler() {
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 DYNAMIC_DATE -> {
@@ -827,6 +830,18 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         sendEmptyMessageDelayed(MTU_DELAY, 3000)
                     } else {
                         removeMessages(MTU_DELAY)
+                        requestTimes = 0
+                        showToast("MTU同步失败")
+                        EventBus.getDefault().post(HideDialogEvent(false))
+                    }
+                }
+                MTU_UPDATE_DELAY ->{
+                    requestTimes++
+                    if (requestTimes < 4) {
+                        myBleManager?._mtu_update()
+                        sendEmptyMessageDelayed(MTU_UPDATE_DELAY, 3000)
+                    } else {
+                        removeMessages(MTU_UPDATE_DELAY)
                         requestTimes = 0
                         showToast("MTU同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
@@ -896,7 +911,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     private fun cancelProgressBar() {
         BaseUtils.ifNotNull(mContext, progresssBar) { it, p ->
-            if(!it.isFinishing) {
+            if (!it.isFinishing) {
                 p.cancel()
                 progresssBar = null
             }
