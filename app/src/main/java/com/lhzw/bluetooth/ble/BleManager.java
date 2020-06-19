@@ -8,6 +8,9 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.lhzw.bluetooth.dfu.DfuUtils;
+import com.lhzw.bluetooth.dfu.uitls.CRC32;
+import com.lhzw.bluetooth.dfu.uitls.FileHelper;
 import com.orhanobut.logger.Logger;
 
 import java.util.ArrayList;
@@ -22,7 +25,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private final static UUID COMM_SERVICE_UUID = UUID.fromString("88660001-8866-8866-8866-78A901000000");
     private final static UUID COMM_SERVICE_TXRX_CHAR_UUID = UUID.fromString("88660002-8866-8866-8866-78A901000000");
 
-
+    private DfuUtils dfuFile;
     private BluetoothGattCharacteristic mCommTXRXCharacteristic = null;
     private BleManagerCallbacks bleManagerCallbacks;
 
@@ -182,8 +185,8 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         int year = calendar.get(Calendar.YEAR) % 100;
         int month = calendar.get(Calendar.MONTH) + 1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int weekDay = calendar.get(Calendar.DAY_OF_WEEK) -1;
-        if(weekDay == 0) weekDay = 7;
+        int weekDay = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (weekDay == 0) weekDay = 7;
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         int second = calendar.get(Calendar.SECOND);
@@ -355,5 +358,424 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         return 0;
     }
 
+    /********************************************   OTA升级    *************************************************/
+    //蓝牙升级腕表固件
+    private int dfuImageDataOffset = 0;
+    private int dfuImageDataSize = 0;
+    private int dfuImageDataCrc = 0;
 
+    public int dfu_start(DfuUtils dfuFile) {
+        this.dfuFile = dfuFile;
+        dfu_cmd_start();
+        return 0;
+    }
+
+
+    //OTA 升级
+    private int dfu_total_image_size = 0;
+    private int dfu_total_image_send = 0; //用于做进度条
+
+    private int dfu_cmd_start() {
+
+        bleManagerCallbacks.onDfuStatus("开始升级");
+
+        dfu_total_image_send = 0;
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            dfu_cmd_bootsetting_apollo();
+
+        });
+        dfu_total_image_size = dfuFile.getApolloBinSize() + dfuFile.getNrf52BinSize();
+        byte[] data = new byte[5];
+        data[0] = 0x30;
+        data[1] = (byte) (dfu_total_image_size & 0xff);
+        data[2] = (byte) (dfu_total_image_size >> 8);
+        data[3] = (byte) (dfu_total_image_size >> 16);
+        data[4] = (byte) (dfu_total_image_size >> 24);
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_bootsetting_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO BOOTSETTING");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfu_cmd_prevalidate_apollo();
+            }
+        });
+        byte[] data = new byte[dfuFile.getApolloDatSize() + 1];
+        data[0] = 0x31;
+        byte[] bootsetting = FileHelper.readFile(dfuFile.getApolloBootSettingPath(), 0, dfuFile.getApolloDatSize());
+        System.arraycopy(bootsetting, 0, data, 1, bootsetting.length);
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_prevalidate_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO PREVALIDATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            dfu_cmd_image_data_start_apollo();
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x32;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+
+    private int dfu_cmd_image_data_start_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfuImageDataOffset += dfuImageDataSize;
+                dfu_total_image_send += dfuImageDataSize;
+                dfu_cmd_image_data_apollo();
+            }
+
+
+        });
+        dfuImageDataOffset = 0;
+        dfuImageDataSize = 231;
+        dfuImageDataCrc = 0;
+        byte[] data = new byte[1 + 4 + 4 + 4 + 231];
+        data[0] = 0x33;
+        data[1] = (byte) (dfuImageDataOffset & 0xff);
+        data[2] = (byte) (dfuImageDataOffset >> 8);
+        data[3] = (byte) (dfuImageDataOffset >> 16);
+        data[4] = (byte) (dfuImageDataOffset >> 24);
+        data[5] = (byte) (dfuImageDataSize & 0xff);
+        data[6] = (byte) (dfuImageDataSize >> 8);
+        data[7] = (byte) (dfuImageDataSize >> 16);
+        data[8] = (byte) (dfuImageDataSize >> 24);
+        byte[] bin = FileHelper.readFile(dfuFile.getApolloBinPath(), 0, dfuImageDataSize);
+        dfuImageDataCrc = CRC32.fast(bin);
+        data[9] = (byte) (dfuImageDataCrc & 0xff);
+        data[10] = (byte) (dfuImageDataCrc >> 8);
+        data[11] = (byte) (dfuImageDataCrc >> 16);
+        data[12] = (byte) (dfuImageDataCrc >> 24);
+        System.arraycopy(bin, 0, data, 13, bin.length);
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_image_data_send_apollo() {
+        if ((dfuFile.getApolloBinSize() - dfuImageDataOffset) > 231) {
+            dfuImageDataSize = 231;
+        } else {
+            dfuImageDataSize = dfuFile.getApolloBinSize() - dfuImageDataOffset;
+        }
+        dfuImageDataCrc = 0;
+        byte[] data = new byte[1 + 4 + 4 + 4 + 231];
+        data[0] = 0x33;
+        data[1] = (byte) (dfuImageDataOffset & 0xff);
+        data[2] = (byte) (dfuImageDataOffset >> 8);
+        data[3] = (byte) (dfuImageDataOffset >> 16);
+        data[4] = (byte) (dfuImageDataOffset >> 24);
+        data[5] = (byte) (dfuImageDataSize & 0xff);
+        data[6] = (byte) (dfuImageDataSize >> 8);
+        data[7] = (byte) (dfuImageDataSize >> 16);
+        data[8] = (byte) (dfuImageDataSize >> 24);
+        byte[] bin = FileHelper.readFile(dfuFile.getApolloBinPath(), dfuImageDataOffset, dfuImageDataSize);
+        dfuImageDataCrc = CRC32.fast(bin);
+        data[9] = (byte) (dfuImageDataCrc & 0xff);
+        data[10] = (byte) (dfuImageDataCrc >> 8);
+        data[11] = (byte) (dfuImageDataCrc >> 16);
+        data[12] = (byte) (dfuImageDataCrc >> 24);
+        System.arraycopy(bin, 0, data, 13, bin.length);
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_image_data_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfuImageDataOffset += dfuImageDataSize;
+                dfu_total_image_send += dfuImageDataSize;
+                if (dfuImageDataOffset % 4158 == 0 || dfuImageDataOffset >= dfuFile.getApolloBinSize()) {
+                    dfu_cmd_image_data_write_apollo();
+                    bleManagerCallbacks.onDfuProgress((dfu_total_image_send * 100) / dfu_total_image_size);
+                } else {
+                    dfu_image_data_send_apollo();
+                }
+            }
+
+
+        });
+        dfu_image_data_send_apollo();
+        return 0;
+    }
+
+    private int dfu_cmd_image_data_write_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA WRITE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                if (dfuImageDataOffset >= dfuFile.getApolloBinSize()) {
+                    dfu_cmd_postvalidate_apollo();
+                } else {
+                    dfu_cmd_image_data_apollo();
+                }
+            }
+
+
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x34;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_postvalidate_apollo() {
+
+        bleManagerCallbacks.onDfuStatus("发送APOLLO POSTVALIDATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfu_cmd_reset_n_activate_apollo();
+            }
+
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x35;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_reset_n_activate_apollo() {
+        bleManagerCallbacks.onDfuStatus("发送APOLLO RESET N ACTIVATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("错误");
+            } else {
+                dfu_cmd_bootsetting_nrf52();
+            }
+
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x36;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+
+        return 0;
+    }
+
+    private int dfu_cmd_bootsetting_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 BOOTSETTING");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfu_cmd_prevalidate_nrf52();
+            }
+
+        });
+        byte[] data = new byte[dfuFile.getNrf52DatSize() + 1];
+        data[0] = 0x37;
+        byte[] bootsetting = FileHelper.readFile(dfuFile.getNrf52BootSettingPath(), 0, dfuFile.getNrf52DatSize());
+        System.arraycopy(bootsetting, 0, data, 1, bootsetting.length);
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+
+
+        return 0;
+    }
+
+    private int dfu_cmd_prevalidate_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 PREVALIDATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+            dfu_cmd_image_data_start_nrf52();
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x38;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_image_data_start_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfuImageDataOffset += dfuImageDataSize;
+                dfu_total_image_send += dfuImageDataSize;
+                dfu_cmd_image_data_nrf52();
+            }
+        });
+        dfuImageDataOffset = 0;
+        dfuImageDataSize = 231;
+        dfuImageDataCrc = 0;
+        byte[] data = new byte[1 + 4 + 4 + 4 + 231];
+        data[0] = 0x39;
+        data[1] = (byte) (dfuImageDataOffset & 0xff);
+        data[2] = (byte) (dfuImageDataOffset >> 8);
+        data[3] = (byte) (dfuImageDataOffset >> 16);
+        data[4] = (byte) (dfuImageDataOffset >> 24);
+        data[5] = (byte) (dfuImageDataSize & 0xff);
+        data[6] = (byte) (dfuImageDataSize >> 8);
+        data[7] = (byte) (dfuImageDataSize >> 16);
+        data[8] = (byte) (dfuImageDataSize >> 24);
+        byte[] bin = FileHelper.readFile(dfuFile.getNrf52BinPath(), 0, dfuImageDataSize);
+        dfuImageDataCrc = CRC32.fast(bin);
+        data[9] = (byte) (dfuImageDataCrc & 0xff);
+        data[10] = (byte) (dfuImageDataCrc >> 8);
+        data[11] = (byte) (dfuImageDataCrc >> 16);
+        data[12] = (byte) (dfuImageDataCrc >> 24);
+        System.arraycopy(bin, 0, data, 13, bin.length);
+//        Logger.i(Logger.BLE_TAG, byte2HexStr(data));
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_image_data_send_nrf52() {
+        if ((dfuFile.getNrf52BinSize() - dfuImageDataOffset) > 231) {
+            dfuImageDataSize = 231;
+        } else {
+            dfuImageDataSize = dfuFile.getNrf52BinSize() - dfuImageDataOffset;
+        }
+        dfuImageDataCrc = 0;
+        byte[] data = new byte[1 + 4 + 4 + 4 + 231];
+        data[0] = 0x39;
+        data[1] = (byte) (dfuImageDataOffset & 0xff);
+        data[2] = (byte) (dfuImageDataOffset >> 8);
+        data[3] = (byte) (dfuImageDataOffset >> 16);
+        data[4] = (byte) (dfuImageDataOffset >> 24);
+        data[5] = (byte) (dfuImageDataSize & 0xff);
+        data[6] = (byte) (dfuImageDataSize >> 8);
+        data[7] = (byte) (dfuImageDataSize >> 16);
+        data[8] = (byte) (dfuImageDataSize >> 24);
+        byte[] bin = FileHelper.readFile(dfuFile.getNrf52BinPath(), dfuImageDataOffset, dfuImageDataSize);
+        dfuImageDataCrc = CRC32.fast(bin);
+        data[9] = (byte) (dfuImageDataCrc & 0xff);
+        data[10] = (byte) (dfuImageDataCrc >> 8);
+        data[11] = (byte) (dfuImageDataCrc >> 16);
+        data[12] = (byte) (dfuImageDataCrc >> 24);
+        System.arraycopy(bin, 0, data, 13, bin.length);
+//        Logger.i(Logger.BLE_TAG, byte2HexStr(data));
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_image_data_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfuImageDataOffset += dfuImageDataSize;
+                dfu_total_image_send += dfuImageDataSize;
+                if (dfuImageDataOffset % 4158 == 0 || dfuImageDataOffset >= dfuFile.getNrf52BinSize()) {
+                    dfu_cmd_image_data_write_nrf52();
+                    bleManagerCallbacks.onDfuProgress((dfu_total_image_send * 100) / dfu_total_image_size);
+                } else {
+                    dfu_image_data_send_nrf52();
+                }
+            }
+        });
+        dfu_image_data_send_nrf52();
+        return 0;
+    }
+
+    private int dfu_cmd_image_data_write_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA WRITE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                if (dfuImageDataOffset >= dfuFile.getNrf52BinSize()) {
+                    dfu_cmd_postvalidate_nrf52();
+                } else {
+                    dfu_cmd_image_data_nrf52();
+                }
+            }
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x3A;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_postvalidate_nrf52() {
+
+        bleManagerCallbacks.onDfuStatus("发送NRF52 POSTVALIDATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("CRC 错误");
+            } else {
+                dfu_cmd_reset_n_activate_nrf52();
+            }
+
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x3B;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+        return 0;
+    }
+
+    private int dfu_cmd_reset_n_activate_nrf52() {
+        bleManagerCallbacks.onDfuStatus("发送NRF52 RESET N ACTIVATE");
+
+        setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
+//            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
+
+            if (data.getValue()[1] != 0) {
+                bleManagerCallbacks.onDfuStatus("错误");
+            } else {
+                bleManagerCallbacks.onDfuStatus("升级结束");
+            }
+
+        });
+        byte[] data = new byte[1];
+        data[0] = 0x3C;
+        writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
+
+        return 0;
+    }
+    //蓝牙升级腕表固件
 }

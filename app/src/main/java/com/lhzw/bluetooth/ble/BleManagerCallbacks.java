@@ -41,4 +41,8 @@ public interface BleManagerCallbacks extends no.nordicsemi.android.ble.BleManage
     void onCurrentDataUpdate(byte[] response);
 
     void onPersonalInfoSaveResponse(byte[] response);
+
+    void onDfuStatus(String message);
+
+    void onDfuProgress(int progress);
 }
