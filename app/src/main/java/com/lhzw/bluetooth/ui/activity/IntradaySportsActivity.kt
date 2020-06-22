@@ -16,12 +16,16 @@ import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.adapter.SportAdapter
 import com.lhzw.bluetooth.base.BaseShareActivity
+import com.lhzw.bluetooth.bean.CurrentDataBean
 import com.lhzw.bluetooth.bean.ShareBgBean
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.BitmapUtil
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.makeramen.roundedimageview.RoundedDrawable
 import kotlinx.android.synthetic.main.activity_intraday_ports.*
+import org.litepal.LitePal
+import org.litepal.extension.findAll
 
 
 /**
@@ -39,6 +43,13 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     }
 
     override fun initData() {
+        //查询当前步数,cal
+        val currentList = LitePal.findAll<CurrentDataBean>()
+        if (currentList.isNotEmpty()) {
+            tv_sports_step.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
+            tv_sport_distance.text=(currentList[0].dailyMileageTotal + currentList[0].sportMileageTotal).toString()
+            tv_sports_calorie.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
+        }
         //拿到初始图
         sharBean = ShareBgBean(R.drawable.icon_share_default, null)
         val bg = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
@@ -49,10 +60,13 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
 
         // 获取 当天的活动
         Log.e("ShareSport", "${BaseUtils.getCurrentData()}")
+
         val list = translateSportBeans()
         if (list == null || list.size == 0) {
+            tv_sports_num.text="0"
             Iv_no_data.visibility = View.VISIBLE
         } else {
+            tv_sports_num.text=list.size.toString()
             val adapter = SportAdapter(list)
             adapter?.openLoadAnimation { view ->
                 arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
@@ -66,7 +80,7 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     }
 
     override fun initView() {
-
+        tv_title.text=DateUtils.getTodayStringData()
     }
 
     override fun initListener() {

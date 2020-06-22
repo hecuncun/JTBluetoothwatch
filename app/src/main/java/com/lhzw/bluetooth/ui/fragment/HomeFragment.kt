@@ -22,6 +22,7 @@ import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
 import com.lhzw.bluetooth.ui.activity.DailyStatisticsActivity
+import com.lhzw.bluetooth.ui.activity.StatisticsActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.XAxisValueFormatter
 import com.orhanobut.logger.Logger
@@ -49,6 +50,10 @@ class HomeFragment : BaseFragment() {
     override fun initView(view: View) {
         initLineChar(step_line_chart)
         initLineChar(cal_line_chart)
+        ll_progress_container.setOnClickListener {
+            //跳转统计页
+            startActivity(Intent(activity,StatisticsActivity::class.java))
+        }
     }
 
     //初始化图表
@@ -58,6 +63,7 @@ class HomeFragment : BaseFragment() {
         lineChart.apply {
             setTouchEnabled(true)//触摸事件
             setDrawGridBackground(false)//网格线
+            setNoDataText("请连接手表")
             isDragEnabled = true//可拖拽
             isScaleXEnabled = false//X缩放
             isScaleYEnabled = false//Y缩放
@@ -332,8 +338,10 @@ class HomeFragment : BaseFragment() {
         //查询当前步数,cal
         val currentList = LitePal.findAll<CurrentDataBean>()
         if (currentList.isNotEmpty()) {
-            tv_step_num.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
-            tv_cal_num.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
+            tv_step_num.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()//进度条步数
+            tv_current_step_chart.text=(currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()//折线图步数
+            tv_cal_num.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()//进度条步数
+            tv_current_cal_chart.text= (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()//折线图步数
             currentStepNum = currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal
             currentCalNum = currentList[0].dailyCalTotal + currentList[0].sportCalTotal
         }
@@ -385,6 +393,10 @@ class HomeFragment : BaseFragment() {
         rl_state_disconnect_step.visibility = View.VISIBLE
         rl_state_connect_cal.visibility = View.GONE
         rl_state_connect_step.visibility = View.GONE
+        task_step.setProgress(100)
+        task_cal.setProgress(100)
+        step_line_chart.clear()
+        cal_line_chart.clear()
     }
 
     /**
@@ -395,6 +407,7 @@ class HomeFragment : BaseFragment() {
         rl_state_disconnect_step.visibility = View.GONE
         rl_state_connect_cal.visibility = View.VISIBLE
         rl_state_connect_step.visibility = View.VISIBLE
+
     }
 
     //

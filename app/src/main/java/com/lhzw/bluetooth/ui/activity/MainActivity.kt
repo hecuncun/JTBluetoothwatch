@@ -2,6 +2,7 @@ package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.*
@@ -392,6 +393,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         hideFragment(transaction)
         mIndex = index
         toolbar_right_img.visibility = View.GONE
+        toolbar_left_img.visibility=View.GONE
         toolbar_right_tv.visibility = View.GONE
         tv_sync.visibility = View.GONE
         im_back.visibility = View.GONE
@@ -406,9 +408,25 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                         val intentOpen = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
                         startActivityForResult(intentOpen, REQUEST_ENABLE_BLE)
                     } else {
-                        bleManager?.adapter?.disable()
+                        AlertDialog.Builder(this)
+                                .setTitle("确定关闭蓝牙?")
+                                .setMessage("关闭蓝牙会断开手表连接,您将无法使用部分app功能")
+                                .setPositiveButton("确定"){_,_->
+                                    bleManager?.adapter?.disable()
+                                }
+                                .setNegativeButton("取消"){_,_->
+
+                                }.create().show()
+
                     }
 
+                }
+
+                toolbar_left_img.visibility=View.VISIBLE
+                toolbar_left_img.setImageResource(R.drawable.icon_my_day)
+                toolbar_left_img.setOnClickListener {
+                    //进入我的一天
+                    startActivity(Intent(this,IntradaySportsActivity::class.java))
                 }
 
                 if (mHomeFragment == null) {

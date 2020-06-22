@@ -8,6 +8,7 @@
     android:orientation="vertical">
 
     <LinearLayout
+        android:id="@+id/ll_progress_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -170,6 +171,7 @@
                 android:textSize="16sp"
                 android:textColor="@color/white"/>
             <TextView
+                android:id="@+id/tv_current_step_chart"
                 android:padding="10dp"
                 tool:text="27820"
                 android:layout_width="0dp"
@@ -183,7 +185,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:padding="10dp"
-                android:drawableLeft="@mipmap/icon_dot_green"
+                android:drawableRight="@drawable/icon_step_simple"
                 android:drawablePadding="10dp"
                 android:textColor="@color/white"
                 tool:text="200"/>
@@ -214,6 +216,7 @@
                     android:textSize="16sp"
                     android:textColor="@color/white"/>
                 <TextView
+                    android:id="@+id/tv_current_cal_chart"
                     android:padding="10dp"
                     tool:text="27820"
                     android:layout_width="0dp"
@@ -227,7 +230,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:padding="10dp"
-                    android:drawableLeft="@mipmap/icon_dot_red"
+                    android:drawableRight="@drawable/icon_cal_simple"
                     android:drawablePadding="10dp"
                     android:textColor="@color/white"
                     tool:text="200"/>

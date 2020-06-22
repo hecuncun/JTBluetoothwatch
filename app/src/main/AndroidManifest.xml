@@ -91,6 +91,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".ui.activity.StatisticsActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
