@@ -88,11 +88,11 @@ class HomeFragment : BaseFragment() {
                 Logger.e("${e.toString()}")
                 var position =e.x.toInt()
                 if (lineChart == step_line_chart ){
-                        tv_step_chart.text=e.y.toString()
+                        tv_step_chart.text=e.y.toInt().toString()
                     //自定义方法设置圆点显示
                         LineChartRenderer.setCirclePoints(position)
                 }else{
-                    tv_cal_chart.text=e.y.toString()
+                    tv_cal_chart.text=e.y.toInt().toString()
                     //自定义方法设置圆点显示
                     LineChartRenderer.setCirclePoints(position)
                 }
@@ -271,19 +271,19 @@ class HomeFragment : BaseFragment() {
         if (dailyInfoList.isNotEmpty()) {
             val stepValues = ArrayList<Entry>()
             for (i in 0..23) {
-                val num = (Math.random() * 1000).toFloat()
-                //val num = dailyInfoList[i].daily_steps.toFloat() + dailyInfoList[i].sport_steps.toFloat()
+                //val num = (Math.random() * 1000).toFloat()
+                val num = dailyInfoList[i].daily_steps.toFloat() + dailyInfoList[i].sport_steps.toFloat()
                 stepValues.add(Entry(i.toFloat(), num))
             }
             initLineData(step_line_chart, stepValues, R.color.green_path, R.color.blue_path)
             //初始化24小时cal表的值
             val calValues = ArrayList<Entry>()
             for (i in 0..23) {
-                val num = (Math.random() * 1000).toFloat()
-                //val num = dailyInfoList[i].daily_calorie.toFloat() + dailyInfoList[i].sport_calorie.toFloat()
+               // val num = (Math.random() * 1000).toFloat()
+                val num = dailyInfoList[i].daily_calorie.toFloat() + dailyInfoList[i].sport_calorie.toFloat()
                 calValues.add(Entry(i.toFloat(), num))
             }
-            initLineData(cal_line_chart, stepValues, R.color.color_pink_FF00FF, R.color.color_red_FF0000)
+            initLineData(cal_line_chart, calValues, R.color.color_pink_FF00FF, R.color.color_red_FF0000)
 
                 //初始化24小时步数图表的值
 //        if (dailyInfoList.isNotEmpty()){

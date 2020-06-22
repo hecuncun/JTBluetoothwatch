@@ -24,7 +24,7 @@ data class PersonalInfoBean(//unique约束确保在非主键列中不输入重�
         val step_len: Int,
         /*     目标步数   */
         val des_steps: Int,
-        /*     目标卡路里   */
+        /*     目标卡路里千卡   */
         val des_calorie: Int,
         /*     目标距离   */
         val des_distance: Int,
