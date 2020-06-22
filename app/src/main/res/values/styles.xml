@@ -126,4 +126,15 @@
         <item name="android:minHeight">48dip</item>
         <item name="android:maxHeight">48dip</item>
     </style>
+
+    <!--    圆环进度条-->
+    <declare-styleable name="TasksCompletedView">
+        <attr name="radius" format="dimension"/>
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="circleColor" format="color"/>
+        <attr name="ringColor" format="color"/>
+        <attr name="ringStartColor" format="color"/>
+        <attr name="ringEndColor" format="color"/>
+        <attr name="isColorful" format="boolean"/>
+    </declare-styleable>
 </resources>

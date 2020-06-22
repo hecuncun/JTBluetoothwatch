@@ -3,8 +3,10 @@ package com.github.mikephil.charting.renderer;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
@@ -17,6 +19,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.model.GradientColor;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.MPPointD;
 import com.github.mikephil.charting.utils.MPPointF;
@@ -261,7 +264,19 @@ public class LineChartRenderer extends LineRadarRenderer {
         mRenderPaint.setStyle(Paint.Style.STROKE);
 
         trans.pathValueToPixel(cubicPath);
-
+        if (dataSet.getGradientColor() != null)
+        {//设置渐变色
+            GradientColor gradientColor = dataSet.getGradientColor();
+            mRenderPaint.setShader(
+                    new LinearGradient(
+                            0,
+                            0,
+                            0,
+                            mChart.getHeight(),
+                            gradientColor.getStartColor(),
+                            gradientColor.getEndColor(),
+                            Shader.TileMode.CLAMP));
+        }
         mBitmapCanvas.drawPath(cubicPath, mRenderPaint);
 
         mRenderPaint.setPathEffect(null);
@@ -616,6 +631,21 @@ public class LineChartRenderer extends LineRadarRenderer {
      */
     private float[] mCirclesBuffer = new float[2];
 
+//==========================================增加筛选自己选点才显示==================
+    /**
+     * 显示原点的x轴的对应的数组
+     */
+    private static int mCirclePointPositions=-1;
+
+    /**
+     * 设置显示哪个x轴对应的原点
+     *
+     * @param positions 显示原点的数据所在的位置的集合
+     */
+    public static void setCirclePoints(int positions) {
+        mCirclePointPositions = positions;
+    }
+    //==========================================增加筛选自己选点才显示==================
     protected void drawCircles(Canvas c) {
 
         mRenderPaint.setStyle(Paint.Style.FILL);
@@ -667,8 +697,9 @@ public class LineChartRenderer extends LineRadarRenderer {
 
             int boundsRangeCount = mXBounds.range + mXBounds.min;
 
-            for (int j = mXBounds.min; j <= boundsRangeCount; j++) {
-
+            for (int j = mXBounds.min; j <= boundsRangeCount; j++) {//画圆的方法
+               //todo  添加显示
+                if (mCirclePointPositions==j) {
                 Entry e = dataSet.getEntryForIndex(j);
 
                 if (e == null) break;
@@ -689,6 +720,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
                 if (circleBitmap != null) {
                     c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+                }
                 }
             }
         }

@@ -6,8 +6,6 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
-import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.uitls.Preference
 import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
@@ -15,7 +13,7 @@ import kotlinx.android.synthetic.main.activity_splash.*
  */
 class SplashActivity : BaseActivity() {
     private var alphaAnimation: AlphaAnimation? = null
-    private var firest_login: Boolean by Preference(Constants.FIREST_LOGIN, true)
+
     override fun attachLayoutRes(): Int = R.layout.activity_splash
     override fun initData() {
     }
@@ -49,7 +47,7 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun jumpToMain() {
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

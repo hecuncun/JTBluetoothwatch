@@ -21,7 +21,7 @@ import com.lhzw.bluetooth.dfu.DfuBeanEvent
 import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.NotificationEvent
-import com.lhzw.bluetooth.event.RefreshEvent
+import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -517,8 +517,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     CommOperation.insert(it)
                 }
                 //保存到数据库,并刷新页面
-                Logger.e("当前步数==${bean?.dailyStepNumTotal}")
-                EventBus.getDefault().post(RefreshEvent(Constants.TYPE_CURRENT_DATA))
+                Logger.e("当前步数==${bean!!.dailyStepNumTotal+bean.sportStepNumTotal},当前cal=${bean.dailyCalTotal+bean.sportCalTotal}")
+                EventBus.getDefault().post(RefreshTargetStepsEvent())
                 //动态数据后,TODO 请求日常数据
                 val list = CommOperation.query(SportActivityBean::class.java, "daily_date", BaseUtils.getCurrentData())
                 if (list.isNotEmpty()) {

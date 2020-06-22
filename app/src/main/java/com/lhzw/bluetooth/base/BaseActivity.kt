@@ -31,6 +31,7 @@ import java.util.*
  */
 abstract class BaseActivity : AppCompatActivity() {
     protected var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+    protected var firest_login: Boolean by Preference(Constants.FIREST_LOGIN, true)
 
     /**
      * 布局文件id

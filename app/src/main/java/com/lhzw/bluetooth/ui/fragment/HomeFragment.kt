@@ -1,29 +1,29 @@
 package com.lhzw.bluetooth.ui.fragment
 
 import android.bluetooth.BluetoothManager
-import android.content.Context
 import android.content.Intent
 import android.view.View
-import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.renderer.LineChartRenderer
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bean.CurrentDataBean
 import com.lhzw.bluetooth.bean.DailyInfoDataBean
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.*
+import com.lhzw.bluetooth.event.ConnectEvent
+import com.lhzw.bluetooth.event.HideDialogEvent
+import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
 import com.lhzw.bluetooth.ui.activity.DailyStatisticsActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.XAxisValueFormatter
-import com.lhzw.bluetooth.widget.XYMarkerView
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.greenrobot.eventbus.Subscribe
@@ -47,76 +47,112 @@ class HomeFragment : BaseFragment() {
     override fun attachLayoutRes(): Int = R.layout.fragment_home
 
     override fun initView(view: View) {
-        rl_step_num_container.setOnClickListener {
-            jumpToDailyStatisticsActivity()
-        }
-        bleManager = activity?.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        bleManager?.let {
-            state = it.adapter.isEnabled//拿到蓝牙状态
-        }
-        if (connectState) {//已连接就隐藏提示
-            tv_ble_state_tip.visibility = View.GONE
-        } else {
-            tv_ble_state_tip.text = if (state) {
-                "在连接中添加设备"
-            } else "蓝牙关闭"
-        }
-
-        initBarChart(bar_chart_step, resources.getColor(R.color.blue_light))
-
-        initBarChart(bar_chart_cal, resources.getColor(R.color.orange))
+        initLineChar(step_line_chart)
+        initLineChar(cal_line_chart)
     }
 
-    private fun initBarChart(barChat: BarChart, mainColor: Int) {
+    //初始化图表
+    private fun initLineChar(lineChart: LineChart) {
         val times = arrayOf("1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00",
                 "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00")
+        lineChart.apply {
+            setTouchEnabled(true)//触摸事件
+            setDrawGridBackground(false)//网格线
+            isDragEnabled = true//可拖拽
+            isScaleXEnabled = false//X缩放
+            isScaleYEnabled = false//Y缩放
+            setPinchZoom(false)//手指缩放
+            //配置X轴
+            xAxis.apply {
+                setLabelCount(6, true)
+                enableGridDashedLine(10f, 10f, 0f)//垂直虚线
+                // xAxis.enableAxisLineDashedLine(10f, 10f, 0f)  X轴线
+                setDrawAxisLine(false)//是否画X轴线
+                textColor=resources.getColor(R.color.gray)
+                position = XAxis.XAxisPosition.BOTTOM//X轴位置
+                valueFormatter = XAxisValueFormatter(times)
+            }
+            //隐藏
+            description.isEnabled = false//右上角描述
+            legend.isEnabled = false//隐藏左下角label
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+            valuesToHighlight()
+        }
 
-        barChat.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+        lineChart.setOnChartValueSelectedListener(object :OnChartValueSelectedListener{
             override fun onNothingSelected() {
             }
 
-            override fun onValueSelected(e: Entry?, h: Highlight?) {
-                //选中值
-                Logger.e("value=${e.toString()}")
+            override fun onValueSelected(e: Entry, h: Highlight?) {
+                Logger.e("${e.toString()}")
+                var position =e.x.toInt()
+                if (lineChart == step_line_chart ){
+                        tv_step_chart.text=e.y.toString()
+                    //自定义方法设置圆点显示
+                        LineChartRenderer.setCirclePoints(position)
+                }else{
+                    tv_cal_chart.text=e.y.toString()
+                    //自定义方法设置圆点显示
+                    LineChartRenderer.setCirclePoints(position)
+                }
+                lineChart.invalidate()
             }
+
         })
 
-        barChat.apply {
-            description.isEnabled = false
-            setMaxVisibleValueCount(24)//最大显示24个值
-            setPinchZoom(false)
-            setDrawBarShadow(false)
-            setDrawGridBackground(false)
-            setDrawValueAboveBar(false)
-            setScaleEnabled(false)
-            extraBottomOffset = 0f
-            xAxis.apply {
-                position = XAxis.XAxisPosition.BOTTOM
-                setDrawGridLines(false)
-                gridColor = resources.getColor(R.color.white)
-                textColor = mainColor
-                valueFormatter = XAxisValueFormatter(times)
-                axisLineColor = resources.getColor(R.color.colorPrimary)
-                setLabelCount(5, true)//设置标签个数,true为精确
-            }
-
-            axisLeft.apply {
-                isEnabled = true
-                setDrawLabels(false)//标签
-                setDrawAxisLine(false)//轴线
-                setDrawGridLines(true)//网格线
-                gridColor = resources.getColor(R.color.gray)
-                axisMinimum = 0f
-                enableGridDashedLine(20f, 5f, 0f)
-            }
-            axisRight.isEnabled = false
-            legend.isEnabled = false
-            val mv = XYMarkerView(activity, XAxisValueFormatter(times))
-            mv.chartView = barChat
-            marker = mv
-        }
-
     }
+
+//    private fun initBarChart(barChat: BarChart, mainColor: Int) {
+//        val times = arrayOf("1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00",
+//                "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00")
+//
+//        barChat.setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+//            override fun onNothingSelected() {
+//            }
+//
+//            override fun onValueSelected(e: Entry?, h: Highlight?) {
+//                //选中值
+//                Logger.e("value=${e.toString()}")
+//            }
+//        })
+//
+//        barChat.apply {
+//            description.isEnabled = false
+//            setMaxVisibleValueCount(24)//最大显示24个值
+//            setPinchZoom(false)
+//            setDrawBarShadow(false)
+//            setDrawGridBackground(false)
+//            setDrawValueAboveBar(false)
+//            setScaleEnabled(false)
+//            extraBottomOffset = 0f
+//            xAxis.apply {
+//                position = XAxis.XAxisPosition.BOTTOM
+//                setDrawGridLines(false)
+//                gridColor = resources.getColor(R.color.white)
+//                textColor = mainColor
+//                valueFormatter = XAxisValueFormatter(times)
+//                axisLineColor = resources.getColor(R.color.colorPrimary)
+//                setLabelCount(6, true)//设置标签个数,true为精确
+//            }
+//
+//            axisLeft.apply {
+//                isEnabled = true
+//                setDrawLabels(false)//标签
+//                setDrawAxisLine(false)//轴线
+//                setDrawGridLines(true)//网格线
+//                gridColor = resources.getColor(R.color.gray)
+//                axisMinimum = 0f
+//                enableGridDashedLine(20f, 5f, 0f)
+//            }
+//            axisRight.isEnabled = false
+//            legend.isEnabled = false
+//            val mv = XYMarkerView(activity, XAxisValueFormatter(times))
+//            mv.chartView = barChat
+//            marker = mv
+//        }
+//
+//    }
 
 
     private fun jumpToDailyStatisticsActivity() {
@@ -126,81 +162,101 @@ class HomeFragment : BaseFragment() {
 
     override fun lazyLoad() {
 
-        if (connectState){
+        if (connectState) {
             //处于连接状态,就显示数据
+            setConnectedState()
+            //初始化手表数据
             initWatchData()
-            refresh(RefreshEvent(Constants.TYPE_CURRENT_DATA))
-            tv_ble_state_tip.visibility = View.GONE
-            rl_step_num_container.background = resources.getDrawable(R.mipmap.icon_colorful_bg)
+        } else {
+            //显示空白页
+            setDisConnectState()
+
         }
 
     }
 
-    private fun initBarData(barChat: BarChart, values: ArrayList<BarEntry>, startColor: Int, endColor: Int) {
-        val set1: BarDataSet?
-        if (barChat.data != null && barChat.data.dataSetCount > 0) {
-            set1 = barChat.data.getDataSetByIndex(0) as BarDataSet
+//    private fun initBarData(barChat: BarChart, values: ArrayList<BarEntry>, startColor: Int, endColor: Int) {
+//        val set1: BarDataSet?
+//        if (barChat.data != null && barChat.data.dataSetCount > 0) {
+//            set1 = barChat.data.getDataSetByIndex(0) as BarDataSet
+//            set1.values = values
+//            barChat.notifyDataSetChanged()
+//        } else {
+//            set1 = BarDataSet(values, "Data Set")
+//            // * 可变参数展开操作符
+//            // set1.setColors(*ColorTemplate.VORDIPLOM_COLORS)
+//            set1.setGradientColor(startColor, endColor)
+//            val dataSets = ArrayList<IBarDataSet>()
+//            dataSets.add(set1)
+//            val data = BarData(dataSets)
+//            data.barWidth = 0.3f
+//            barChat.data = data
+//            barChat.setFitBars(true) // 在bar开头结尾两边添加一般bar宽的留白
+//        }
+//        barChat.invalidate()
+//    }
+
+    private fun initLineData(chart: LineChart, values: ArrayList<Entry>, startColor: Int, endColor: Int) {
+        val set1: LineDataSet?
+        if (chart.data != null && chart.data.dataSetCount > 0) {
+            set1 = chart.data.getDataSetByIndex(0) as LineDataSet
             set1.values = values
-            barChat.notifyDataSetChanged()
-        } else {
-            set1 = BarDataSet(values, "Data Set")
-            // * 可变参数展开操作符
-            // set1.setColors(*ColorTemplate.VORDIPLOM_COLORS)
-            set1.setGradientColor(startColor, endColor)
-            val dataSets = ArrayList<IBarDataSet>()
-            dataSets.add(set1)
-            val data = BarData(dataSets)
-            data.barWidth = 0.3f
-            barChat.data = data
-            barChat.setFitBars(true) // 在bar开头结尾两边添加一般bar宽的留白
+            set1.notifyDataSetChanged()
+            chart.data.notifyDataChanged()
+            chart.notifyDataSetChanged()
+        } else { // create a dataset and give it a type
+            set1 = LineDataSet(values, "DataSet 1")
+            set1.mode = LineDataSet.Mode.CUBIC_BEZIER// 设置线条的模式
+            set1.setDrawIcons(false)
+            set1.setDrawValues(false)
+            set1.setDrawHighlightIndicators(false)//设置高亮辅助线
+            // draw dashed line
+            // set1.enableDashedLine(10f, 5f, 0f)
+            // black lines and points
+           // set1.setColor(Color.RED)
+           set1.setGradientColor(resources.getColor(startColor), resources.getColor(endColor))//设置曲线的颜色
+            set1.circleHoleColor = resources.getColor(R.color.gray_bottom)  //圆孔颜色
+            // line thickness and point size
+            set1.lineWidth = 2f//线宽
+            set1.circleRadius = 5f//圆半径
+            set1.circleHoleRadius=3f
+            // draw points as solid circles
+            set1.setDrawCircleHole(true)//圆孔
+            set1.setDrawCircles(true)//圆
+            // customize legend entry
+           // set1.setFormLineWidth(1f)
+           // set1.setFormLineDashEffect(DashPathEffect(floatArrayOf(10f, 5f), 0f))
+          //  set1.setFormSize(15f)
+            // text size of values
+           // set1.setValueTextSize(9f)
+            // draw selection line as dashed
+            //set1.enableDashedHighlightLine(10f, 5f, 0f)
+            // set the filled area
+//            set1.setDrawFilled(false)
+//            set1.setFillFormatter(IFillFormatter { dataSet, dataProvider -> chart.getAxisLeft().getAxisMinimum() })
+            // set color of filled area
+//            if (Utils.getSDKInt() >= 18) { // drawables only supported on api level 18 and above
+//                val drawable: Drawable? = ContextCompat.getDrawable(activity, R.drawable.fade_red)
+//                set1.setFillDrawable(drawable)
+//            } else {
+//                set1.setFillColor(Color.BLACK)
+//            }
+            val dataSets = java.util.ArrayList<ILineDataSet>()
+            dataSets.add(set1) // add the data sets
+            // create a data object with the data sets
+            val data = LineData(dataSets)
+            // set data
+            chart.data = data
         }
-        barChat.invalidate()
+        chart.invalidate()
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onBleStateChanged(event: BleStateEvent) {
-        if (event.state) {//打开
-            tv_ble_state_tip.text = "在连接中添加设备"
-        } else {//关闭
-            tv_ble_state_tip.text = "蓝牙关闭"
-        }
-    }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onWatchConnectChanged(event: ConnectEvent) {
-        if (event.isConnected) {
-            tv_ble_state_tip.visibility = View.GONE
-            rl_step_num_container.background = resources.getDrawable(R.mipmap.icon_colorful_bg)
-            //已连接成功后再显示数据
-
-
-
-        } else {
-            tv_ble_state_tip.visibility = View.VISIBLE
-            rl_step_num_container.background = resources.getDrawable(R.mipmap.icon_black_circle_bg)
-            tv_current_step_num.text = "--"
-        }
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun hideDialog(event: HideDialogEvent){
-        if (event.success){
-            initWatchData()
-        }
-
-    }
-
-
-
-    //连接成功后初始化手表数据
+    // 连接成功后初始化手表数据
     private fun initWatchData() {
+        //刷新目标步数/cal和当前占比
         refreshTargetSteps(RefreshTargetStepsEvent())
-        //查询当天步数,cal
-        val currentList = LitePal.findAll<CurrentDataBean>()
-        if (currentList.isNotEmpty()) {
-            tv_step_num_total.text = (currentList[0].dailyStepNumTotal+currentList[0].sportStepNumTotal).toString()
-            tv_cal_total.text = (currentList[0].dailyCalTotal+currentList[0].sportCalTotal).toString()
-        }
+
         //获取当天24小时的信息list
         val dateNow = DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd")
         val list = dateNow.split("-")
@@ -211,55 +267,142 @@ class HomeFragment : BaseFragment() {
         val daily_date = sb.append(year).append("-").append(month).append("-").append(day).trim().toString()//20-1-18
         //24小时数据
         val dailyInfoList = LitePal.where("daily_date = ?", daily_date).find(DailyInfoDataBean::class.java)
-        //初始化24小时步数图表的值
-        if (dailyInfoList.isNotEmpty()){
-            val stepValues = ArrayList<BarEntry>()
+        //初始化24步数数据
+        if (dailyInfoList.isNotEmpty()) {
+            val stepValues = ArrayList<Entry>()
             for (i in 0..23) {
-                //val num = (Math.random() * 1000).toFloat()
-                val num = dailyInfoList[i].daily_steps.toFloat()+dailyInfoList[i].sport_steps.toFloat()
-                stepValues.add(BarEntry(i.toFloat(), num))
+                val num = (Math.random() * 1000).toFloat()
+                //val num = dailyInfoList[i].daily_steps.toFloat() + dailyInfoList[i].sport_steps.toFloat()
+                stepValues.add(Entry(i.toFloat(), num))
             }
+            initLineData(step_line_chart, stepValues, R.color.green_path, R.color.blue_path)
             //初始化24小时cal表的值
-            val calValues = ArrayList<BarEntry>()
+            val calValues = ArrayList<Entry>()
             for (i in 0..23) {
-                //val num = (Math.random() * 1000).toFloat()
-                val num = dailyInfoList[i].daily_calorie.toFloat()+dailyInfoList[i].sport_calorie.toFloat()
-                calValues.add(BarEntry(i.toFloat(), num))
+                val num = (Math.random() * 1000).toFloat()
+                //val num = dailyInfoList[i].daily_calorie.toFloat() + dailyInfoList[i].sport_calorie.toFloat()
+                calValues.add(Entry(i.toFloat(), num))
             }
-            initBarData(bar_chart_step, stepValues, resources.getColor(R.color.blue_light), resources.getColor(R.color.green_circle))
-            initBarData(bar_chart_cal, calValues, resources.getColor(R.color.orange_light), resources.getColor(R.color.orange))
-        }
+            initLineData(cal_line_chart, stepValues, R.color.color_pink_FF00FF, R.color.color_red_FF0000)
 
+                //初始化24小时步数图表的值
+//        if (dailyInfoList.isNotEmpty()){
+//            val stepValues = ArrayList<BarEntry>()
+//            for (i in 0..23) {
+//                //val num = (Math.random() * 1000).toFloat()
+//                val num = dailyInfoList[i].daily_steps.toFloat()+dailyInfoList[i].sport_steps.toFloat()
+//                stepValues.add(BarEntry(i.toFloat(), num))
+//            }
 
-    }
-
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun refresh(event: RefreshEvent) {
-        when (event.type) {
-            Constants.TYPE_CURRENT_DATA -> {
-                val list = LitePal.findAll(CurrentDataBean::class.java)
-                if (list.isNotEmpty()) {
-                    //当前步数
-                    //Logger.e("当前步数更新==${list[0].dailyStepNumTotal.toString()}")
-                    tv_current_step_num.text = (list[0].dailyStepNumTotal+ list[0].sportStepNumTotal).toString()
-                }
-
-            }
-
+//            }
+                //initBarData(bar_chart_step, stepValues, resources.getColor(R.color.blue_light), resources.getColor(R.color.green_circle))
+                //initBarData(bar_chart_cal, calValues, resources.getColor(R.color.orange_light), resources.getColor(R.color.orange))
 
         }
     }
 
+    //    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun refresh(event: RefreshEvent) {
+//        when (event.type) {
+//            Constants.TYPE_CURRENT_DATA -> {
+//                val list = LitePal.findAll(CurrentDataBean::class.java)
+//                if (list.isNotEmpty()) {
+//                    //当前步数
+//                    //Logger.e("当前步数更新==${list[0].dailyStepNumTotal.toString()}")
+//                    tv_step_num.text = (list[0].dailyStepNumTotal+ list[0].sportStepNumTotal).toString()
+//                    //当前卡路里
+//                    tv_cal_num.text =(list[0].dailyCalTotal+list[0].sportCalTotal).toString()
+//                }
+//
+//            }
+//
+//
+//        }
+//    }
+//
+//
+    private var targetStepNum = 0
+    private var targetCalNum = 0
+    private var currentStepNum = 0
+    private var currentCalNum = 0
 
+    //刷新当前步数,cal百分比
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun refreshTargetSteps(event: RefreshTargetStepsEvent) {
+        //查询当前步数,cal
+        val currentList = LitePal.findAll<CurrentDataBean>()
+        if (currentList.isNotEmpty()) {
+            tv_step_num.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
+            tv_cal_num.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
+            currentStepNum = currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal
+            currentCalNum = currentList[0].dailyCalTotal + currentList[0].sportCalTotal
+        }
+        //查询目标步数,cal
         val list = LitePal.findAll<PersonalInfoBean>()
         if (list.isNotEmpty()) {
-            tv_goal_step_num.text = list[0].des_steps.toString()
+            targetStepNum = list[0].des_steps
+            targetCalNum = list[0].des_calorie
         }
-       // showToast("成功")
+        if (targetStepNum > 0) {
+            task_step.setProgress(currentStepNum * 100 / targetStepNum)
+            tv_step_percent.text = "${currentStepNum * 100 / targetStepNum}%"
+            tv_step_percent.typeface = Constants.font_futurn_num
+        }
+        if (targetCalNum > 0) {
+            task_cal.setProgress(currentCalNum * 100 / (targetCalNum * 1000))
+            tv_cal_percent.text = "${currentCalNum * 100 / (targetCalNum * 1000)}%"
+            tv_cal_percent.typeface = Constants.font_futurn_num
+        }
 
     }
 
+    //
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    fun onBleStateChanged(event: BleStateEvent) {
+//        if (event.state) {//打开
+//            tv_ble_state_tip.text = "在连接中添加设备"
+//        } else {//关闭
+//            tv_ble_state_tip.text = "蓝牙关闭"
+//        }
+//    }
+//
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onWatchConnectChanged(event: ConnectEvent) {
+        if (event.isConnected) {
+            setConnectedState()
+            //已连接成功后再显示数据
+        } else {
+            //未连接
+            setDisConnectState()
+        }
+    }
+
+    /**
+     * 设置未连接状态
+     */
+    private fun setDisConnectState() {
+        rl_state_disconnect_cal.visibility = View.VISIBLE
+        rl_state_disconnect_step.visibility = View.VISIBLE
+        rl_state_connect_cal.visibility = View.GONE
+        rl_state_connect_step.visibility = View.GONE
+    }
+
+    /**
+     * 设置为连接状态
+     */
+    private fun setConnectedState() {
+        rl_state_disconnect_cal.visibility = View.GONE
+        rl_state_disconnect_step.visibility = View.GONE
+        rl_state_connect_cal.visibility = View.VISIBLE
+        rl_state_connect_step.visibility = View.VISIBLE
+    }
+
+    //
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun hideDialog(event: HideDialogEvent) {
+        if (event.success) {
+            initWatchData()
+        }
+
+    }
 }
