@@ -137,4 +137,10 @@
         <attr name="ringEndColor" format="color"/>
         <attr name="isColorful" format="boolean"/>
     </declare-styleable>
+
+<!-- Tab字体   -->
+    <style name="ConstomTabTextStyle" parent="TextAppearance.AppCompat.Title.Inverse">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>

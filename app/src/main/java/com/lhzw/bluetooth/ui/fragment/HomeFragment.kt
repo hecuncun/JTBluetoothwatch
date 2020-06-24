@@ -50,6 +50,10 @@ class HomeFragment : BaseFragment() {
     override fun initView(view: View) {
         initLineChar(step_line_chart)
         initLineChar(cal_line_chart)
+        tv_current_step_chart.typeface=Constants.font_futurn_num
+        tv_current_cal_chart.typeface=Constants.font_futurn_num
+        tv_step_chart.typeface=Constants.font_futurn_num
+        tv_cal_chart.typeface=Constants.font_futurn_num
         ll_progress_container.setOnClickListener {
             //跳转统计页
             startActivity(Intent(activity,StatisticsActivity::class.java))
@@ -83,7 +87,7 @@ class HomeFragment : BaseFragment() {
             legend.isEnabled = false//隐藏左下角label
             axisLeft.isEnabled = false
             axisRight.isEnabled = false
-            valuesToHighlight()
+            //valuesToHighlight()
         }
 
         lineChart.setOnChartValueSelectedListener(object :OnChartValueSelectedListener{

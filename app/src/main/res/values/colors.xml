@@ -26,6 +26,7 @@
     <color name="gray_lite">#c5c5c5</color>
     <color name="gray_little1">#D1D1D1</color>
     <color name="green2">#00a944</color>
+    <color name="text_color_787878">#787878</color>
     <!-- 键盘绿 焦点 -->
     <color name="btn_green_focused">#0fa400</color>
 
@@ -68,6 +69,7 @@
     <color name="red_path">#FF3300</color>
     <color name="yellow_path">#FFFF00</color>
     <color name="green_path">#00FF00</color>
+    <color name="green_33CC99">#33CC99</color>
     <color name="blue_path">#3399FF</color>
     <color name="cyan_path">#009999</color>
     <color name="light_color_speed">#0099FF</color>
@@ -79,6 +81,10 @@
     <color name="item_watch_text">#3B3B3B</color>
     <color name="color_pink_FF00FF">#FF00FF</color>
     <color name="color_red_FF0000">#FF0000</color>
+    <color name="color_pink_FF0099">#FF0099</color>
+    <color name="color_gray_757575">#757575</color>
+    <color name="color_green_0C1A00">#0C1A00</color>
+    <color name="color_red_180008">#180008</color>
 
 
 </resources>

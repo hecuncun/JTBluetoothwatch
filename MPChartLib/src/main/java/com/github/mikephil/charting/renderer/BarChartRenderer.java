@@ -4,8 +4,11 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
@@ -197,10 +200,17 @@ public class BarChartRenderer extends BarLineScatterCandleBubbleRenderer {
 
 //            c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
 //                    buffer.buffer[j + 3], mRenderPaint);
+            //todo 修改一个矩形的角为圆角
+            float[] outerR = new float[] { 0, 0, 12,12, 0, 0, 0, 0};
+            RoundRectShape rr = new RoundRectShape(outerR, null, null);
+            ShapeDrawable drawable = new ShapeDrawable(rr);
 
-            RectF rectF = new RectF(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2], buffer.buffer[j + 3]);
-            c.drawRoundRect(rectF, (float) 25, (float) 25, mRenderPaint);
-
+         //   RectF rectF = new RectF(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2], buffer.buffer[j + 3]);
+            Rect rect = new Rect((int)buffer.buffer[j], (int) (buffer.buffer[j + 1]),(int) buffer.buffer[j + 2] , (int)buffer.buffer[j + 3]);
+            drawable.setBounds(rect);
+            drawable.getPaint().set(mRenderPaint);
+            drawable.draw(c);
+           // c.drawRoundRect(rectF, (float) 25, (float) 25, mRenderPaint);
             if (drawBorder) {
                 c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
                         buffer.buffer[j + 3], mBarBorderPaint);
