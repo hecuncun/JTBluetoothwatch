@@ -449,10 +449,9 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             FRAGMENT_SETTING -> {
                 toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_setting)
-                toolbar_right_tv.visibility = View.VISIBLE
-                toolbar_right_tv.text = "保存"
-                toolbar_right_tv.setTextColor(resources.getColor(com.lhzw.bluetooth.R.color.orange))
-                toolbar_right_tv.setOnClickListener {
+                toolbar_right_img.visibility=View.VISIBLE
+                toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
+                toolbar_right_img.setOnClickListener {
                     //保存bean
                     EventBus.getDefault().post(SaveUserEvent())
                 }

@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.ui.fragment
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.view.View
+import android.widget.SeekBar
 import com.jzxiang.pickerview.TimePickerDialog
 import com.jzxiang.pickerview.data.Type
 import com.lhzw.bluetooth.R
@@ -28,7 +29,6 @@ import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_setting.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.litepal.LitePal
 
 
 /**
@@ -36,9 +36,9 @@ import org.litepal.LitePal
  */
 class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Presenter>(), SettingContract.View {
 
-    private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
-    private var birthday: String? by Preference(Constants.BIRTHDAY, "")
-    private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
+  //  private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
+ //   private var birthday: String? by Preference(Constants.BIRTHDAY, "")
+ //   private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
 
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
@@ -58,33 +58,36 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         //初始化数据
         mPresenter?.getPersonalInfo()
     }
-
+    private var personalInfoBean:PersonalInfoBean?=null
     override fun getPersonalInfoSuccess(data: PersonalInfoBean?) {
         //设置数据
         if (data != null) {
-            if (data.gender == 1) {
-                rg_btn_man.isChecked = true
-            } else {
-                rg_btn_women.isChecked = true
-            }
-            //  Logger.e("显示个人信息身高=="+ data.height)
+            personalInfoBean=data
+//            if (data.gender == 1) {
+//                rg_btn_man.isChecked = true
+//            } else {
+//                rg_btn_women.isChecked = true
+//            }
+//            //  Logger.e("显示个人信息身高=="+ data.height)
+//
+//            counter_height.initNum = data.height
+//            et_weight.setText(data.weight.toString())
+//            counter_step_length.initNum = data.step_len
+//            et_target_step_num.setText(data.des_steps.toString())
+//            et_target_cal_num.setText(data.des_calorie.toString())
+//            tv_name.text = nickName
+//
+//            et_target_distance_num.setText(data.des_distance.toString())
+//           // counter_max_heart.initNum = data.heart_rate
+            tv_heart_rate_limit.text=data.heart_rate.toString()
+            seekBar.progress=data.heart_rate
+  //          tv_birthday.text = if (birthday!!.isEmpty()) "请选择 > " else birthday
 
-            counter_height.initNum = data.height
-            et_weight.setText(data.weight.toString())
-            counter_step_length.initNum = data.step_len
-            et_target_step_num.setText(data.des_steps.toString())
-            et_target_cal_num.setText(data.des_calorie.toString())
-            tv_name.text = nickName
-
-            et_target_distance_num.setText(data.des_distance.toString())
-            counter_max_heart.initNum = data.heart_rate
-            tv_birthday.text = if (birthday!!.isEmpty()) "请选择 > " else birthday
-
-            nuan_shen.text = "区间[${data.heart_rate.times(0.5).toInt()}-${data.heart_rate.times(0.6).toInt() - 1}]"
-            ran_zhi.text = "区间[${data.heart_rate.times(0.6).toInt()}-${data.heart_rate.times(0.7).toInt() - 1}]"
-            you_yang.text = "区间[${data.heart_rate.times(0.7).toInt()}-${data.heart_rate.times(0.8).toInt() - 1}]"
-            ru_suan.text = "区间[${data.heart_rate.times(0.8).toInt()}-${data.heart_rate.times(0.9).toInt() - 1}]"
-            wu_yang.text = "区间[${data.heart_rate.times(0.9).toInt()}-${data.heart_rate}]"
+            nuan_shen.text = "[${data.heart_rate.times(0.5).toInt()}-${data.heart_rate.times(0.6).toInt() - 1}]"
+            ran_zhi.text = "[${data.heart_rate.times(0.6).toInt()}-${data.heart_rate.times(0.7).toInt() - 1}]"
+            you_yang.text = "[${data.heart_rate.times(0.7).toInt()}-${data.heart_rate.times(0.8).toInt() - 1}]"
+            ru_suan.text = "[${data.heart_rate.times(0.8).toInt()}-${data.heart_rate.times(0.9).toInt() - 1}]"
+            wu_yang.text = "[${data.heart_rate.times(0.9).toInt()}-${data.heart_rate}]"
         }
 
 
@@ -92,50 +95,45 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     override fun initView(view: View) {
         super.initView(view)
-        GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
+       // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
         initListener()
-
         initIvState()
-
-
     }
 
     //初始化消息接收状态
     private fun initIvState() {
-        iv_phone.setImageResource(if (enablePhone) R.drawable.icon_phone else R.drawable.icon_phone_normal)
-        iv_msg.setImageResource(if (enableMsg) R.drawable.icon_msg else R.drawable.icon_msg_normal)
-        iv_qq.setImageResource(if (enableQQ) R.drawable.icon_qq else R.drawable.icon_qq_normal)
-        iv_wx.setImageResource(if (enableWx) R.drawable.icon_wx else R.drawable.icon_wx_normal)
+        iv_phone_state.setImageResource(if (enablePhone) R.mipmap.icon_on else R.mipmap.icon_off)
+        iv_msg_state.setImageResource(if (enableMsg) R.mipmap.icon_on else R.mipmap.icon_off)
+        iv_qq_state.setImageResource(if (enableQQ) R.mipmap.icon_on else R.mipmap.icon_off)
+        iv_wx_state.setImageResource(if (enableWx) R.mipmap.icon_on else R.mipmap.icon_off)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun saveUser(event: SaveUserEvent) {
         //获取所有的设置信息,并保存
-        val gender = if (rg_sex.checkedRadioButtonId == R.id.rg_btn_man) 1 else 0
-        val height = counter_height.initNum
-        val weight = et_weight.text.toString().toInt()
-        val step_len = counter_step_length.initNum
-        val des_steps = et_target_step_num.text.toString().toInt()
-        val des_calorie = et_target_cal_num.text.toString().toInt()
-        val des_distance = et_target_distance_num.text.toString().toInt()
-        val heart_rate = counter_max_heart.initNum
+//        val gender = if (rg_sex.checkedRadioButtonId == R.id.rg_btn_man) 1 else 0
+//        val height = counter_height.initNum
+//        val weight = et_weight.text.toString().toInt()
+//        val step_len = counter_step_length.initNum
+//        val des_steps = et_target_step_num.text.toString().toInt()
+//        val des_calorie = et_target_cal_num.text.toString().toInt()
+//        val des_distance = et_target_distance_num.text.toString().toInt()
+        val heart_rate =  tv_heart_rate_limit.text.toString().toInt()
 
-        val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
+      //  val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
 
-        Logger.e(personalInfoBean.toString())
+   //     Logger.e(personalInfoBean.toString())
         //先删除所有的bean对象再去添加
         if (connectState) {
             //已连接才能保存
-            LitePal.deleteAll(PersonalInfoBean::class.java)
-            tv_birthday.text = birthday
-            personalInfoBean.save()
-
+            personalInfoBean?.heart_rate=heart_rate
+            personalInfoBean?.save()//更新数据库的心率值
             //计算显示心率区间
-            nuan_shen.text = "区间[${heart_rate.times(0.5).toInt()}-${heart_rate.times(0.6).toInt() - 1}]"
-            ran_zhi.text = "区间[${heart_rate.times(0.6).toInt()}-${heart_rate.times(0.7).toInt() - 1}]"
-            you_yang.text = "区间[${heart_rate.times(0.7).toInt()}-${heart_rate.times(0.8).toInt() - 1}]"
-            ru_suan.text = "区间[${heart_rate.times(0.8).toInt()}-${heart_rate.times(0.9).toInt() - 1}]"
-            wu_yang.text = "区间[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
+            nuan_shen.text = "[${heart_rate.times(0.5).toInt()}-${heart_rate.times(0.6).toInt() - 1}]"
+            ran_zhi.text = "[${heart_rate.times(0.6).toInt()}-${heart_rate.times(0.7).toInt() - 1}]"
+            you_yang.text = "[${heart_rate.times(0.7).toInt()}-${heart_rate.times(0.8).toInt() - 1}]"
+            ru_suan.text = "[${heart_rate.times(0.8).toInt()}-${heart_rate.times(0.9).toInt() - 1}]"
+            wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
             //发指令更新个人信息
             RxBus.getInstance().post("updatePersonInfo", "")
         } else {
@@ -149,6 +147,42 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     private var age: Int = 25
 
     private fun initListener() {
+        //极限心率设置
+        seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
+               Logger.e("seekProgress==$progress")
+                tv_heart_rate_limit.text=progress.toString()
+            }
+
+            override fun onStartTrackingTouch(p0: SeekBar?) {
+
+            }
+
+            override fun onStopTrackingTouch(p0: SeekBar?) {
+
+            }
+        })
+
+        //消息通知开关
+        iv_phone_state.setOnClickListener {
+            enablePhone = !enablePhone
+            initIvState()
+        }
+
+        iv_msg_state.setOnClickListener {
+            enableMsg = !enableMsg
+            initIvState()
+        }
+
+        iv_qq_state.setOnClickListener {
+            enableQQ = !enableQQ
+            initIvState()
+        }
+
+        iv_wx_state.setOnClickListener {
+            enableWx = !enableWx
+            initIvState()
+        }
         //头像选择
         val dialog = SelectDialog(activity)
         //日期选择
@@ -202,8 +236,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             dialog.setOnConfirmListener(object : EditNameDialog.OnConfirmListener {
                 override fun onConfirm(name: String) {
                     dialog.dismiss()
-                    nickName = name
-                    tv_name.text = nickName
+                 //   nickName = name
+                  //  tv_name.text = nickName
                 }
             })
         }
@@ -223,26 +257,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
-        //消息通知开关
-        iv_phone.setOnClickListener {
-            enablePhone = !enablePhone
-            initIvState()
-        }
 
-        iv_msg.setOnClickListener {
-            enableMsg = !enableMsg
-            initIvState()
-        }
-
-        iv_qq.setOnClickListener {
-            enableQQ = !enableQQ
-            initIvState()
-        }
-
-        iv_wx.setOnClickListener {
-            enableWx = !enableWx
-            initIvState()
-        }
 
 
     }
@@ -256,7 +271,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                     if (selectList.size > 0) {
                         GlideUtils.showCircleWithBorder(iv_head_photo, selectList[0].compressPath, R.drawable.icon_head_photo, resources.getColor(R.color.white))
                         //保存头像地址
-                        photoPath = selectList[0].compressPath
+                       // photoPath = selectList[0].compressPath
                     } else {
                         showToast("图片出现问题")
                     }

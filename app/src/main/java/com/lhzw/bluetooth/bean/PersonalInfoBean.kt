@@ -13,23 +13,23 @@ data class PersonalInfoBean(//unique约束确保在非主键列中不输入重�
         /*     响应号   */
         val reponse: String = "9",
         /*     性别   */
-        val gender: Int,
+        var gender: Int,
         /*     年龄   */
-        val age: Int,
+        var age: Int,
         /*     身高   */
-        val height: Int,
+        var height: Int,
         /*     体重   */
-        val weight: Int,
+        var weight: Int,
         /*     步长   */
-        val step_len: Int,
+        var step_len: Int,
         /*     目标步数   */
-        val des_steps: Int,
+        var des_steps: Int,
         /*     目标卡路里千卡   */
-        val des_calorie: Int,
+        var des_calorie: Int,
         /*     目标距离   */
-        val des_distance: Int,
+        var des_distance: Int,
         /*     心率区间极限值   */
-        val heart_rate: Int) : LitePalSupport() {
+        var heart_rate: Int) : LitePalSupport() {
     //需要注意的是，如果你的实体类中需要定义id这个字段，
     // 不要把它放到构造函数当中，因为id的值是由LitePal自动赋值的，而不应该由用户来指定
     val id: Long = 1
