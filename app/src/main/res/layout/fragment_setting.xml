@@ -136,6 +136,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:gravity="center_vertical"
@@ -796,7 +797,7 @@
                 android:gravity="center_vertical"
                 android:text="关于我们"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+                android:textSize="@dimen/sp_14" />
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -829,7 +830,7 @@
                 android:gravity="center_vertical"
                 android:text="软件升级"
                 android:textColor="@color/white"
-                android:textSize="@dimen/sp_16" />
+                android:textSize="@dimen/sp_14" />
 
             <ImageView
                 android:id="@+id/iv_update_note"
