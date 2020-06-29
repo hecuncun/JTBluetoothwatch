@@ -29,6 +29,8 @@ abstract class BaseFragment :Fragment(){
      * 手表是否已连接
      */
     protected var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
+    protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
+    protected var nickName: String by Preference(Constants.NICK_NAME, "")
     /**
      * 视图是否加载完毕
      */

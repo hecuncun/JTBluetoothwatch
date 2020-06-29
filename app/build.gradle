@@ -110,6 +110,7 @@ dependencies {
     implementation project(':scanner')
     implementation project(':library')
     implementation project(':ble')
+    implementation project(':pickerview')
     implementation 'com.hwangjr.rxbus:rxbus:2.0.1'
     implementation 'com.makeramen:roundedimageview:2.2.1'
 

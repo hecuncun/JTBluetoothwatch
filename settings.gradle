@@ -1,1 +1,1 @@
-include ':app', ':MPChartLib', ":lib-zxing", ':toastex', ':ble', ':scanner', ':library'
+include ':app', ':MPChartLib', ":lib-zxing", ':toastex', ':ble', ':scanner', ':library',':pickerview', ':wheelview'

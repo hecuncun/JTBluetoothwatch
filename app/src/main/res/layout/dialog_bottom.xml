@@ -28,7 +28,8 @@
         android:background="@drawable/bg_gray_bg_selector"
         android:text="相册"/>
     <View
-        style="@style/horizontalOrangeLine"/>
+        style="@style/horizontalOrangeLine"
+        android:layout_height="1px"/>
     <TextView
         android:id="@+id/tv_cancel"
         android:padding="@dimen/dp_10"

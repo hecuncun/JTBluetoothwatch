@@ -10,8 +10,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
-import android.support.design.bottomnavigation.LabelVisibilityMode
-import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.FragmentTransaction
 import android.text.TextUtils
 import android.view.KeyEvent
@@ -25,8 +23,8 @@ import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
-import com.lhzw.bluetooth.ui.fragment.ConnectFragment
 import com.lhzw.bluetooth.ui.fragment.HomeFragment
+import com.lhzw.bluetooth.ui.fragment.MineFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
 import com.lhzw.bluetooth.uitls.Preference
@@ -45,14 +43,16 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private val FRAGMENT_HOME = 0x01
     private val FRAGMENT_SPORTS = 0X02
     private val FRAGMENT_SETTING = 0X03
-    private val FRAGMENT_CONNECT = 0X04
+   // private val FRAGMENT_CONNECT = 0X04
+    private val FRAGMENT_MINE = 0X05
 
     private var mIndex = FRAGMENT_HOME
 
     private var mHomeFragment: HomeFragment? = null
     private var mSportsFragment: SportsFragment? = null
     private var mSettingFragment: SettingFragment? = null
-    private var mConnectFragment: ConnectFragment? = null
+   // private var mConnectFragment: ConnectFragment? = null
+    private var mMineFragment: MineFragment? = null
     private val PERMISS_REQUEST_CODE = 0x100
     private val PERMISS_REQUEST_CODE_PHONE = 0x101
     private var tapId = Constants.TAP_HOME;
@@ -348,20 +348,20 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 //        myBleManager = BleManager(this)
 //        myBleManager!!.setGattCallbacks(this)
 
-        bottom_navigation.run {
-            // 以前使用 BottomNavigationViewHelper.disableShiftMode(this) 方法来设置底部图标和字体都显示并去掉点击动画
-            // 升级到 28.0.0 之后，官方重构了 BottomNavigationView ，目前可以使用 labelVisibilityMode = 1 来替代
-            // BottomNavigationViewHelper.disableShiftMode(this)
-            /**
-             * auto   当item小于等于3是，显示文字，item大于3个默认不显示，选中显示文字
-            labeled   始终显示文字
-            selected  选中时显示文字
-            unlabeled 不显示文字
-             */
-            labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_LABELED
-            setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-
-        }
+//        bottom_navigation.run {
+//            // 以前使用 BottomNavigationViewHelper.disableShiftMode(this) 方法来设置底部图标和字体都显示并去掉点击动画
+//            // 升级到 28.0.0 之后，官方重构了 BottomNavigationView ，目前可以使用 labelVisibilityMode = 1 来替代
+//            // BottomNavigationViewHelper.disableShiftMode(this)
+//            /**
+//             * auto   当item小于等于3是，显示文字，item大于3个默认不显示，选中显示文字
+//            labeled   始终显示文字
+//            selected  选中时显示文字
+//            unlabeled 不显示文字
+//             */
+//            labelVisibilityMode = LabelVisibilityMode.LABEL_VISIBILITY_LABELED
+//            setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+//
+//        }
         toolbar_title.text = "首页"
         showFragment(mIndex)
 //        showFragment(mIndex)
@@ -395,7 +395,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         toolbar_right_img.visibility = View.GONE
         toolbar_left_img.visibility=View.GONE
         toolbar_right_tv.visibility = View.GONE
-        tv_sync.visibility = View.GONE
+       // tv_sync.visibility = View.GONE
         im_back.visibility = View.GONE
         when (index) {
             FRAGMENT_HOME -> {
@@ -454,7 +454,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
                 toolbar_right_img.setOnClickListener {
                     //保存bean
-                    EventBus.getDefault().post(SaveUserEvent())
+                    EventBus.getDefault().post(SaveWatchSettingEvent())
                 }
                 if (mSettingFragment == null) {
                     mSettingFragment = SettingFragment.getInstance()
@@ -464,14 +464,31 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            FRAGMENT_CONNECT -> {
-                toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_connect)
-                if (mConnectFragment == null) {
-                    mConnectFragment = ConnectFragment.getInstance()
-                    transaction.add(com.lhzw.bluetooth.R.id.container, mConnectFragment!!, "connect")
+//            FRAGMENT_CONNECT -> {
+//                toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_connect)
+//                if (mConnectFragment == null) {
+//                    mConnectFragment = ConnectFragment.getInstance()
+//                    transaction.add(com.lhzw.bluetooth.R.id.container, mConnectFragment!!, "connect")
+//                } else {
+//                    transaction.show(mConnectFragment!!)
+//                    mConnectFragment?.refleshSyncState()
+//                }
+//            }
+
+            FRAGMENT_MINE -> {
+                toolbar_title.text = "我的信息"
+                toolbar_right_img.visibility=View.VISIBLE
+                toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
+                toolbar_right_img.setOnClickListener {
+                    //保存bean
+                    EventBus.getDefault().post(SavePersonInfoEvent())
+                }
+                if (mMineFragment == null) {
+                    mMineFragment = MineFragment.getInstance()
+                    transaction.add(com.lhzw.bluetooth.R.id.container, mMineFragment!!, "connect")
                 } else {
-                    transaction.show(mConnectFragment!!)
-                    mConnectFragment?.refleshSyncState()
+                    transaction.show(mMineFragment!!)
+                 //  mMineFragment?.refleshSyncState()
                 }
             }
         }
@@ -485,36 +502,37 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         mHomeFragment?.let { transaction.hide(it) }
         mSportsFragment?.let { transaction.hide(it) }
         mSettingFragment?.let { transaction.hide(it) }
-        mConnectFragment?.let { transaction.hide(it) }
+        //mConnectFragment?.let { transaction.hide(it) }
+        mMineFragment?.let { transaction.hide(it) }
     }
 
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        return@OnNavigationItemSelectedListener when (item.itemId) {
-            R.id.action_home -> {
-                showFragment(FRAGMENT_HOME)
-                true
-            }
-
-            R.id.action_sports -> {
-                showFragment(FRAGMENT_SPORTS)
-                true
-            }
-
-            R.id.action_setting -> {
-                showFragment(FRAGMENT_SETTING)
-                true
-            }
-
-            R.id.action_connect -> {
-                showFragment(FRAGMENT_CONNECT)
-                true
-            }
-            else -> {
-                false
-            }
-
-        }
-    }
+//    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+//        return@OnNavigationItemSelectedListener when (item.itemId) {
+//            R.id.action_home -> {
+//                showFragment(FRAGMENT_HOME)
+//                true
+//            }
+//
+//            R.id.action_sports -> {
+//                showFragment(FRAGMENT_SPORTS)
+//                true
+//            }
+//
+//            R.id.action_setting -> {
+//                showFragment(FRAGMENT_SETTING)
+//                true
+//            }
+//
+//            R.id.action_connect -> {
+//                showFragment(FRAGMENT_CONNECT)
+//                true
+//            }
+//            else -> {
+//                false
+//            }
+//
+//        }
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -638,7 +656,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 tv_sport.setTextColor(getColor(R.color.tab_unselected))
                 tv_setting.setTextColor(getColor(R.color.tab_unselected))
                 tv_me.setTextColor(getColor(R.color.white))
-                showFragment(FRAGMENT_CONNECT)
+                showFragment(FRAGMENT_MINE)
                 tapId = Constants.TAP_ME;
             }
         }

@@ -11,7 +11,7 @@ import com.lhzw.bluetooth.base.BaseMvpFragment
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.SaveUserEvent
+import com.lhzw.bluetooth.event.SaveWatchSettingEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SettingContract
@@ -109,7 +109,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun saveUser(event: SaveUserEvent) {
+    fun saveUser(event: SaveWatchSettingEvent) {
         //获取所有的设置信息,并保存
 //        val gender = if (rg_sex.checkedRadioButtonId == R.id.rg_btn_man) 1 else 0
 //        val height = counter_height.initNum
@@ -121,24 +121,22 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         val heart_rate =  tv_heart_rate_limit.text.toString().toInt()
 
       //  val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
-
+        personalInfoBean?.heart_rate=heart_rate
+        personalInfoBean?.save()//更新数据库的心率值
+        //计算显示心率区间
+        nuan_shen.text = "[${heart_rate.times(0.5).toInt()}-${heart_rate.times(0.6).toInt() - 1}]"
+        ran_zhi.text = "[${heart_rate.times(0.6).toInt()}-${heart_rate.times(0.7).toInt() - 1}]"
+        you_yang.text = "[${heart_rate.times(0.7).toInt()}-${heart_rate.times(0.8).toInt() - 1}]"
+        ru_suan.text = "[${heart_rate.times(0.8).toInt()}-${heart_rate.times(0.9).toInt() - 1}]"
+        wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
    //     Logger.e(personalInfoBean.toString())
         //先删除所有的bean对象再去添加
         if (connectState) {
             //已连接才能保存
-            personalInfoBean?.heart_rate=heart_rate
-            personalInfoBean?.save()//更新数据库的心率值
-            //计算显示心率区间
-            nuan_shen.text = "[${heart_rate.times(0.5).toInt()}-${heart_rate.times(0.6).toInt() - 1}]"
-            ran_zhi.text = "[${heart_rate.times(0.6).toInt()}-${heart_rate.times(0.7).toInt() - 1}]"
-            you_yang.text = "[${heart_rate.times(0.7).toInt()}-${heart_rate.times(0.8).toInt() - 1}]"
-            ru_suan.text = "[${heart_rate.times(0.8).toInt()}-${heart_rate.times(0.9).toInt() - 1}]"
-            wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
-            //发指令更新个人信息
             RxBus.getInstance().post("updatePersonInfo", "")
         } else {
             //请先连接手表后保存
-            showToast("请先连接手表")
+            showToast("设置会在连接手表后生效")
         }
 
 

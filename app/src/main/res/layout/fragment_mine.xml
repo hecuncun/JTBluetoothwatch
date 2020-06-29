@@ -25,6 +25,8 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@null"
+            android:textCursorDrawable="@drawable/my_cursor"
+            android:textColor="@color/white"
             android:hint="在此输入用户昵称"
             android:textColorHint="#888888"
             android:textSize="14sp" />
@@ -176,6 +178,7 @@
             android:textSize="14dp" />
 
         <TextView
+            android:id="@+id/tv_step_length"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -224,8 +227,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="56dp"
-            android:text="140"
-            android:textColor="#888888"
+            android:hint="140"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:textCursorDrawable="@drawable/my_cursor"
+            android:textColorHint="#888888"
             android:textSize="12sp" />
 
         <TextView
@@ -261,8 +267,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="40dp"
-            android:text="140"
-            android:textColor="#888888"
+            android:hint="140"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:textCursorDrawable="@drawable/my_cursor"
+            android:textColorHint="#888888"
             android:textSize="12sp" />
 
         <TextView
@@ -298,8 +307,11 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="40dp"
-            android:text="140"
-            android:textColor="#888888"
+            android:hint="140"
+            android:inputType="number"
+            android:textColor="@color/white"
+            android:textCursorDrawable="@drawable/my_cursor"
+            android:textColorHint="#888888"
             android:textSize="12sp" />
 
         <TextView
