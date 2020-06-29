@@ -92,6 +92,7 @@
             android:exported="true"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".ui.activity.StatisticsActivity" />
+        <activity android:name=".ui.activity.ScanQRCodeActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

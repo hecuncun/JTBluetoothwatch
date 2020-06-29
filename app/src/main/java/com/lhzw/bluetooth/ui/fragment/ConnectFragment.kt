@@ -11,17 +11,17 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.*
+import com.lhzw.bluetooth.event.BleStateEvent
+import com.lhzw.bluetooth.event.ConnectEvent
+import com.lhzw.bluetooth.event.HideDialogEvent
+import com.lhzw.bluetooth.event.SyncDataEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import com.orhanobut.logger.Logger
-import com.uuzuche.lib_zxing.activity.CaptureActivity
-import com.uuzuche.lib_zxing.activity.CodeUtils
 import kotlinx.android.synthetic.main.fragment_connect.*
 import kotlinx.android.synthetic.main.toolbar.*
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -70,7 +70,7 @@ class ConnectFragment : BaseFragment() {
                     if (checkPermissions(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION))) {
 
                         //     startScan()
-                        jumpToScannerActivity()
+                     //   jumpToScannerActivity()
                     } else {
                         requestPermission(arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION), PERMISS_REQUEST_BLE_CODE)
                     }
@@ -188,27 +188,27 @@ class ConnectFragment : BaseFragment() {
     }
 
 
-    private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
-        if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
-            val intent = Intent(activity, CaptureActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE)
-        } else {
-            requestPermission(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE), PERMISS_REQUEST_CODE)
-        }
+//    private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
+//        if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
+//            val intent = Intent(activity, CaptureActivity::class.java)
+//            startActivityForResult(intent, REQUEST_CODE)
+//        } else {
+//            requestPermission(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE), PERMISS_REQUEST_CODE)
+//        }
+//
+//    }
 
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISS_REQUEST_CODE) {
-            val intent = Intent(activity, CaptureActivity::class.java)
-            startActivityForResult(intent, REQUEST_CODE)
-        }
-        if (requestCode == PERMISS_REQUEST_BLE_CODE) {
-            // EventBus.getDefault().post(ScanBleEvent())
-            jumpToScannerActivity()
-        }
-    }
+//    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        if (requestCode == PERMISS_REQUEST_CODE) {
+//            val intent = Intent(activity, CaptureActivity::class.java)
+//            startActivityForResult(intent, REQUEST_CODE)
+//        }
+//        if (requestCode == PERMISS_REQUEST_BLE_CODE) {
+//            // EventBus.getDefault().post(ScanBleEvent())
+//            jumpToScannerActivity()
+//        }
+//    }
 
     override fun lazyLoad() {
     }
@@ -300,32 +300,32 @@ class ConnectFragment : BaseFragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE) {
             //扫描结果
-            if (data != null) {
-                data.extras?.let {
-                    if (it.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                        val result = it.getString(CodeUtils.RESULT_STRING)
-                        showToast("扫描结果为$result")
-                        Logger.e("result=$result")
-                        //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
-                        if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
-                            lastDeviceMacAddress = result.split(",")[2]
-                            connectedDeviceName = result.split(",")[1]
-                            autoConnect=false //扫码成功就不自动连接,等连接成功后再设置为自动成功
-                            //下面为连接流程
-                            loadingView = LoadingView(activity)
-                            loadingView?.setLoadingTitle("连接中...")
-                            loadingView?.show()
-                            EventBus.getDefault().post(ScanBleEvent())
-                            Logger.e("发送开始扫描的EventBus")
-                        } else {
-                            showToast("无法识别的设备")
-                        }
-
-                    } else {
-                        showToast("扫描失败")
-                    }
-                }
-            }
+//            if (data != null) {
+//                data.extras?.let {
+//                    if (it.getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
+//                        val result = it.getString(CodeUtils.RESULT_STRING)
+//                        showToast("扫描结果为$result")
+//                        Logger.e("result=$result")
+//                        //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
+//                        if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
+//                            lastDeviceMacAddress = result.split(",")[2]
+//                            connectedDeviceName = result.split(",")[1]
+//                            autoConnect=false //扫码成功就不自动连接,等连接成功后再设置为自动成功
+//                            //下面为连接流程
+//                            loadingView = LoadingView(activity)
+//                            loadingView?.setLoadingTitle("连接中...")
+//                            loadingView?.show()
+//                            EventBus.getDefault().post(ScanBleEvent())
+//                            Logger.e("发送开始扫描的EventBus")
+//                        } else {
+//                            showToast("无法识别的设备")
+//                        }
+//
+//                    } else {
+//                        showToast("扫描失败")
+//                    }
+//                }
+//            }
         }
     }
 

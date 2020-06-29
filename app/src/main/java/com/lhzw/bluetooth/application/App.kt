@@ -25,7 +25,7 @@ import com.tencent.bugly.crashreport.CrashReport
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.socialize.PlatformConfig
-import com.uuzuche.lib_zxing.activity.ZXingLibrary
+//import com.uuzuche.lib_zxing.activity.ZXingLibrary
 import org.litepal.LitePal
 import kotlin.properties.Delegates
 
@@ -88,7 +88,7 @@ class App : MultiDexApplication() {
         //初始化数据库
         LitePal.initialize(context)
         //初始化二维码扫描
-        ZXingLibrary.initDisplayOpinion(this)
+       // ZXingLibrary.initDisplayOpinion(this)
         //设置LOG开关，默认为false
         UMConfigure.setLogEnabled(true);
         // 分享权限
