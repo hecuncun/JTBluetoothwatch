@@ -183,7 +183,6 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
 
     override fun onDestroy() {
         super.onDestroy()
-        photoPath = null
         shareFile?.let {
             if(it.isFile && it.exists()) {
                 it.delete()

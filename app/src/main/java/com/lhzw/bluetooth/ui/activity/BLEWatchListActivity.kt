@@ -1,10 +1,12 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.ClipDrawable
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.Toast
@@ -61,6 +63,18 @@ class BLEWatchListActivity : BaseActivity() {
     override fun initData() {
 
     }
+    private lateinit var drawable:ClipDrawable
+    val animator = ValueAnimator.ofInt(10000)
+    private fun initProgress() {
+        animator.duration=5000
+        animator.addUpdateListener {
+            val value = it.animatedValue as Int
+            drawable.level=value
+            if (value==10000){
+                drawable.level=0
+            }
+        }
+    }
 
     private fun initRecyclerView() {
         val manager = LinearLayoutManager(this)
@@ -79,6 +93,8 @@ class BLEWatchListActivity : BaseActivity() {
         initConnectState()//初始化连接状态
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         loadingView = LoadingView(this)
+        drawable = progress_iv.background as ClipDrawable
+        initProgress()
     }
 
     private fun initConnectState() {
@@ -91,26 +107,31 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     override fun initListener() {
+        fl_sync.setOnClickListener {
+            animator.start()
+            startSyncData()
+        }
         im_back.setOnClickListener {
             this.finish()
         }
-        iv_ok.setOnClickListener {//断开连接
+        iv_ok.setOnClickListener {
+            //断开连接
             connectState = false
             //关闭自动连接
             autoConnect = false
             RxBus.getInstance().post("disconnect", "")
-            dialog_container.visibility=View.GONE
+            dialog_container.visibility = View.GONE
         }
         iv_canel.setOnClickListener {
-            dialog_container.visibility=View.GONE
-            iv_disconnect.visibility=View.VISIBLE
+            dialog_container.visibility = View.GONE
+            iv_disconnect.visibility = View.VISIBLE
         }
         //断开连接
         iv_disconnect.setOnClickListener {
             //点击断开蓝牙,直接前端显示断开,不重新连接
             //todo:弹窗提示
-            iv_disconnect.visibility=View.GONE
-            dialog_container.visibility=View.VISIBLE
+            iv_disconnect.visibility = View.GONE
+            dialog_container.visibility = View.VISIBLE
         }
 
         adapter.setOnItemClickListener(object : WatchAdapter.OnItemClickListener {
@@ -129,10 +150,9 @@ class BLEWatchListActivity : BaseActivity() {
         })
 
 
-
     }
 
-    private fun startSyncData(){
+    private fun startSyncData() {
         //点击同步
         if (BleConnectService.isConnecting) {
             Toast.makeText(this, "正在进行同步中，请稍后同步", Toast.LENGTH_LONG).show()
@@ -194,7 +214,7 @@ class BLEWatchListActivity : BaseActivity() {
                 }
 
             } else {
-                showToast("扫描失败")
+                showToast("取消扫描")
             }
         }
     }
@@ -231,6 +251,7 @@ class BLEWatchListActivity : BaseActivity() {
         }
 
     }
+
     override fun onDestroy() {
         super.onDestroy()
         watchList?.let {
@@ -239,6 +260,7 @@ class BLEWatchListActivity : BaseActivity() {
         watchList = null
 
     }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
         loadingView?.dismiss()
