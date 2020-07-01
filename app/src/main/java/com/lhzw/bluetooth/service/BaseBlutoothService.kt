@@ -18,10 +18,7 @@ import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.dfu.DfuBeanEvent
-import com.lhzw.bluetooth.event.ConnectEvent
-import com.lhzw.bluetooth.event.HideDialogEvent
-import com.lhzw.bluetooth.event.NotificationEvent
-import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
+import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -59,9 +56,12 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
     private var hasSports = false
-    private var progresssBar: SyncProgressBar? = null
+
+    //    private var progresssBar: SyncProgressBar? = null
     private var sportActivityBeanList = ArrayList<SportActivityBean>()
     protected var dfuBean: DfuBeanEvent? = null
+    private var progressBarMax = 0.0f
+    private var progress = 0.0f
     override fun onCreate() {
         super.onCreate()
         RxBus.getInstance().register(this)
@@ -134,7 +134,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
         acceptMsg = false
-        cancelProgressBar()
+//        cancelProgressBar()
+        EventBus.getDefault().post(ProgressEvent(1.0f, 2))
     }
 
     override fun onAppShortMsgResponse(response: ByteArray?) {
@@ -258,7 +259,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
-                cancelProgressBar()
+//                cancelProgressBar()
+                EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
                 EventBus.getDefault().post(HideDialogEvent(true))
@@ -398,7 +400,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             response?.let {
                 if (response.size > 11) {
                     if (mContext != null && !mContext!!.isFinishing) {
-                        progresssBar?.refleshProgressBar(0x02)
+//                        progresssBar?.refleshProgressBar(0x02)
+                        progress++
+                        EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 0))
                     }
                     if (readSportDetailMap.get(ID) == null) {
                         val detail = HashMap<Int, MutableList<Byte>>()
@@ -517,7 +521,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     CommOperation.insert(it)
                 }
                 //保存到数据库,并刷新页面
-                Logger.e("当前步数==${bean!!.dailyStepNumTotal+bean.sportStepNumTotal},当前cal=${bean.dailyCalTotal+bean.sportCalTotal}")
+                Logger.e("当前步数==${bean!!.dailyStepNumTotal + bean.sportStepNumTotal},当前cal=${bean.dailyCalTotal + bean.sportCalTotal}")
                 EventBus.getDefault().post(RefreshTargetStepsEvent())
                 //动态数据后,TODO 请求日常数据
                 val list = CommOperation.query(SportActivityBean::class.java, "daily_date", BaseUtils.getCurrentData())
@@ -682,17 +686,19 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             readSportInfoBeanList.clear()
         }
         // 计算显示进度条最大值
-        var max = 0
+        progressBarMax = 0.0f
         readSportDetailList.forEach {
             var len = it.read_len
             while (len > 0) {
                 len -= Constants.MTU_MAX
-                max++
+                progressBarMax++
             }
         }
-        showProgressBar()
+//        showProgressBar()
         if (mContext != null && !mContext!!.isFinishing) {
-            progresssBar?.setProgressBarMax(max, 0x02)
+
+//            progresssBar?.setProgressBarMax(max, 0x02)
+            EventBus.getDefault().post(ProgressEvent(0.0f, 0))
         }
         readSportDetailBean()
     }
@@ -720,7 +726,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         } else {
 //            Log.e("Tag", "parser sport detail addr over ...")
             // 进行数据解析
-            var max = 0
+            progressBarMax = 0.0f
             readSportDetailMap.forEach { (mark, data) ->
                 data.forEach { (type, content) ->
                     val read_len = content.size
@@ -728,43 +734,45 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         // 除了Gps 4字节数据  活动步数 单位步 1分钟 活动距离 单位 cm  热量 单位 卡 一分钟 速度 单位 m/s 一分钟
                         Constants.STEP, Constants.DISTANCE, Constants.CALORIE -> {
                             if (read_len > 0) {
-                                max += 1
+                                progressBarMax += 1
                             }
                         }
                         // 一个字节  一分钟  心率
                         Constants.HEART_RATE -> {
                             if (read_len > 0) {
-                                max += 1
+                                progressBarMax += 1
                             }
                         }
                         // 4字节 气压 单位帕  高度4字节浮点数  高度米 5分钟
                         Constants.AIR_PRESSURE -> {
                             if (read_len > 0) {
-                                max += 1
+                                progressBarMax += 1
                             }
                         }
                         // 8个字节数据 经纬度各占四个字节，带符号整形数据 然后在除 1000000  高精度 1s 低电量 1s或者5s
                         Constants.GPS -> {
                             if (read_len > 0) {
-                                max += 1
+                                progressBarMax += 1
                             }
                         }
                         Constants.SPEED -> {
                             if (read_len > 0) {
-                                max += 1
+                                progressBarMax += 1
                             }
                         }
                     }
                 }
             }
             if (mContext != null && !mContext!!.isFinishing) {
-                progresssBar?.setProgressBarMax(max, 0x01)
+                EventBus.getDefault().post(ProgressEvent(0.0f, 1))
+//                progresssBar?.setProgressBarMax(max, 0x01)
             }
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
                     mContext?.runOnUiThread {
                         if (!mContext!!.isFinishing) {
-                            progresssBar?.refleshProgressBar(0x01)
+//                            progresssBar?.refleshProgressBar(0x01)
+                            EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 1))
                         }
                     }
                 }
@@ -788,7 +796,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
 //        App.setActivityContext(null)
-        cancelProgressBar()
+        EventBus.getDefault().post(ProgressEvent(0.0f, 2))
+//        cancelProgressBar()
         Logger.e("杀死进程")
         onClear()
         Log.e("BluetoothWatch", "onTaskRemoved ...");
@@ -835,7 +844,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         EventBus.getDefault().post(HideDialogEvent(false))
                     }
                 }
-                MTU_UPDATE_DELAY ->{
+                MTU_UPDATE_DELAY -> {
                     requestTimes++
                     if (requestTimes < 4) {
                         myBleManager?._mtu_update()
@@ -893,6 +902,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     }
 
     // 显示进度条
+    /*
     private fun showProgressBar() {
         //开始连接进入进度条,连接并初始化成功后再发成功
         hasSports = true
@@ -917,5 +927,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
     }
+
+     */
 }
 
