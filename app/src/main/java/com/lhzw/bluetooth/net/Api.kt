@@ -27,7 +27,7 @@ interface Api {
      * 获取最新 apk 信息
      */
     @GET("apks/latest")
-    fun getLatestApk(@Query("packageName") packageName: String): Observable<BaseBean<ApkBean>>
+    fun getLatestApk(@Query("packageName") packageName: String): Observable<BaseBean<MutableList<ApkBean>>>
 
     /**
      * apk 下载
@@ -39,7 +39,7 @@ interface Api {
      * 获取最新腕表固件
      */
     @GET("firmware/latest")
-    fun getLatestFirm(): Observable<BaseBean<FirmBean>>
+    fun getLatestFirm(@Query("model") model: String): Observable<BaseBean<MutableList<FirmBean>>>
 
     /**
      * 腕表固件 下载
