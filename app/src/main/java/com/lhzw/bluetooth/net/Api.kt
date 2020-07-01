@@ -1,9 +1,13 @@
 package com.lhzw.bluetooth.net
 
+import com.lhzw.bluetooth.bean.net.ApkBean
 import com.lhzw.bluetooth.bean.net.BaseBean
+import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.bean.net.UserInfo
 import io.reactivex.Observable;
+import okhttp3.ResponseBody
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 /**
@@ -13,6 +17,33 @@ import retrofit2.http.Query
  */
 
 interface Api {
+    /**
+     * 登录
+     */
     @GET("security/login")
     fun login(@Query("loginName") loginName: String, @Query("password") password: String): Observable<BaseBean<UserInfo>>
+
+    /**
+     * 获取最新 apk 信息
+     */
+    @GET("apks/latest")
+    fun getLatestApk(@Query("type") type: String): Observable<BaseBean<ApkBean>>
+
+    /**
+     * apk 下载
+     */
+    @GET("attachments/apks/{id:\\d+}")
+    fun downloadApk(@Path("id") id: Long): Observable<ResponseBody>
+
+    /**
+     * 获取最新腕表固件
+     */
+    @GET("firmware/latest")
+    fun getLatestFirm(): Observable<BaseBean<FirmBean>>
+
+    /**
+     * 腕表固件 下载
+     */
+    @GET("attachments/firms/{id:\\d+}")
+    fun downloadFirm(@Path("id") id: Long): Observable<ResponseBody>
 }

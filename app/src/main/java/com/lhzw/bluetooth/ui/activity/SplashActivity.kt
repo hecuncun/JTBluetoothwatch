@@ -23,7 +23,7 @@ class SplashActivity : BaseActivity() {
             fadeIn(tv_login, 0.1f, 1.0f, 2300)
             tv_login.setOnClickListener {
                 firest_login = false
-                jumpToMain()
+                jumpToLogin()
             }
         }
         alphaAnimation = AlphaAnimation(0.3F, 1.0F)
@@ -35,7 +35,7 @@ class SplashActivity : BaseActivity() {
 
                 override fun onAnimationEnd(p0: Animation?) {
                     if (!firest_login) {
-                        jumpToMain()
+                        jumpToLogin()
                     }
                 }
 
@@ -46,7 +46,7 @@ class SplashActivity : BaseActivity() {
         splash_view.startAnimation(alphaAnimation)
     }
 
-    private fun jumpToMain() {
+    private fun jumpToLogin() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
         finish()

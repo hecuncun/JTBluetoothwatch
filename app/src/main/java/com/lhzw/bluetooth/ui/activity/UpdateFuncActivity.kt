@@ -1,7 +1,6 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
-import android.os.Environment
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
@@ -9,8 +8,6 @@ import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bus.RxBus
-import com.lhzw.bluetooth.dfu.DfuBeanEvent
-import com.lhzw.bluetooth.dfu.DfuConfigCallBack
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_update_func_list.*
 
