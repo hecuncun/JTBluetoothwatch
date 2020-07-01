@@ -11,7 +11,6 @@ import android.os.IBinder
 import android.os.Message
 import android.os.PowerManager
 import android.util.Log
-import android.view.Gravity
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.ble.*
 import com.lhzw.bluetooth.bus.RxBus
@@ -22,7 +21,6 @@ import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
-import com.lhzw.bluetooth.view.SyncProgressBar
 import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
 
@@ -766,6 +764,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             if (mContext != null && !mContext!!.isFinishing) {
                 EventBus.getDefault().post(ProgressEvent(0.0f, 1))
 //                progresssBar?.setProgressBarMax(max, 0x01)
+                progress = 0.0f
             }
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
