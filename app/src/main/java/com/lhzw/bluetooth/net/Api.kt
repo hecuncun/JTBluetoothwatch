@@ -27,7 +27,7 @@ interface Api {
      * 获取最新 apk 信息
      */
     @GET("apks/latest")
-    fun getLatestApk(@Query("type") type: String): Observable<BaseBean<ApkBean>>
+    fun getLatestApk(@Query("packageName") packageName: String): Observable<BaseBean<ApkBean>>
 
     /**
      * apk 下载
