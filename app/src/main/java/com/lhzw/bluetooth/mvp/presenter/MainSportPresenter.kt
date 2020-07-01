@@ -349,7 +349,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             }
             val bounds: LatLngBounds = b.build()
             val top_padding: Int = BaseUtils.dip2px(50)
-            val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 120)
+            val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 160)
             val left_right_padding: Int = BaseUtils.dip2px(50)
             var douglasList = Douglas(list, 3.0).compress()
             amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, object : AMap.CancelableCallback {
