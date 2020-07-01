@@ -265,7 +265,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
 
         System.arraycopy(message_size_tmp, 0, message_size, 0, if (message_size_tmp.size > 4) (message_size.size) else message_size_tmp.size)
         System.arraycopy(message_size, 0, data, 210, message_size.size)
-
+        //消息未回应超时机制
         myBleManager?.app_short_msg(data)
     }
 
@@ -273,6 +273,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
     fun notifyWatchMsg(event: NotificationEvent) {
         Logger.e("BlutoothService收到推送==>package==${event.packageName}")
+        Log.e("BluetoothService","信息是否可以推送==$acceptMsg,msg是否正在推送isSending==$isSending")
         if (acceptMsg) {
             listMsg.add(event)
             // 执行发送数据
@@ -346,6 +347,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
         acceptMsg = false
+        isSending=false//断开连接将这个正在发送信息状态标记为可发送
         dfuBean = null
     }
 
