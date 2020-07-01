@@ -13,10 +13,11 @@
             <option value="$PROJECT_DIR$/MPChartLib" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/ble" />
-            <option value="$PROJECT_DIR$/lib-zxing" />
             <option value="$PROJECT_DIR$/library" />
+            <option value="$PROJECT_DIR$/pickerview" />
             <option value="$PROJECT_DIR$/scanner" />
             <option value="$PROJECT_DIR$/toastex" />
+            <option value="$PROJECT_DIR$/wheelview" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
