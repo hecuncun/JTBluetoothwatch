@@ -762,6 +762,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
+                    progress++
                     EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 1))
                 }
                 readSportDetailMap.clear()
