@@ -16,10 +16,7 @@ import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.ConnectWatchBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.ConnectEvent
-import com.lhzw.bluetooth.event.HideDialogEvent
-import com.lhzw.bluetooth.event.ScanBleEvent
-import com.lhzw.bluetooth.event.SyncDataEvent
+import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -94,7 +91,7 @@ class BLEWatchListActivity : BaseActivity() {
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         loadingView = LoadingView(this)
         drawable = progress_iv.background as ClipDrawable
-        initProgress()
+        //initProgress()
     }
 
     private fun initConnectState() {
@@ -108,7 +105,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     override fun initListener() {
         fl_sync.setOnClickListener {
-            animator.start()
+          //  animator.start()
             startSyncData()
         }
         im_back.setOnClickListener {
@@ -165,6 +162,29 @@ class BLEWatchListActivity : BaseActivity() {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun setSyncDataProgress(event: ProgressEvent){
+        Logger.e("进度==${event.progress},state=${event.state}")
+      //  0 运动数据同步  1 运动数据解析  2 同步解析结束
+        when(event.state){
+            0->{
+                drawable.level=(10000*(event.progress*0.5)).toInt()
+            }
+            1->{
+                drawable.level=(10000*(event.progress*0.5+0.5)).toInt()
+            }
+            2->{
+                drawable.level=0
+                showToast("同步完成")
+            }
+            3->{//3 进程杀死/断开连接销毁进度
+                drawable.level=0
+                showToast("已断开连接")
+            }
+        }
+
+    }
+
     private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
         if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
             val intent = Intent(this, ScanQRCodeActivity::class.java)
@@ -197,7 +217,7 @@ class BLEWatchListActivity : BaseActivity() {
         if (requestCode == REQUEST_CODE) {
             if (data != null) {
                 val result = data.getStringExtra("result")
-                showToast("扫描结果为$result")
+                //showToast("扫描结果为$result")
                 Logger.e("result=$result")
                 //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
                 if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
