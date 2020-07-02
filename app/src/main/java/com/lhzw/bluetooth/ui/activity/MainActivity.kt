@@ -451,6 +451,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 } else {
                     transaction.hide(currentFragment!!).show(mSportsFragment!!)
                 }
+                currentFragment = mSportsFragment
             }
 
             FRAGMENT_SETTING -> {
