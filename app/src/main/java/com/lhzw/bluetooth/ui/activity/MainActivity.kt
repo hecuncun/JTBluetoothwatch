@@ -500,7 +500,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 currentFragment = mMineFragment
             }
         }
-        transaction.commit()
+//        transaction.commit()
+        transaction.commitAllowingStateLoss();
     }
 
     /**
