@@ -61,7 +61,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
             Log.e("Tag", "reflesh ...")
             adapter?.run {
                 setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
-                notifyDataSetChanged()
+//                notifyDataSetChanged()
             }
         }
     }
@@ -171,7 +171,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     override fun onItemClick(pos: Int) {
         adapter?.run {
             setNewData(translateSportBeans(SPORT_TYPES[pos]))
-            notifyDataSetChanged()
+//            notifyDataSetChanged()
 //            if (pos == 5) {
 //                startActivity(Intent(activity, IntradaySportsActivity::class.java))
 //            }
