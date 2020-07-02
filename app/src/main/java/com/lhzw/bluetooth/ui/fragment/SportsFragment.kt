@@ -173,7 +173,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
             Thread {
                 val data = translateSportBeans(SPORT_TYPES[pos])
                 activity?.runOnUiThread {
-                    setNewData(data)
+                    replaceData(data)
                 }
             }.start()
 
