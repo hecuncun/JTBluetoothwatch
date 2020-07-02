@@ -175,6 +175,7 @@ class BLEWatchListActivity : BaseActivity() {
                 if(drawable.level==10000){
                     showToast("同步数据成功")
                     drawable.level=0
+                    loadingView?.dismiss()
                 }
             }
             2->{

@@ -14,6 +14,7 @@ import com.lhzw.bluetooth.application.App
 
 object Constants {
     const val PHOTO_PATH = "photo_path"
+    const val IVBACKGROUND = "iv_background"
 
     // 运动类型
     const val ACTIVITY_RUNNING = 0xB1  //跑步

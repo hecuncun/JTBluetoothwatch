@@ -18,10 +18,12 @@ import com.lhzw.bluetooth.adapter.SportAdapter
 import com.lhzw.bluetooth.base.BaseShareActivity
 import com.lhzw.bluetooth.bean.CurrentDataBean
 import com.lhzw.bluetooth.bean.ShareBgBean
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.BitmapUtil
 import com.lhzw.bluetooth.uitls.DateUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.makeramen.roundedimageview.RoundedDrawable
 import kotlinx.android.synthetic.main.activity_intraday_ports.*
 import org.litepal.LitePal
@@ -36,26 +38,32 @@ import org.litepal.extension.findAll
  *
  */
 class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
+    private var nickName: String by Preference(Constants.NICK_NAME, "")
     private val PICK_PHOTO = 0x00102
-
+    private var ivBackground: String by Preference(Constants.IVBACKGROUND, "")
     override fun attachLayoutRes(): Int {
         return R.layout.activity_intraday_ports
     }
-
     override fun initData() {
+        tv_name.text=nickName
         //查询当前步数,cal
         val currentList = LitePal.findAll<CurrentDataBean>()
         if (currentList.isNotEmpty()) {
             tv_sports_step.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
-            tv_sport_distance.text=(currentList[0].dailyMileageTotal + currentList[0].sportMileageTotal).toString()
+            tv_sport_distance.text=((currentList[0].dailyMileageTotal + currentList[0].sportMileageTotal)/100f).toString()
             tv_sports_calorie.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
         }
         //拿到初始图
         sharBean = ShareBgBean(R.drawable.icon_share_default, null)
-        val bg = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
-        //处理得到模糊效果的图
-        val blurBitmap = blurBitmap(this, bg, 20f);
-        im_background.setImageBitmap(blurBitmap);
+        if (ivBackground.isEmpty()){
+            val bg = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
+            //处理得到模糊效果的图
+            val blurBitmap = blurBitmap(this, bg, 20f);
+            im_background.setImageBitmap(blurBitmap);
+        }else{
+            displayImage(ivBackground)
+        }
+
         GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
 
         // 获取 当天的活动
@@ -68,17 +76,29 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
         } else {
             tv_sports_num.text=list.size.toString()
             val adapter = SportAdapter(list)
-            adapter?.openLoadAnimation { view ->
+            adapter.openLoadAnimation { view ->
                 arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
             }
-            adapter?.setOnItemClickListener { _, view, position ->
-//            body(view, position)
+            adapter.setOnItemClickListener { _, view, position ->
+               body(view, position)
             }
             recyclerView.layoutManager = LinearLayoutManager(this)
             recyclerView.adapter = adapter
         }
     }
-
+    private var body: (view: View, position: Int) -> Any = { _, position ->
+        list?.get(position)?.apply {
+            var date = BaseUtils.formatData(activity_start, activity_end)
+            val intent = Intent(this@IntradaySportsActivity, SportInfoActivity::class.java)
+            intent.putExtra("mark", sport_detail_mark)
+            intent.putExtra("ymt", date[0])
+            intent.putExtra("type", activity_type)
+            intent.putExtra("duration", date[2])
+            startActivity(intent)
+        }
+        // ToastUtils.toastSuccess("OK")
+        Log.e("Tag", "点击事件 ： $position")
+    }
     override fun initView() {
         tv_title.text=DateUtils.getTodayStringData()
     }
@@ -130,6 +150,7 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
                         // 4.4以下系统使用这个方法处理图片
                         imagePath = handleImageBeforeKitKat(data);
                     }
+                    ivBackground=imagePath!!
                     Log.e("ImagePath", "resultCode : ${resultCode} , ${imagePath}")
                     displayImage(imagePath)
                 }
