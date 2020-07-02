@@ -132,7 +132,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         EventBus.getDefault().post(ConnectEvent(false))
         //断开连接后就不接收消息
         acceptMsg = false
-//        cancelProgressBar()
         EventBus.getDefault().post(ProgressEvent(1.0f, 2))
     }
 
@@ -257,7 +256,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
-//                cancelProgressBar()
                 EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
@@ -690,7 +688,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 progressBarMax++
             }
         }
-//        showProgressBar()
         EventBus.getDefault().post(ProgressEvent(0.0f, 0))
 
         readSportDetailBean()
@@ -756,10 +753,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
             }
-            EventBus.getDefault().post(ProgressEvent(0.0f, 1))
-//                progresssBar?.setProgressBarMax(max, 0x01)
             progress = 0.0f
-
+            EventBus.getDefault().post(ProgressEvent(progress, 1))
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
                     progress++
@@ -784,9 +779,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     override fun onTaskRemoved(rootIntent: Intent?) {
         super.onTaskRemoved(rootIntent)
         // 杀死线程清理数据
-//        App.setActivityContext(null)
         EventBus.getDefault().post(ProgressEvent(0.0f, 2))
-//        cancelProgressBar()
         Logger.e("杀死进程")
         onClear()
         Log.e("BluetoothWatch", "onTaskRemoved ...");
