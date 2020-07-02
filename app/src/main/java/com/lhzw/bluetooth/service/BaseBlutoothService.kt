@@ -397,11 +397,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         if (request_code.toInt() == 0x0D) {
             response?.let {
                 if (response.size > 11) {
-                    if (mContext != null && !mContext!!.isFinishing) {
-//                        progresssBar?.refleshProgressBar(0x02)
-                        progress++
-                        EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 0))
-                    }
+                    progress++
+                    EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 0))
+
                     if (readSportDetailMap.get(ID) == null) {
                         val detail = HashMap<Int, MutableList<Byte>>()
                         readSportDetailMap.put(ID, detail)
@@ -693,11 +691,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
         }
 //        showProgressBar()
-        if (mContext != null && !mContext!!.isFinishing) {
+        EventBus.getDefault().post(ProgressEvent(0.0f, 0))
 
-//            progresssBar?.setProgressBarMax(max, 0x02)
-            EventBus.getDefault().post(ProgressEvent(0.0f, 0))
-        }
         readSportDetailBean()
     }
 
@@ -761,19 +756,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     }
                 }
             }
-            if (mContext != null && !mContext!!.isFinishing) {
-                EventBus.getDefault().post(ProgressEvent(0.0f, 1))
+            EventBus.getDefault().post(ProgressEvent(0.0f, 1))
 //                progresssBar?.setProgressBarMax(max, 0x01)
-                progress = 0.0f
-            }
+            progress = 0.0f
+
             Thread {
                 SportDetailInfobean.parserSportDetailInfo(readSportDetailMap) {
-                    mContext?.runOnUiThread {
-                        if (!mContext!!.isFinishing) {
-//                            progresssBar?.refleshProgressBar(0x01)
-                            EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 1))
-                        }
-                    }
+                    EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 1))
                 }
                 readSportDetailMap.clear()
                 // 设置手表蓝牙为低功耗
