@@ -91,7 +91,7 @@
             android:layout_centerHorizontal="true"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="30dp"
             android:src="@mipmap/icon_yewan" />
 
         <TextView
@@ -109,6 +109,7 @@
 
         <TextView
             android:layout_below="@+id/tv_logo"
+            android:layout_above="@+id/fl_sync"
             android:layout_centerHorizontal="true"
             android:id="@+id/tv_device_name"
             android:layout_width="wrap_content"
