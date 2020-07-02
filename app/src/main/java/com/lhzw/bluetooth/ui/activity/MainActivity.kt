@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.text.TextUtils
 import android.view.KeyEvent
@@ -43,7 +44,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private val FRAGMENT_HOME = 0x01
     private val FRAGMENT_SPORTS = 0X02
     private val FRAGMENT_SETTING = 0X03
-   // private val FRAGMENT_CONNECT = 0X04
+
+    // private val FRAGMENT_CONNECT = 0X04
     private val FRAGMENT_MINE = 0X05
 
     private var mIndex = FRAGMENT_HOME
@@ -51,7 +53,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private var mHomeFragment: HomeFragment? = null
     private var mSportsFragment: SportsFragment? = null
     private var mSettingFragment: SettingFragment? = null
-   // private var mConnectFragment: ConnectFragment? = null
+
+    // private var mConnectFragment: ConnectFragment? = null
     private var mMineFragment: MineFragment? = null
     private val PERMISS_REQUEST_CODE = 0x100
     private val PERMISS_REQUEST_CODE_PHONE = 0x101
@@ -61,6 +64,8 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     private var bleStateChangeReceiver: BleStateChangeReceiver? = null
 
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
+
+    private var currentFragment : Fragment? = null
 
     override fun useEventBus() = true
 
@@ -363,10 +368,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 //
 //        }
         toolbar_title.text = "首页"
-        showFragment(mIndex)
-//        showFragment(mIndex)
-//        showFragment(mIndex)
-//        showFragment(mIndex)
+
 
         //获取蓝牙状态
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
@@ -381,6 +383,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         ll_setting.setOnClickListener(this)
         ll_watch.setOnClickListener(this)
         ll_me.setOnClickListener(this)
+        showFragment(mIndex)
     }
 
     private val REQUEST_ENABLE_BLE = 101
@@ -390,12 +393,12 @@ class MainActivity : BaseActivity(), View.OnClickListener {
      */
     private fun showFragment(index: Int) {
         val transaction = supportFragmentManager.beginTransaction()
-        hideFragment(transaction)
+//        hideFragment(transaction)
         mIndex = index
         toolbar_right_img.visibility = View.GONE
-        toolbar_left_img.visibility=View.GONE
+        toolbar_left_img.visibility = View.GONE
         toolbar_right_tv.visibility = View.GONE
-       // tv_sync.visibility = View.GONE
+        // tv_sync.visibility = View.GONE
         im_back.visibility = View.GONE
         when (index) {
             FRAGMENT_HOME -> {
@@ -403,7 +406,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 toolbar_right_img.visibility = View.VISIBLE
                 toolbar_right_img.setImageResource(if (state) com.lhzw.bluetooth.R.drawable.icon_ble_open else com.lhzw.bluetooth.R.drawable.icon_ble_close)
                 toolbar_right_img.setOnClickListener {
-                     toolbar_right_img.setImageResource(if (state) R.drawable.icon_ble_open else R.drawable.icon_ble_close)
+                    toolbar_right_img.setImageResource(if (state) R.drawable.icon_ble_open else R.drawable.icon_ble_close)
                     //打开,关闭蓝牙
                     if (!bleManager!!.adapter.isEnabled) {
                         val intentOpen = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
@@ -412,10 +415,10 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                         AlertDialog.Builder(this)
                                 .setTitle("确定关闭蓝牙?")
                                 .setMessage("关闭蓝牙会断开手表连接,您将无法使用部分app功能")
-                                .setPositiveButton("确定"){_,_->
+                                .setPositiveButton("确定") { _, _ ->
                                     bleManager?.adapter?.disable()
                                 }
-                                .setNegativeButton("取消"){_,_->
+                                .setNegativeButton("取消") { _, _ ->
 
                                 }.create().show()
 
@@ -423,34 +426,36 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
                 }
 
-                toolbar_left_img.visibility=View.VISIBLE
+                toolbar_left_img.visibility = View.VISIBLE
                 toolbar_left_img.setImageResource(R.drawable.icon_my_day)
                 toolbar_left_img.setOnClickListener {
                     //进入我的一天
-                    startActivity(Intent(this,IntradaySportsActivity::class.java))
+                    startActivity(Intent(this, IntradaySportsActivity::class.java))
                 }
 
                 if (mHomeFragment == null) {
                     mHomeFragment = HomeFragment.getInstance()
+                    currentFragment = mHomeFragment
                     transaction.add(R.id.container, mHomeFragment!!, "home")
                 } else {
-                    transaction.show(mHomeFragment!!)
+                    transaction.hide(currentFragment!!).show(mHomeFragment!!)
                 }
+                currentFragment = mHomeFragment
             }
 
             FRAGMENT_SPORTS -> {
                 toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_sport_record)
                 if (mSportsFragment == null) {
                     mSportsFragment = SportsFragment.getInstance()
-                    transaction.add(com.lhzw.bluetooth.R.id.container, mSportsFragment!!, "sports")
+                    transaction.hide(currentFragment!!).add(R.id.container, mSportsFragment!!, "sports")
                 } else {
-                    transaction.show(mSportsFragment!!)
+                    transaction.hide(currentFragment!!).show(mSportsFragment!!)
                 }
             }
 
             FRAGMENT_SETTING -> {
                 toolbar_title.text = getString(com.lhzw.bluetooth.R.string.main_setting)
-                toolbar_right_img.visibility=View.VISIBLE
+                toolbar_right_img.visibility = View.VISIBLE
                 toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
                 toolbar_right_img.setOnClickListener {
                     //保存bean
@@ -458,10 +463,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 }
                 if (mSettingFragment == null) {
                     mSettingFragment = SettingFragment.getInstance()
-                    transaction.add(com.lhzw.bluetooth.R.id.container, mSettingFragment!!, "setting")
+                    transaction.hide(currentFragment!!).add(com.lhzw.bluetooth.R.id.container, mSettingFragment!!, "setting")
                 } else {
-                    transaction.show(mSettingFragment!!)
+                    transaction.hide(currentFragment!!).show(mSettingFragment!!)
                 }
+                currentFragment = mSettingFragment
             }
 
 //            FRAGMENT_CONNECT -> {
@@ -477,7 +483,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
             FRAGMENT_MINE -> {
                 toolbar_title.text = "我的信息"
-                toolbar_right_img.visibility=View.VISIBLE
+                toolbar_right_img.visibility = View.VISIBLE
                 toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
                 toolbar_right_img.setOnClickListener {
                     //保存bean
@@ -485,11 +491,12 @@ class MainActivity : BaseActivity(), View.OnClickListener {
                 }
                 if (mMineFragment == null) {
                     mMineFragment = MineFragment.getInstance()
-                    transaction.add(com.lhzw.bluetooth.R.id.container, mMineFragment!!, "connect")
+                    transaction.hide(currentFragment!!).add(com.lhzw.bluetooth.R.id.container, mMineFragment!!, "connect")
                 } else {
-                    transaction.show(mMineFragment!!)
-                 //  mMineFragment?.refleshSyncState()
+                    transaction.hide(currentFragment!!).show(mMineFragment!!)
+                    //  mMineFragment?.refleshSyncState()
                 }
+                currentFragment = mMineFragment
             }
         }
         transaction.commit()

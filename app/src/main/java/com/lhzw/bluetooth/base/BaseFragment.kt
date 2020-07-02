@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.base
 
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -40,6 +41,9 @@ abstract class BaseFragment :Fragment(){
      */
     protected var hasLoadData = false
 
+
+    protected var mContext : Context? = null
+
     /**
      * 加载布局
      */
@@ -58,6 +62,11 @@ abstract class BaseFragment :Fragment(){
      * 是否使用 EventBus
      */
     open fun useEventBus(): Boolean = false
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(attachLayoutRes(),null)
@@ -227,5 +236,8 @@ abstract class BaseFragment :Fragment(){
         Log.d(TAG, "获取权限成功=$requestCode")
     }
 
-
+    override fun onDetach() {
+        super.onDetach()
+        mContext = null
+    }
 }
