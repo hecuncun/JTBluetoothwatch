@@ -179,7 +179,6 @@ class BLEWatchListActivity : BaseActivity() {
             }
             2->{
                 drawable.level=0
-                showToast("已断开连接")
             }
             3->{//3 进程杀死/断开连接销毁进度
                 drawable.level=0

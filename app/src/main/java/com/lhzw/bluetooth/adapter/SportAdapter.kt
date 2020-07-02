@@ -19,6 +19,7 @@ import com.lhzw.bluetooth.constants.Constants
 @Suppress("DEPRECATION")
 class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseViewHolder>(R.layout.item_sport_list, data), View.OnTouchListener {
     override fun convert(helper: BaseViewHolder, item: SportBean?) {
+        item?:return
         item?.apply {
             when (type) {
                 Constants.ACTIVITY_HIKING -> {

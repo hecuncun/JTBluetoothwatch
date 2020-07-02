@@ -9,7 +9,7 @@
         android:id="@+id/recycler_title"
         android:layout_width="match_parent"
         android:layout_marginTop="10.5dp"
-        android:layout_height="45dp"></android.support.v7.widget.RecyclerView>
+        android:layout_height="45dp"/>
 
     <View style="@style/horizontalsplite" />
 
@@ -17,6 +17,6 @@
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layoutAnimation="@anim/layout_fall_down_anim"></android.support.v7.widget.RecyclerView>
+        android:layoutAnimation="@anim/layout_fall_down_anim"/>
 
 </LinearLayout>

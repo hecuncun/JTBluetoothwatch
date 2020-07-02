@@ -30,7 +30,10 @@ import kotlinx.android.synthetic.main.fragment_sports.*
 class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     private var list: List<SportInfoAddrBean>? = null
     private var filter_list: Array<String>? = null
-    private var adapter: SportAdapter? = null
+    //private var adapter: SportAdapter? = null
+    private val adapter by lazy{
+        SportAdapter(translateSportBeans(Constants.ACTIVITY_ALL))
+    }
     private val SPORT_TYPES = arrayOf(
             Constants.ACTIVITY_ALL,
             Constants.ACTIVITY_HIKING,
@@ -47,7 +50,23 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     override fun attachLayoutRes(): Int = R.layout.fragment_sports
 
     override fun initView(view: View) {
+        filter_list = resources.getStringArray(R.array.sport_type_list)
+        val manager = LinearLayoutManager(context)
+        manager.orientation = LinearLayoutManager.HORIZONTAL
+        recycler_title.layoutManager = manager
+        BaseUtils.ifNotNull(activity, filter_list) { v, list ->
+            val titleAdapter = SportTypeAdapter(v, list, this@SportsFragment, recycler_title.layoutParams.height)
+            recycler_title.adapter = titleAdapter
+        }
+        adapter.openLoadAnimation { view ->
+            arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
+        }
 
+        recyclerview.layoutManager = LinearLayoutManager(context)
+        recyclerview.adapter = adapter
+        adapter.setOnItemClickListener { _, view, position ->
+            body(view, position)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,34 +76,12 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("reflesh")])
     fun reflesh(str: String) {
-        if (hasLoadData) {
             Log.e("Tag", "reflesh ...")
-            adapter?.run {
-                setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
-//                notifyDataSetChanged()
-            }
-        }
+            adapter.setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
     }
 
     override fun lazyLoad() {
         Log.e("Tag", "lazyLoad ...")
-        filter_list = resources.getStringArray(R.array.sport_type_list)
-        val manager = LinearLayoutManager(context)
-        manager.orientation = LinearLayoutManager.HORIZONTAL
-        recycler_title.layoutManager = manager
-        BaseUtils.ifNotNull(activity, filter_list) { v, list ->
-            val titleAdapter = SportTypeAdapter(v, list, this@SportsFragment, recycler_title.layoutParams.height)
-            recycler_title.adapter = titleAdapter
-        }
-        adapter = SportAdapter(translateSportBeans(Constants.ACTIVITY_ALL))
-        adapter?.openLoadAnimation { view ->
-            arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
-        }
-        adapter?.setOnItemClickListener { _, view, position ->
-            body(view, position)
-        }
-        recyclerview.layoutManager = LinearLayoutManager(context)
-        recyclerview.adapter = adapter
     }
 
     private fun translateSportBeans(type: Int): MutableList<SportBean> {
@@ -165,17 +162,12 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         RxBus.getInstance().unregister(this)
         filter_list = null
         list = null
-        adapter = null
     }
 
     override fun onItemClick(pos: Int) {
-        adapter?.run {
+        adapter.run {
             val data = translateSportBeans(SPORT_TYPES[pos])
              setNewData(data)
-//            notifyDataSetChanged()
-//            if (pos == 5) {
-//                startActivity(Intent(activity, IntradaySportsActivity::class.java))
-//            }
         }
     }
 }

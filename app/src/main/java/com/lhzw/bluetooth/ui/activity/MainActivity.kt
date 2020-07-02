@@ -69,7 +69,7 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 
     override fun useEventBus() = true
 
-    override fun attachLayoutRes(): Int = com.lhzw.bluetooth.R.layout.activity_main
+    override fun attachLayoutRes(): Int = R.layout.activity_main
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InvalidWakeLockTag")
@@ -82,7 +82,6 @@ class MainActivity : BaseActivity(), View.OnClickListener {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")
             //未初始化就 先初始化一个用户对象
-            LitePal.getDatabase()
             val bean = LitePal.find<PersonalInfoBean>(1)
             if (bean == null) {
                 val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 10000, 1500, 5, 194)
