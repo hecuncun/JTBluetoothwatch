@@ -171,9 +171,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     override fun onItemClick(pos: Int) {
         adapter?.run {
             val data = translateSportBeans(SPORT_TYPES[pos])
-            getData().clear()
-            getData().addAll(data)
-            notifyDataSetChanged()
+             setNewData(data)
 //            notifyDataSetChanged()
 //            if (pos == 5) {
 //                startActivity(Intent(activity, IntradaySportsActivity::class.java))

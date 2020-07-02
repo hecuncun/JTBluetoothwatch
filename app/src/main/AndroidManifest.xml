@@ -23,7 +23,7 @@
         android:theme="@style/AppTheme">
         <!-- SHA1: 69:CF:B2:AA:51:1B:28:AD:7B:F7:2D:7A:7B:01:89:76:AB:CA:7E:45  -->
 
-        <activity android:name=".ui.activity.MainActivity"></activity>
+        <activity android:name=".ui.activity.MainActivity" android:launchMode="singleTask"></activity>
         <activity android:name=".ui.activity.IntradaySportsActivity"></activity>
         <activity android:name=".ui.activity.SharePosterActivity"></activity>
         <activity android:name=".ui.activity.ShareMapPosterActivity"></activity>

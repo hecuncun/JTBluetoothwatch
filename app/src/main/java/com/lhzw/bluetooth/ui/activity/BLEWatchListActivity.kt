@@ -172,10 +172,14 @@ class BLEWatchListActivity : BaseActivity() {
             }
             1->{
                 drawable.level=(10000*(event.progress*0.5+0.5)).toInt()
+                if(drawable.level==10000){
+                    showToast("同步数据成功")
+                    drawable.level=0
+                }
             }
             2->{
                 drawable.level=0
-                showToast("同步完成")
+                showToast("已断开连接")
             }
             3->{//3 进程杀死/断开连接销毁进度
                 drawable.level=0
@@ -262,12 +266,10 @@ class BLEWatchListActivity : BaseActivity() {
             ll_watch_list_container.visibility = View.GONE
             iv_disconnect.visibility = View.VISIBLE
             tv_device_name.text = "$connectedDeviceName"
-            //todo 可以点击同步数据
         } else {
             ll_watch_connected_container.visibility = View.GONE
             ll_watch_list_container.visibility = View.VISIBLE
             iv_disconnect.visibility = View.GONE
-            //todo 不可点击同步数据
         }
 
     }
