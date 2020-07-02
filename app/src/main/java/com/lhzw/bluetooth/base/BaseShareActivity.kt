@@ -48,6 +48,7 @@ abstract class BaseShareActivity : AppCompatActivity() {
     private val DOWNLOAD_DOCUMENTS = "com.android.providers.downloads.documents"
     protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     protected var sharBean: ShareBgBean? = null
+    protected var list: List<SportInfoAddrBean>? = null
 
     /**
      * 布局文件id
@@ -143,6 +144,11 @@ abstract class BaseShareActivity : AppCompatActivity() {
         if (useEventBus()) {
             EventBus.getDefault().unregister(this)
         }
+
+        list?.let {
+            list = null
+        }
+
         CommonUtil.fixInputMethodManagerLeak(this)
         App.getRefWatcher(this)?.watch(this)//开始检测内存泄漏
         sharBean = null
@@ -404,7 +410,7 @@ abstract class BaseShareActivity : AppCompatActivity() {
 
     protected fun translateSportBeans(): MutableList<SportBean> {
         val sportBeans = ArrayList<SportBean>()
-        val list = CommOperation.queryFuzzy(SportInfoAddrBean::class.java, "daily_date_mark", BaseUtils.getCurrentData())
+        list = CommOperation.queryFuzzy(SportInfoAddrBean::class.java, "daily_date_mark", BaseUtils.getCurrentData())
         list?.forEach {
             val date = BaseUtils.formatData(it.activity_start, it.activity_end)
             var allocation_speed = ""
@@ -456,5 +462,6 @@ abstract class BaseShareActivity : AppCompatActivity() {
         }
         return sportBeans
     }
+
 
 }
