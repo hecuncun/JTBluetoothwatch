@@ -46,6 +46,7 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
     protected var scBitmapMap: Bitmap? = null   // 原始
     protected var scMapShotPath = "/sdcard/share/sport_gaode_map_shot.jpg"
     private var backCounter = 0
+    protected var isIndoor = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
@@ -139,7 +140,7 @@ abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (!getAnimationState()) {
+            if (!isIndoor && !getAnimationState()) {
                 return false
             }
 

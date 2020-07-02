@@ -36,9 +36,9 @@ import java.io.File
  *
  */
 
+@Suppress("DEPRECATION")
 class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener {
     private var aMap: AMap? = null
-    private var isIndoor = false
     override fun getLayoutId(): Int {
         return R.layout.activity_sport_info
     }
@@ -81,7 +81,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
                 isIndoor = true
             }
         }
-
+        Log.e("ISIndoor", "value --------------------- $isIndoor         $type")
         mPresenter = MainSportPresenter(mark, "${duration}", type)
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
@@ -94,8 +94,10 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             }
         }
         v_cover.setOnClickListener {
-            if (mPresenter == null || !getAnimationState()) {
-                return@setOnClickListener
+            if(!isIndoor) {
+                if (mPresenter == null || !getAnimationState()) {
+                    return@setOnClickListener
+                }
             }
             it.visibility = View.GONE
         }
@@ -106,7 +108,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         toolbar_title.text = intent.getStringExtra("ymt")
         im_back.visibility = View.VISIBLE
         im_back.setOnClickListener {
-            if (!getAnimationState()) {
+            if (!isIndoor && !getAnimationState()) {
                 return@setOnClickListener
             }
             finish()
@@ -115,10 +117,10 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         toolbar_right_img.setBackgroundResource(R.drawable.icon_share_def)
         toolbar_right_img.setOnClickListener {
 
-            if (!getAnimationState()) {
+            if (!isIndoor && !getAnimationState()) {
                 return@setOnClickListener
             }
-            if (scBitmapMap == null) {
+            if (!isIndoor && scBitmapMap == null) {
                 showToast("没有轨迹")
                 return@setOnClickListener
             }
