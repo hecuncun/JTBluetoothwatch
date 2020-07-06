@@ -38,7 +38,7 @@ import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.uitls.douglas.Douglas
 import com.lhzw.bluetooth.view.ShareShareDialog
 import com.lhzw.bluetooth.view.SportTrailView
-import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
+import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 import kotlinx.android.synthetic.main.activity_sport_info.*
 import java.security.MessageDigest
 import java.util.*
@@ -52,7 +52,7 @@ import java.util.*
  *
  */
 
-class MainSportPresenter(var mark: String, var duration: String, val type: Int) : BaseSportPresenter<SportConstract.View>(), SportConstract.Presenter, LocationUtils.ILocationCallBack, LocationSource, AMap.CancelableCallback {
+class MainSportPresenter(var mark: String, var duration: String, val type: Int) : BaseIPresenter<SportConstract.View>(), SportConstract.Presenter, LocationUtils.ILocationCallBack, LocationSource, AMap.CancelableCallback {
     private var mListener: LocationSource.OnLocationChangedListener? = null
     private var aMap: AMap? = null
     private var locationUtils: LocationUtils? = null

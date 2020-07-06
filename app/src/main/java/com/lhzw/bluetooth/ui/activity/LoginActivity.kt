@@ -64,9 +64,10 @@ class LoginActivity : AppCompatActivity() {
     private fun login() {
         if (loadingView == null) {
             loadingView = LoadingView(this@LoginActivity)
-            loadingView?.setLoadingTitle("登录中...")
-            loadingView?.show()
+
         }
+        loadingView?.setLoadingTitle("登录中...")
+        loadingView?.show()
         val response = SLMRetrofit.getInstance().getApi()?.login(et_account.text.toString(), et_password.text.toString())
         response?.compose(ThreadSwitchTransformer<BaseBean<UserInfo>>())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo>?>() {
             override fun onSucceed(bean: BaseBean<UserInfo>?) {

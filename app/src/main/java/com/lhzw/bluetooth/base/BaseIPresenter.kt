@@ -10,7 +10,7 @@ import com.lhzw.bluetooth.base.BaseIView
 @date : 2019/11/12 10:04
  *
  */
-open class BaseSportPresenter<V : BaseIView> {
+open class BaseIPresenter<V : BaseIView> {
     var mView: V? = null
 
     /**

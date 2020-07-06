@@ -23,7 +23,7 @@ import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.view.panel.base.BaseSlidingUIPanelView
 import com.lhzw.dmotest.SlidingUIPanelView
-import com.lhzw.kotlinmvp.presenter.BaseSportPresenter
+import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 import com.xw.repo.supl.ISlidingUpPanel
 import com.xw.repo.supl.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_sport_info.*
@@ -36,7 +36,7 @@ import kotlinx.android.synthetic.main.activity_sport_info.*
  *
  */
 
-abstract class BaseSportActivity<T : BaseSportPresenter<SportConstract.View>> : AppCompatActivity(), BaseIView {
+abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppCompatActivity(), BaseIView {
     protected var mPresenter: MainSportPresenter? = null
     protected var mMapView: MapView? = null
     protected val panelViewList = ArrayList<BaseSlidingUIPanelView>()

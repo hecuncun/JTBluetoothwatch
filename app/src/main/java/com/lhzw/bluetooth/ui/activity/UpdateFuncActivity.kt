@@ -6,8 +6,10 @@ import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.R
-import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.base.BaseUpdateActivity
 import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.mvp.contract.UpdateContract
+import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_update_func_list.*
 
@@ -18,28 +20,31 @@ import kotlinx.android.synthetic.main.activity_update_func_list.*
  */
 
 @Suppress("SpellCheckingInspection")
-class UpdateFuncActivity : BaseActivity() {
+class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>(), UpdateContract.IView {
     private val TAG = UpdateFuncActivity::class.java.simpleName
     private val PERMISS_REQUEST_CODE = 0x0001
     private val UPDATE_APP = 0x0010
     private val UPDATE_WATCH = 0x0015
     private var update_type = UPDATE_APP
     private var loadingView: LoadingView? = null
+    private var isChecking = false
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
     override fun initData() {
         RxBus.getInstance().register(this)
-        checkVersion()
+//        checkVersion()
+        checkPermission()
     }
 
     override fun initView() {
 
     }
 
+
     private fun checkPermission() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET))) {
             Log.e(TAG, "已获取存储权限")
-            update()
+            checkVersion()
         } else {
             Log.e(TAG, "请求存储权限")
             requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET), PERMISS_REQUEST_CODE)
@@ -47,12 +52,8 @@ class UpdateFuncActivity : BaseActivity() {
     }
 
     private fun checkVersion() {
-        // app
-
-
-        // 腕表
-
-
+        if (isChecking) return
+        mPresenter?.checkUpdate(this)
     }
 
     private fun update() {
@@ -73,7 +74,7 @@ class UpdateFuncActivity : BaseActivity() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
 //        tv_update_watch_status.text = "进行解压数据..."
-        showLoadingView()
+        showLoadingView("进行数据解压中...")
         RxBus.getInstance().post("reconnet", "")
 
         Log.e("UPDATEWATCH", "updateWatch ---------  ++++")
@@ -88,7 +89,7 @@ class UpdateFuncActivity : BaseActivity() {
     }
 
     override fun initListener() {
-        startProgress()
+//        startProgress()
 
 //        startProgress1()
 
@@ -148,7 +149,7 @@ class UpdateFuncActivity : BaseActivity() {
     fun onUpdateProgress(progress: String) {
         val value = progress.toInt()
         if (value > 0) {
-            canncelLoadingView()
+            cancelLoadingView()
         }
         progesss_watch.progress = value
         Log.e("UPDATEWATCH", "onUpdateProgress ---------  ++++")
@@ -158,24 +159,6 @@ class UpdateFuncActivity : BaseActivity() {
     fun onUpdateStatus(status: String) {
         tv_update_watch_status.text = status
         Log.e("UPDATEWATCH", "onUpdateStatus ---------  ++++")
-    }
-
-    private fun showLoadingView() {
-        if (loadingView == null) {
-            loadingView = LoadingView(this)
-        }
-        loadingView?.let {
-            it.setLoadingTitle("设置腕表连接参数")
-            it.show()
-        }
-    }
-
-    private fun canncelLoadingView() {
-        loadingView?.let {
-            if (it.isShowing) {
-                it.dismiss()
-            }
-        }
     }
 
     override fun onDestroy() {
@@ -189,5 +172,16 @@ class UpdateFuncActivity : BaseActivity() {
         loadingView = null
     }
 
+    override fun getMainPresent() = MainUpdatePresenter()
+    override fun updateApkState(state: Boolean, versionName: String) {
 
+    }
+
+    override fun updateFirmState(state: Boolean, versionName: String) {
+
+    }
+
+    override fun reflesh() {
+
+    }
 }
