@@ -73,7 +73,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>(), UpdateCont
     private fun updateWatch() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
-//        tv_update_watch_status.text = "进行解压数据..."
         showLoadingView("进行数据解压中...")
         RxBus.getInstance().post("reconnet", "")
 

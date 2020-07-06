@@ -7,6 +7,8 @@ import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseIView
+import com.lhzw.bluetooth.bean.net.ApkBean
+import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.model.UpdateModel
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
@@ -17,9 +19,11 @@ import com.lhzw.kotlinmvp.presenter.BaseIPresenter
  * Created by xtqb.
  */
 
-class MainUpdatePresenter : BaseIPresenter<BaseIView>(), UpdateContract.IPresenter {
+class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContract.IPresenter {
     private var mModel: UpdateContract.IModel? = null
     private val TAG = "MainUpdatePresenter"
+    private var firm: FirmBean? = null
+    private var apk: ApkBean? = null
     override fun checkUpdate(mContext: Context) {
         // 腕表信息
         val watchInfo = mModel?.queryWatchData()
@@ -32,8 +36,9 @@ class MainUpdatePresenter : BaseIPresenter<BaseIView>(), UpdateContract.IPresent
                     if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION || it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
                         // 说明有新的更新 暂时不支持退版本，仅支持升级
                         isFirmUpdate = true
+                        firm = it
                     }
-
+                    mView?.updateFirmState(isFirmUpdate, "")
                     // 检查Apk
                     checkApkUpdate(mContext) { state, version ->
                         if (state) {
@@ -73,6 +78,7 @@ class MainUpdatePresenter : BaseIPresenter<BaseIView>(), UpdateContract.IPresent
                 var isApkUpdate = false
                 if (appVersionCode < it.getVersionCode()) {
                     isApkUpdate = true
+                    apk = it
                 }
                 body(isApkUpdate, it.getVersionName()!!)
             } else {

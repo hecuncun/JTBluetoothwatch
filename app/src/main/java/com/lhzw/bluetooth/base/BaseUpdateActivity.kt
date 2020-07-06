@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.base
 
+import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.widget.LoadingView
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
@@ -9,7 +10,7 @@ import com.lhzw.kotlinmvp.presenter.BaseIPresenter
  * Time： 15:04
  * Created by xtqb.
  */
-abstract class BaseUpdateActivity<T : BaseIPresenter<BaseIView>> : BaseActivity(), BaseIView {
+abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : BaseActivity(), UpdateContract.IView {
     protected var mPresenter: MainUpdatePresenter? = null
     private var loadingView: LoadingView? = null
     override fun initView() {
