@@ -1,9 +1,12 @@
 package com.lhzw.bluetooth.ui.fragment
 
+import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.util.Log
 import android.view.View
 import android.widget.SeekBar
+import android.widget.Toast
 import com.jzxiang.pickerview.TimePickerDialog
 import com.jzxiang.pickerview.data.Type
 import com.lhzw.bluetooth.R
@@ -18,6 +21,7 @@ import com.lhzw.bluetooth.mvp.contract.SettingContract
 import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
+import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.EditNameDialog
@@ -35,15 +39,13 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by hecuncun
  */
 class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Presenter>(), SettingContract.View {
-
-  //  private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
- //   private var birthday: String? by Preference(Constants.BIRTHDAY, "")
- //   private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
-
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
+    private val TAG = "SettingFragment"
+    private val PERMISS_REQUEST_CODE = 0x000056
+    private var isChecking = false
     override fun useEventBus() = true
 
     companion object {
@@ -57,12 +59,14 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     override fun lazyLoad() {
         //初始化数据
         mPresenter?.getPersonalInfo()
+        checkPermission()
     }
-    private var personalInfoBean:PersonalInfoBean?=null
+
+    private var personalInfoBean: PersonalInfoBean? = null
     override fun getPersonalInfoSuccess(data: PersonalInfoBean?) {
         //设置数据
         if (data != null) {
-            personalInfoBean=data
+            personalInfoBean = data
 //            if (data.gender == 1) {
 //                rg_btn_man.isChecked = true
 //            } else {
@@ -79,9 +83,9 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 //
 //            et_target_distance_num.setText(data.des_distance.toString())
 //           // counter_max_heart.initNum = data.heart_rate
-            tv_heart_rate_limit.text=data.heart_rate.toString()
-            seekBar.progress=data.heart_rate
-  //          tv_birthday.text = if (birthday!!.isEmpty()) "请选择 > " else birthday
+            tv_heart_rate_limit.text = data.heart_rate.toString()
+            seekBar.progress = data.heart_rate
+            //          tv_birthday.text = if (birthday!!.isEmpty()) "请选择 > " else birthday
 
             nuan_shen.text = "[${data.heart_rate.times(0.5).toInt()}-${data.heart_rate.times(0.6).toInt() - 1}]"
             ran_zhi.text = "[${data.heart_rate.times(0.6).toInt()}-${data.heart_rate.times(0.7).toInt() - 1}]"
@@ -89,15 +93,75 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             ru_suan.text = "[${data.heart_rate.times(0.8).toInt()}-${data.heart_rate.times(0.9).toInt() - 1}]"
             wu_yang.text = "[${data.heart_rate.times(0.9).toInt()}-${data.heart_rate}]"
         }
+    }
 
-
+    // 刷新更新状态
+    override fun refleshUpdateState(state: Boolean) {
+        iv_update_note.visibility = if (state) View.VISIBLE else View.GONE
+        isChecking = false
+        Log.e(TAG, "--------------------------------------------------------------------")
     }
 
     override fun initView(view: View) {
         super.initView(view)
-       // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
+        // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
         initListener()
         initIvState()
+    }
+
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden) {
+            // 切换刷新
+            checkPermission()
+        }
+    }
+
+
+    /**
+     * 获取网络权限
+     */
+    private fun checkPermission() {
+        if (checkPermissions(arrayOf(Manifest.permission.INTERNET))) {
+            Log.e(TAG, "已获取存储权限")
+            checkUpdate()
+        } else {
+            Log.e(TAG, "请求存储权限")
+            requestPermission(arrayOf(Manifest.permission.INTERNET), PERMISS_REQUEST_CODE)
+        }
+    }
+
+    /**
+     * 权限获取失败
+     *
+     * @param requestCode
+     */
+    override fun permissionFail(requestCode: Int) {
+        Log.d(TAG, "获取权限失败=$requestCode")
+        Toast.makeText(mContext, "未获取网络权限", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 获取权限成功
+     *
+     * @param requestCode
+     */
+    override fun permissionSuccess(requestCode: Int) {
+        Log.d(TAG, "获取权限成功=$requestCode")
+        checkUpdate()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun checkUpdate() {
+        Log.e(TAG, "检查版本信息 ..........................")
+        if (isChecking) return
+        if (BaseUtils.isNetConnected(mContext)) {
+            isChecking = true
+            mPresenter?.checkUpdate(mContext!!)
+        } else {
+            Toast.makeText(mContext, "未开启网络", Toast.LENGTH_SHORT).show()
+        }
     }
 
     //初始化消息接收状态
@@ -118,10 +182,10 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 //        val des_steps = et_target_step_num.text.toString().toInt()
 //        val des_calorie = et_target_cal_num.text.toString().toInt()
 //        val des_distance = et_target_distance_num.text.toString().toInt()
-        val heart_rate =  tv_heart_rate_limit.text.toString().toInt()
+        val heart_rate = tv_heart_rate_limit.text.toString().toInt()
 
-      //  val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
-        personalInfoBean?.heart_rate=heart_rate
+        //  val personalInfoBean = PersonalInfoBean("9", gender, age, height, weight, step_len, des_steps, des_calorie, des_distance, heart_rate)
+        personalInfoBean?.heart_rate = heart_rate
         personalInfoBean?.save()//更新数据库的心率值
         //计算显示心率区间
         nuan_shen.text = "[${heart_rate.times(0.5).toInt()}-${heart_rate.times(0.6).toInt() - 1}]"
@@ -129,7 +193,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         you_yang.text = "[${heart_rate.times(0.7).toInt()}-${heart_rate.times(0.8).toInt() - 1}]"
         ru_suan.text = "[${heart_rate.times(0.8).toInt()}-${heart_rate.times(0.9).toInt() - 1}]"
         wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
-   //     Logger.e(personalInfoBean.toString())
+        //     Logger.e(personalInfoBean.toString())
         //先删除所有的bean对象再去添加
         if (connectState) {
             //已连接才能保存
@@ -146,10 +210,10 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     private fun initListener() {
         //极限心率设置
-        seekBar.setOnSeekBarChangeListener(object :SeekBar.OnSeekBarChangeListener{
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
-               Logger.e("seekProgress==$progress")
-                tv_heart_rate_limit.text=progress.toString()
+                Logger.e("seekProgress==$progress")
+                tv_heart_rate_limit.text = progress.toString()
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
@@ -234,8 +298,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             dialog.setOnConfirmListener(object : EditNameDialog.OnConfirmListener {
                 override fun onConfirm(name: String) {
                     dialog.dismiss()
-                 //   nickName = name
-                  //  tv_name.text = nickName
+                    //   nickName = name
+                    //  tv_name.text = nickName
                 }
             })
         }
@@ -256,8 +320,6 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
 
 
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -269,7 +331,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                     if (selectList.size > 0) {
                         GlideUtils.showCircleWithBorder(iv_head_photo, selectList[0].compressPath, R.drawable.icon_head_photo, resources.getColor(R.color.white))
                         //保存头像地址
-                       // photoPath = selectList[0].compressPath
+                        // photoPath = selectList[0].compressPath
                     } else {
                         showToast("图片出现问题")
                     }

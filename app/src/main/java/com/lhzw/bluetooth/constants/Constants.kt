@@ -129,4 +129,7 @@ object Constants {
     const val TAP_WATCH = 2
     const val TAP_SETTING = 3
     const val TAP_ME = 4
+
+    // 当前腕表类型 暂时
+    const val WATCH_TYPE = "sw2500"
 }

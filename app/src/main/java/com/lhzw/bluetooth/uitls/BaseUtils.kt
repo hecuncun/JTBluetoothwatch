@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.ConnectivityManager
+import android.net.NetworkInfo
 import android.os.Build
 import android.os.Environment
 import android.util.Log
@@ -386,15 +387,15 @@ object BaseUtils {
         return sNavBarOverride!!
     }
 
-    fun getNavBarHeight(context: Activity) : Int{
-        if(!hasNavBar(context)) return 0
+    fun getNavBarHeight(context: Activity): Int {
+        if (!hasNavBar(context)) return 0
         return CommonUtil.getNavigationBarHeight(context)
     }
 
     /**
      * 保存成图片
      */
-    fun savePicture(bm: Bitmap?, fileName: String?) : Boolean{
+    fun savePicture(bm: Bitmap?, fileName: String?): Boolean {
         if (null == bm) {
             return false
         }
@@ -448,6 +449,17 @@ object BaseUtils {
                 if (appPackageName == pn) {
                     return true
                 }
+            }
+        }
+        return false
+    }
+
+    fun isNetConnected(context: Context?): Boolean {
+        if (context != null) {
+            val mConnectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val mNetworkInfo: NetworkInfo? = mConnectivityManager.activeNetworkInfo
+            if (mNetworkInfo != null) {
+                return mNetworkInfo.isAvailable
             }
         }
         return false

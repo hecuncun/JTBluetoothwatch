@@ -214,7 +214,7 @@ abstract class BaseFragment :Fragment(){
      *
      * @param requestCode
      */
-    fun permissionFail(requestCode: Int) {
+    open fun permissionFail(requestCode: Int) {
         Log.d(TAG, "获取权限失败=$requestCode")
     }
 
@@ -232,7 +232,7 @@ abstract class BaseFragment :Fragment(){
      *
      * @param requestCode
      */
-    fun permissionSuccess(requestCode: Int) {
+    open fun permissionSuccess(requestCode: Int) {
         Log.d(TAG, "获取权限成功=$requestCode")
     }
 
