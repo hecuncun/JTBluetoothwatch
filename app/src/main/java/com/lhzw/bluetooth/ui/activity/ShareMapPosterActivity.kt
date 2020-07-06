@@ -8,7 +8,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -65,11 +64,11 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
 
     private fun saveShareUI2Bitmap() {
         if (shareFile == null) {
-            im_bg_share.isDrawingCacheEnabled = true
-            im_bg_share.buildDrawingCache()
-            val bitmap = im_bg_share.getDrawingCache()
+            rl_share_poster.isDrawingCacheEnabled = true
+            rl_share_poster.buildDrawingCache()
+            val bitmap = rl_share_poster.getDrawingCache()
             shareFile = BaseUtils.saveBitmapFile(bitmap, path)!!
-            im_bg_share.destroyDrawingCache()
+            rl_share_poster.destroyDrawingCache()
         }
     }
 
