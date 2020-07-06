@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
@@ -64,11 +65,11 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
 
     private fun saveShareUI2Bitmap() {
         if (shareFile == null) {
-            rl_share_poster.isDrawingCacheEnabled = true
-            rl_share_poster.buildDrawingCache()
-            val bitmap = rl_share_poster.getDrawingCache()
+            im_bg_share.isDrawingCacheEnabled = true
+            im_bg_share.buildDrawingCache()
+            val bitmap = im_bg_share.getDrawingCache()
             shareFile = BaseUtils.saveBitmapFile(bitmap, path)!!
-            rl_share_poster.destroyDrawingCache()
+            im_bg_share.destroyDrawingCache()
         }
     }
 
@@ -106,9 +107,6 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
         val mark: String = intent.getStringExtra("mark")
         val type: Int = intent.getIntExtra("type", 0)
 
-        GlideUtils.showCircleWithBorder(iv_head_photo,
-                photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
-
         // 用户名
         tv_name.text = nickName
 
@@ -117,19 +115,19 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
 
             }
             Constants.ACTIVITY_RUNNING -> {
-                im_bg_share.setBackgroundResource(R.mipmap.sport_running)
+                iv_sport_icon.setBackgroundResource(R.mipmap.sport_running)
                 initSportData(mark)
             }
             Constants.ACTIVITY_HIKING -> {
-                im_bg_share.setBackgroundResource(R.mipmap.sport_waking)
+                iv_sport_icon.setBackgroundResource(R.mipmap.sport_waking)
                 initSportData(mark)
             }
             Constants.ACTIVITY_INDOOR -> {
-                im_bg_share.setBackgroundResource(R.mipmap.sport_indoor)
+                iv_sport_icon.setBackgroundResource(R.mipmap.sport_indoor)
                 initSportData(mark)
             }
             Constants.ACTIVITY_REDING -> {
-                im_bg_share.setBackgroundResource(R.mipmap.sport_waking)
+                iv_sport_icon.setBackgroundResource(R.mipmap.sport_waking)
                 initSportData(mark)
             }
 

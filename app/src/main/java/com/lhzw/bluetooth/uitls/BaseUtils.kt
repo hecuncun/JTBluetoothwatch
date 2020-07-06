@@ -409,7 +409,7 @@ object BaseUtils {
             }
             val bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
             //压缩保存到本地
-            bm.compress(Bitmap.CompressFormat.JPEG, 90, bos)
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, bos)
             bos.flush()
             bos.close()
             return true
