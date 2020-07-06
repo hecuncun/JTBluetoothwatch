@@ -20,6 +20,7 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.glide.BlurBitmapUtil
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import kotlinx.android.synthetic.main.activity_share_poster.*
 import java.io.File
@@ -39,7 +40,7 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     private val QQ_QUEST = 0x0005
     private var path: String? = "/sdcard/share/xxxxxx.jpg"
     private var shareFile: File? = null
-
+    private var nickName: String by Preference(Constants.NICK_NAME, "")
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -72,6 +73,11 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     private fun initView() {
         tv_save_poster.paint.flags = Paint.UNDERLINE_TEXT_FLAG //下划线
         tv_save_poster.paint.isAntiAlias = true//抗锯齿
+        tv_sports_num.text=intent.getStringExtra("numSports")?:""
+        tv_step.text=intent.getStringExtra("steps")?:""
+        tv_distance.text=intent.getStringExtra("distance")?:""
+        tv_calorie.text=intent.getStringExtra("cal")?:""
+
     }
 
     private fun setListener() {
@@ -85,7 +91,9 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
 
     private fun initData() {
         GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
-        val bg_bitmap = intent.getSerializableExtra("bg_bitmap") as ShareBgBean
+        tv_name.text=nickName
+        tv_time.text= DateUtils.getTodayStringData()
+        val bg_bitmap = intent.getSerializableExtra("bg_bitmap")!! as ShareBgBean
         if (bg_bitmap.path == null || "".equals(bg_bitmap.path)) {
             val bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
             var lenght = bitmap.width

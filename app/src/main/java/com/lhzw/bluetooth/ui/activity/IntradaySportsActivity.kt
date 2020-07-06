@@ -44,14 +44,18 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     override fun attachLayoutRes(): Int {
         return R.layout.activity_intraday_ports
     }
+
     override fun initData() {
         tv_name.text=nickName
         //查询当前步数,cal
         val currentList = LitePal.findAll<CurrentDataBean>()
         if (currentList.isNotEmpty()) {
-            tv_sports_step.text = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
-            tv_sport_distance.text=((currentList[0].dailyMileageTotal + currentList[0].sportMileageTotal)/100f).toString()
-            tv_sports_calorie.text = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
+            steps=(currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toString()
+            tv_sports_step.text = steps
+            distance=((currentList[0].dailyMileageTotal + currentList[0].sportMileageTotal)/100f).toString()
+            tv_sport_distance.text=distance
+            cal=(currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toString()
+            tv_sports_calorie.text =cal
         }
         //拿到初始图
         sharBean = ShareBgBean(R.drawable.icon_share_default, null)
@@ -72,9 +76,11 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
         val list = translateSportBeans()
         if (list == null || list.size == 0) {
             tv_sports_num.text="0"
+            numSports="0"
             Iv_no_data.visibility = View.VISIBLE
         } else {
-            tv_sports_num.text=list.size.toString()
+            numSports=list.size.toString()
+            tv_sports_num.text=numSports
             val adapter = SportAdapter(list)
             adapter.openLoadAnimation { view ->
                 arrayOf(ObjectAnimator.ofFloat(view, "scaleY", 1.0f, 1.1f, 1.0f), ObjectAnimator.ofFloat(view, "scaleX", 1.0f, 1.1f, 1.0f))
@@ -108,7 +114,10 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
         im_back.setOnClickListener(this)
         im_share.setOnClickListener(this)
     }
-
+    private var steps=""
+    private var distance=""//米
+    private var cal=""
+    private var numSports=""
     override fun onClick(v: View?) {
         v?.let {
             when (it.id) {
@@ -118,6 +127,10 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
                 R.id.im_share -> {
                     val intent = Intent(this, SharePosterActivity::class.java)
                     intent.putExtra("bg_bitmap", sharBean)
+                    intent.putExtra("steps", steps)
+                    intent.putExtra("distance", distance)
+                    intent.putExtra("cal", cal)
+                    intent.putExtra("numSports", numSports)
                     startActivity(intent)
                 }
                 R.id.im_back -> {

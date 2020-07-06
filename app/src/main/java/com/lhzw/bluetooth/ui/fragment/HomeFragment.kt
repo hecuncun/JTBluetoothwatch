@@ -67,7 +67,7 @@ class HomeFragment : BaseFragment() {
         lineChart.apply {
             setTouchEnabled(true)//触摸事件
             setDrawGridBackground(false)//网格线
-            setNoDataText("请连接手表")
+            setNoDataText("暂无数据")
             isDragEnabled = true//可拖拽
             isScaleXEnabled = false//X缩放
             isScaleYEnabled = false//Y缩放
