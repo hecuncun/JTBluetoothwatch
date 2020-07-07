@@ -25,11 +25,14 @@ interface UpdateContract {
     interface IView : BaseIView {
         fun updateApkState(state: Boolean, versionName: String)
         fun updateFirmState(apollo: Boolean, apolloVersionName: String, ble: Boolean, bleVersion: String)
+        fun initWatchUI(apolloVersion: String, bleVersion: String)
+
     }
 
     interface IPresenter {
         fun checkUpdate(mContext: Context)
         fun onAttach()
         fun onDettach()
+        fun initWatchUI()
     }
 }

@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.constants
 import android.graphics.Color
 import android.graphics.Typeface
 import com.lhzw.bluetooth.application.App
+import com.lhzw.bluetooth.bean.net.ApkBean
 
 /**
  *
@@ -15,6 +16,9 @@ import com.lhzw.bluetooth.application.App
 object Constants {
     const val PHOTO_PATH = "photo_path"
     const val IVBACKGROUND = "iv_background"
+    
+    const val APK_UPDATE_TIME = "apk_update_time"
+    const val FIRM_UPDATE_TIME = "firm_update_time"
 
     // 运动类型
     const val ACTIVITY_RUNNING = 0xB1  //跑步

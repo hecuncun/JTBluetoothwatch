@@ -29,7 +29,6 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         val watchInfo = mModel?.queryWatchData()
         if (watchInfo != null && watchInfo.isNotEmpty()) {
             // 说明已连接过手表
-            Log.e(TAG, "-------------================================ 111345345")
             mModel?.getLatestFirm {
                 if (it != null) {
                     Log.e(TAG, "${it.getApolloAppVersion()}  ${it.getBleAppVersion()}")
@@ -66,8 +65,13 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                             false, BaseUtils.apolloOrBleToVersion(watchInfo[0].BLE_APP_VERSION))
                     mView?.updateApkState(false, App.instance
                             .packageManager.getPackageInfo(App.instance.packageName, 0).versionName)
-                    Toast.makeText(mContext, "无腕表固件版本可升级  ${mView == null}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(mContext, "连接超时...", Toast.LENGTH_SHORT).show()
                 }
+            }
+        } else {
+            // 检查Apk
+            checkApkUpdate(mContext) { state, version ->
+                mView?.updateApkState(state, version)
             }
         }
     }
@@ -89,7 +93,6 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e(TAG, e.message)
         }
-        Log.e(TAG, "appVersionCode  ${appVersionCode}   appVersionName  ${appVersionName}")
         mModel?.getLatestApk {
             if (it != null) {
                 Log.e(TAG, "${it.getPackageName()}")
@@ -100,7 +103,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                 }
                 body(isApkUpdate, it.getVersionName()!!)
             } else {
-                Toast.makeText(mContext, "无Apk版本可升级", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(mContext, "无Apk版本可升级", Toast.LENGTH_SHORT).show()
                 body(false, appVersionName)
             }
         }
@@ -114,5 +117,16 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
     override fun onDettach() {
         mModel?.onDettach()
         mModel = null
+    }
+
+    override fun initWatchUI() {
+        // 腕表信息
+        val watchInfo = mModel?.queryWatchData()
+        if (watchInfo != null && watchInfo.isNotEmpty()) {
+            mView?.initWatchUI(BaseUtils.apolloOrBleToVersion(watchInfo[0].APOLLO_APP_VERSION),
+                    BaseUtils.apolloOrBleToVersion(watchInfo[0].BLE_APP_VERSION))
+        } else {
+            mView?.initWatchUI("", "")
+        }
     }
 }

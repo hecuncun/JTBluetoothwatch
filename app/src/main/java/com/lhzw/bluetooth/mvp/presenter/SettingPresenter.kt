@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
-import android.widget.Toast
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BasePresenter
 import com.lhzw.bluetooth.mvp.contract.SettingContract
@@ -44,7 +43,16 @@ class SettingPresenter : BasePresenter<SettingContract.Model, SettingContract.Vi
                         }
                     }
                 } else {
-                    Toast.makeText(mContext, "无腕表固件版本可升级", Toast.LENGTH_SHORT).show()
+//                    Toast.makeText(mContext, "无腕表固件版本可升级", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            // 检查Apk
+            checkApkUpdate(mContext) {
+                if (it) {
+                    mView?.refleshUpdateState(true)
+                } else {
+                    mView?.refleshUpdateState(false)
                 }
             }
         }
@@ -69,7 +77,6 @@ class SettingPresenter : BasePresenter<SettingContract.Model, SettingContract.Vi
         } catch (e: PackageManager.NameNotFoundException) {
             Log.e(TAG, e.message)
         }
-        Log.e(TAG, "appVersionCode  ${appVersionCode}   appVersionName  ${appVersionName}")
         mModel?.getLatestApk() {
             if (it != null) {
                 Log.e(TAG, "${it.getPackageName()}")
@@ -79,7 +86,7 @@ class SettingPresenter : BasePresenter<SettingContract.Model, SettingContract.Vi
                 }
                 body(isApkUpdate)
             } else {
-                Toast.makeText(mContext, "无Apk版本可升级", Toast.LENGTH_SHORT).show()
+//                Toast.makeText(mContext, "无Apk版本可升级", Toast.LENGTH_SHORT).show()
                 body(false)
             }
         }

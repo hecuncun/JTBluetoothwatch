@@ -1,10 +1,12 @@
 package com.lhzw.bluetooth.base
 
-import android.util.Log
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
+import java.text.SimpleDateFormat
 
 /**
  * Date： 2020/7/6 0006
@@ -14,6 +16,9 @@ import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : BaseActivity(), UpdateContract.IView {
     protected var mPresenter: MainUpdatePresenter? = null
     private var loadingView: LoadingView? = null
+    protected var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "2020年3月28日更新")
+    protected var firm_update_time: String? by Preference(Constants.FIRM_UPDATE_TIME, "2020年3月28日更新")
+    protected val sdf: SimpleDateFormat = SimpleDateFormat("yyyy年MM月dd日更新")
     override fun initView() {
         mPresenter = getMainPresent() as MainUpdatePresenter
         mPresenter?.let {
@@ -49,6 +54,8 @@ abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : Ba
             loadingView = null
         }
         mPresenter?.let {
+            it.onDettach()
+            it.detachView()
             mPresenter = null
         }
     }
