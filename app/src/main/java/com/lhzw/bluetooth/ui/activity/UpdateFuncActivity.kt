@@ -38,7 +38,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun initData() {
         RxBus.getInstance().register(this)
-//        checkVersion()
         // 初始化界面
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
