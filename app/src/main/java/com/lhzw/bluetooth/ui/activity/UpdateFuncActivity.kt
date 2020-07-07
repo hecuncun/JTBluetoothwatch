@@ -36,7 +36,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     override fun initView() {
-
+        super.initView()
     }
 
 
@@ -52,6 +52,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     private fun checkVersion() {
         if (isChecking) return
+        showLoadingView("检查版本...")
         mPresenter?.checkUpdate(this)
     }
 
@@ -172,11 +173,16 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun getMainPresent() = MainUpdatePresenter()
     override fun updateApkState(state: Boolean, versionName: String) {
-
+        tv_app_version.text = "JIANGTAI $versionName"
+        tv_app_version.setTextColor(getColor(if (state) R.color.blue_light else R.color.gray))
+        cancelLoadingView()
     }
 
-    override fun updateFirmState(state: Boolean, versionName: String) {
-
+    override fun updateFirmState(apolloState: Boolean, apolloVersion: String, bleState: Boolean, bleVersion: String) {
+        tv_apollo_version.text = "Apollo $apolloVersion"
+        tv_ble_version.text = "Ble $bleVersion"
+        tv_apollo_version.setTextColor(getColor(if (apolloState) R.color.blue_light else R.color.gray))
+        tv_ble_version.setTextColor(getColor(if (bleState) R.color.blue_light else R.color.gray))
     }
 
     override fun reflesh() {

@@ -24,7 +24,7 @@ interface UpdateContract {
 
     interface IView : BaseIView {
         fun updateApkState(state: Boolean, versionName: String)
-        fun updateFirmState(state: Boolean, versionName: String)
+        fun updateFirmState(apollo: Boolean, apolloVersionName: String, ble: Boolean, bleVersion: String)
     }
 
     interface IPresenter {

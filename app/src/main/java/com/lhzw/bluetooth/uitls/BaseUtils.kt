@@ -466,15 +466,14 @@ object BaseUtils {
     }
 
     // 将ble、apollo Long值装换未版本号
-    fun apolloOrBleToVersion(value: Long): String {
+    fun apolloOrBleToVersion(value: Int): String {
         val builder = java.lang.StringBuilder()
-        val list = longToByteArray(value).toList()
         builder.append("v ")
-        builder.append(byteToInt(list.subList(0, 2)))
+        builder.append("${(value shr 8 * 3) and 0xff}")
         builder.append(".")
-        builder.append(byteToInt(list.subList(2, 4)))
+        builder.append("${(value shr 8 * 2) and 0xff}")
         builder.append(".")
-        builder.append(byteToInt(list.subList(4, 8)))
+        builder.append("${value and 0xffff}")
         return builder.toString()
     }
 }

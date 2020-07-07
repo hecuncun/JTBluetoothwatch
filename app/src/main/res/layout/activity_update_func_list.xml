@@ -80,7 +80,7 @@
             android:layout_below="@+id/tv_phone_name"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
-            android:text="JIANGTAI V1.0.1"
+            android:text="JIANGTAI"
             android:textColor="@color/gray"
             android:textSize="16sp" />
 
@@ -202,18 +202,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="Apollo V 1.2.11"
+                android:text="Apollo "
                 android:textColor="@color/gray"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/tv_ble_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:text="Ble V 1.2.11"
+                android:text="Ble"
                 android:textColor="@color/gray"
-                android:textSize="16sp" />
+                android:textSize="14sp" />
         </LinearLayout>
 
         <TextView

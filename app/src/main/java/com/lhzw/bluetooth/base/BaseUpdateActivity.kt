@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.base
 
+import android.util.Log
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.widget.LoadingView

@@ -6,11 +6,11 @@ import android.os.Build
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
-import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.bean.net.ApkBean
 import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.model.UpdateModel
+import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 
 /**
@@ -29,26 +29,44 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         val watchInfo = mModel?.queryWatchData()
         if (watchInfo != null && watchInfo.isNotEmpty()) {
             // 说明已连接过手表
+            Log.e(TAG, "-------------================================ 111345345")
             mModel?.getLatestFirm {
                 if (it != null) {
                     Log.e(TAG, "${it.getApolloAppVersion()}  ${it.getBleAppVersion()}")
-                    var isFirmUpdate = false
-                    if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION || it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
+                    var isApolloUpdate = false
+                    var isBleUpdate = false
+                    firm = null
+                    if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION) {
                         // 说明有新的更新 暂时不支持退版本，仅支持升级
-                        isFirmUpdate = true
+                        isApolloUpdate = true
                         firm = it
                     }
-                    mView?.updateFirmState(isFirmUpdate, "")
+
+                    if (it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
+                        isBleUpdate = true
+                        firm = it
+                    }
+                    var apolloVersion = ""
+                    var bleVersion = ""
+                    if (firm == null) {
+                        apolloVersion = BaseUtils.apolloOrBleToVersion(watchInfo[0].APOLLO_APP_VERSION)
+                        bleVersion = BaseUtils.apolloOrBleToVersion(watchInfo[0].BLE_APP_VERSION)
+                    } else {
+                        apolloVersion = BaseUtils.apolloOrBleToVersion(it.getApolloAppVersion().toInt())
+                        bleVersion = BaseUtils.apolloOrBleToVersion(it.getBleAppVersion().toInt())
+                    }
+                    mView?.updateFirmState(isApolloUpdate, apolloVersion, isBleUpdate, bleVersion)
                     // 检查Apk
                     checkApkUpdate(mContext) { state, version ->
-                        if (state) {
-
-                        } else {
-
-                        }
+                        mView?.updateApkState(state, version)
                     }
                 } else {
-                    Toast.makeText(mContext, "无腕表固件版本可升级", Toast.LENGTH_SHORT).show()
+                    Log.e(TAG, "${watchInfo[0].APOLLO_APP_VERSION}    ${watchInfo[0].BLE_APP_VERSION}")
+                    mView?.updateFirmState(false, BaseUtils.apolloOrBleToVersion(watchInfo[0].APOLLO_APP_VERSION),
+                            false, BaseUtils.apolloOrBleToVersion(watchInfo[0].BLE_APP_VERSION))
+                    mView?.updateApkState(false, App.instance
+                            .packageManager.getPackageInfo(App.instance.packageName, 0).versionName)
+                    Toast.makeText(mContext, "无腕表固件版本可升级  ${mView == null}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
