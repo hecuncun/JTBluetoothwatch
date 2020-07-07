@@ -79,8 +79,9 @@ class BLEWatchListActivity : BaseActivity() {
         manager.orientation = LinearLayoutManager.VERTICAL
         recyclerView.layoutManager = manager
         watchList = ArrayList()
-        watchList?.add(ConnectWatchBean("JIANGTAI疆泰05X", "型号：SW2500", "应用领域：森林消防局", "规模搜救"))
-        watchList?.add(ConnectWatchBean("JIANGTAI疆泰05X", "型号：SW2501", "应用领域：森林消防局", "规模搜救"))
+        watchList?.add(ConnectWatchBean("JIANGTAI疆泰5X", "型号：SW2500", "产品特性：远距离无线通信 生命体征监测", "户外助手"))
+        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4X", "型号：SW2400", "产品特性：远距离无线通信 生命体征监测","户外助手"))
+        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4", "型号：SW2401", "产品特性：10ATM防水 生命体征监测","户外运动"))
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(SpaceItemDecoration(BaseUtils.dip2px(16)))
     }

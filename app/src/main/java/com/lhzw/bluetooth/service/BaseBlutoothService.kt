@@ -139,7 +139,9 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
             if (it[0].toByte() == Constants.SEND_PHONE_RESPONSE_CODE) {
                 if (it[1].toInt() == 0) {
-                    listMsg.removeAt(0)
+                    if (listMsg.isNotEmpty()){
+                        listMsg.removeAt(0)
+                    }
                     if (listMsg.size > 0) {
                         sendToPhoneData(listMsg[0])
                     } else {

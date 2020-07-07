@@ -20,6 +20,7 @@ import com.bigkoo.pickerview.R;
 import com.bigkoo.pickerview.configure.PickerOptions;
 import com.bigkoo.pickerview.listener.OnDismissListener;
 import com.bigkoo.pickerview.utils.PickerViewAnimateUtil;
+import com.bigkoo.pickerview.utils.RomUtil;
 
 /**
  * Created by Sai on 15/11/22.
@@ -88,6 +89,9 @@ public class BasePickerView {
             FrameLayout.LayoutParams params1 = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             params1.leftMargin=30;
             params1.rightMargin=30;
+            if (RomUtil.isNavigationBarExist((Activity)context)){
+                params1.bottomMargin=80;
+            }
             rootView.setLayoutParams(params1);
             if (mPickerOptions.outSideColor != -1) {
                 rootView.setBackgroundColor(mPickerOptions.outSideColor);

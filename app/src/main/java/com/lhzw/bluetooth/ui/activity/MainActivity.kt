@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.support.v4.app.Fragment
@@ -70,6 +71,11 @@ class MainActivity : BaseActivity(), View.OnClickListener {
     override fun useEventBus() = true
 
     override fun attachLayoutRes(): Int = R.layout.activity_main
+
+    @SuppressLint("MissingSuperCall")
+    override fun onSaveInstanceState(outState: Bundle?) {
+        //
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InvalidWakeLockTag")

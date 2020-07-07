@@ -56,8 +56,8 @@ class LoginActivity : AppCompatActivity() {
                     showToast("请检查登录信息是否为空！")
                     return@setOnClickListener
                 }
-                login()
-//                jumpToMain()
+                //login()
+                jumpToMain()
             }
         }
     }

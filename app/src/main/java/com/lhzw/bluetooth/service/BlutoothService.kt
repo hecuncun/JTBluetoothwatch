@@ -2,6 +2,7 @@ package com.lhzw.bluetooth.service
 
 import android.content.Intent
 import android.os.Environment
+import android.os.Handler
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
@@ -269,7 +270,6 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         myBleManager?.app_short_msg(data)
     }
 
-
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
     fun notifyWatchMsg(event: NotificationEvent) {
         Logger.e("BlutoothService收到推送==>package==${event.packageName}")
@@ -280,6 +280,12 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
             if (!isSending) {
                 isSending = true
                 sendToPhoneData(listMsg[0])
+            }else{
+               mHandler.postDelayed(Runnable {
+                   if (isSending && listMsg.isNotEmpty()){
+                       sendToPhoneData(listMsg[0])
+                   }
+               },3000)
             }
         }
     }
