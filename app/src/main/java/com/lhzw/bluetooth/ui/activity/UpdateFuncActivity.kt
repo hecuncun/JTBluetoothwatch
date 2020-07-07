@@ -43,7 +43,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
         tv_app_update_date.text = apk_update_time
-
         tv_watch_update_date.text = firm_update_time
         mPresenter?.initWatchUI()
         checkPermission()
