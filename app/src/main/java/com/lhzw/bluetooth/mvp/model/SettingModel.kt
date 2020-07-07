@@ -18,6 +18,7 @@ import org.litepal.extension.findAll
 
 /**
  * Created by hecuncun on 2019/11/13
+ *
  */
 class SettingModel : BaseModel(), SettingContract.Model {
 
