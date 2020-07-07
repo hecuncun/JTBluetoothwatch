@@ -32,9 +32,7 @@ class UpdateModel : UpdateContract.IModel {
         response?.compose(ThreadSwitchTransformer())?.subscribe(object : CallbackListObserver<BaseBean<MutableList<ApkBean>>?>() {
             override fun onSucceed(bean: BaseBean<MutableList<ApkBean>>?) {
                 bean?.let {
-                    Log.e("SettingPresenter", "--------------------------------  1   ${it.getMessage()}")
                     if (it.isSuccessed()) {
-                        Log.e("SettingPresenter", "--------------------------------  2   ${it.getData()}")
                         val beans = it.getData()
                         beans?.let {
                             body(beans[0])
