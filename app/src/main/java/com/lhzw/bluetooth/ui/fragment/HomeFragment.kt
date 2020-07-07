@@ -31,6 +31,8 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.findAll
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -64,7 +66,9 @@ class HomeFragment : BaseFragment() {
     private fun initLineChar(lineChart: LineChart) {
         val times = arrayOf("1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00",
                 "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00", "24:00")
+
         lineChart.apply {
+            fitScreen()
             setTouchEnabled(true)//触摸事件
             setDrawGridBackground(false)//网格线
             setNoDataText("暂无数据")
@@ -74,7 +78,8 @@ class HomeFragment : BaseFragment() {
             setPinchZoom(false)//手指缩放
             //配置X轴
             xAxis.apply {
-                setLabelCount(6, true)
+                setLabelCount(6, false)
+                granularity=1f
                 enableGridDashedLine(10f, 10f, 0f)//垂直虚线
                 // xAxis.enableAxisLineDashedLine(10f, 10f, 0f)  X轴线
                 setDrawAxisLine(false)//是否画X轴线
@@ -216,7 +221,8 @@ class HomeFragment : BaseFragment() {
             chart.notifyDataSetChanged()
         } else { // create a dataset and give it a type
             set1 = LineDataSet(values, "DataSet 1")
-            set1.mode = LineDataSet.Mode.CUBIC_BEZIER// 设置线条的模式
+            //set1.mode = LineDataSet.Mode.CUBIC_BEZIER// 设置线条的模式
+            set1.mode = LineDataSet.Mode.HORIZONTAL_BEZIER// 设置线条的模式
             set1.setDrawIcons(false)
             set1.setDrawValues(false)
             set1.setDrawHighlightIndicators(false)//设置高亮辅助线
@@ -258,6 +264,7 @@ class HomeFragment : BaseFragment() {
             // set data
             chart.data = data
         }
+
         chart.invalidate()
     }
 
