@@ -186,6 +186,19 @@ public class LineChartRenderer extends LineRadarRenderer {
         mRenderPaint.setStyle(Paint.Style.STROKE);
 
         trans.pathValueToPixel(cubicPath);
+        if (dataSet.getGradientColor() != null)
+        {//todo 自定义设置渐变色
+            GradientColor gradientColor = dataSet.getGradientColor();
+            mRenderPaint.setShader(
+                    new LinearGradient(
+                            0,
+                            0,
+                            0,
+                            mChart.getHeight(),
+                            gradientColor.getStartColor(),
+                            gradientColor.getEndColor(),
+                            Shader.TileMode.CLAMP));
+        }
 
         mBitmapCanvas.drawPath(cubicPath, mRenderPaint);
 
@@ -265,7 +278,7 @@ public class LineChartRenderer extends LineRadarRenderer {
 
         trans.pathValueToPixel(cubicPath);
         if (dataSet.getGradientColor() != null)
-        {//设置渐变色
+        {//todo 自定义设置渐变色
             GradientColor gradientColor = dataSet.getGradientColor();
             mRenderPaint.setShader(
                     new LinearGradient(
