@@ -8,7 +8,6 @@ import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseUpdateActivity
 import com.lhzw.bluetooth.bus.RxBus
-import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_update_func_list.*
@@ -20,7 +19,7 @@ import kotlinx.android.synthetic.main.activity_update_func_list.*
  */
 
 @Suppress("SpellCheckingInspection")
-class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>(), UpdateContract.IView {
+class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private val TAG = UpdateFuncActivity::class.java.simpleName
     private val PERMISS_REQUEST_CODE = 0x0001
     private val UPDATE_APP = 0x0010

@@ -179,22 +179,48 @@
             android:textColor="@color/white"
             android:textSize="16sp" />
 
-        <TextView
-            android:id="@+id/tv_watch_version"
+
+        <LinearLayout
+            android:id="@+id/ll_version"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_watch_name"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="5dp"
-            android:text="SW2500 V 1.2.11"
-            android:textColor="@color/gray"
-            android:textSize="16sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SW2500"
+                android:textColor="@color/gray"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_apollo_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Apollo V 1.2.11"
+                android:textColor="@color/gray"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_ble_version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="Ble V 1.2.11"
+                android:textColor="@color/gray"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_watch_update_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_watch_version"
+            android:layout_below="@+id/ll_version"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="6dp"
             android:text="2020年3月28日更新"

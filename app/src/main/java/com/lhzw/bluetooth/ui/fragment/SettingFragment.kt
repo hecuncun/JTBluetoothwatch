@@ -3,6 +3,8 @@ package com.lhzw.bluetooth.ui.fragment
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -152,7 +154,6 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         checkUpdate()
     }
 
-    @Suppress("DEPRECATION")
     private fun checkUpdate() {
         Log.e(TAG, "检查版本信息 ..........................")
         if (isChecking) return
