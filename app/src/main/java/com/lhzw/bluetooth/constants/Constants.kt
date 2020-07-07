@@ -59,6 +59,7 @@ object Constants {
     const val CONNECT_DEVICE_NAME = "connect_device_name"
     const val LAST_DEVICE_ADDRESS = "last_device_address"
     const val ISSYNCASCENDING = "is_sync_ascending"
+    const val SYNC_TIME = "sync_time"
     const val LAST_CONNECTED_ADDRESS = "last_connected_address"
     const val AUTO_CONNECT = "auto_connect"
     const val ACCEPT_MSG = "accept_msg"

@@ -20,6 +20,7 @@ import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.SpaceItemDecoration
 import com.lhzw.bluetooth.widget.LoadingView
@@ -47,7 +48,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     private var watchList: MutableList<ConnectWatchBean>? = null
     private val TAG = BLEWatchListActivity::class.java.simpleName
-
+    private var syncTime: String by Preference(Constants.SYNC_TIME, "")//最近同步时间
     override fun useEventBus() = true
     private val adapter: WatchAdapter by lazy {
         WatchAdapter(this, watchList)
@@ -58,7 +59,7 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     override fun initData() {
-
+        tv_sync_time.text=syncTime
     }
     private lateinit var drawable:ClipDrawable
     val animator = ValueAnimator.ofInt(10000)
@@ -286,6 +287,7 @@ class BLEWatchListActivity : BaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
         loadingView?.dismiss()
+        tv_sync_time.text=syncTime
     }
 
 }

@@ -6,10 +6,7 @@ import android.bluetooth.BluetoothDevice
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.IBinder
-import android.os.Message
-import android.os.PowerManager
+import android.os.*
 import android.util.Log
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.ble.*
@@ -20,6 +17,7 @@ import com.lhzw.bluetooth.dfu.DfuBeanEvent
 import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
@@ -47,6 +45,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
+    private var syncTime: String by Preference(Constants.SYNC_TIME, "")//最近同步时间
     private var isSyncAscending: Boolean by Preference(Constants.ISSYNCASCENDING, false)//缓存扫码的mac
     private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     private var ERROR = ""
@@ -237,6 +236,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         // 设置手表为低功率状态
 //        Log.e("BluetoothCallBack", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         Log.e("callBackBluetooth", "onSettingConnectParameter....")
+        syncTime="最近一次同步时间 ${DateUtils.longToString(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")}"
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
