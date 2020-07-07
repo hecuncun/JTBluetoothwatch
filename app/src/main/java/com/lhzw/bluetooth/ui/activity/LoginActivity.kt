@@ -19,6 +19,7 @@ import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_login.*
+import java.text.SimpleDateFormat
 
 /**
  * Date： 2020/6/2 0002
@@ -29,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private val TAG = "Login"
     private var mGlobalToast: Toast? = null
     private var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
+    private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "2020年3月28日更新")
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -75,6 +77,8 @@ class LoginActivity : AppCompatActivity() {
                     if (it.isSuccessed()) {
                         http_token = it.getData()?.getToken()
                         showToast("登录成功")
+                        val sdf = SimpleDateFormat("yyyy年MM月dd日更新")
+                        apk_update_time = sdf.format(System.currentTimeMillis())
                         jumpToMain()
                     } else {
                         showToast("登录失败")

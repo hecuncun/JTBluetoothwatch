@@ -8,9 +8,11 @@ import android.widget.Toast
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.net.ApkBean
 import com.lhzw.bluetooth.bean.net.FirmBean
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.model.UpdateModel
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 
 /**
@@ -117,6 +119,8 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
     override fun onDettach() {
         mModel?.onDettach()
         mModel = null
+        apk = null
+        firm = null
     }
 
     override fun initWatchUI() {

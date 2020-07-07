@@ -17,7 +17,7 @@ abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : Ba
     protected var mPresenter: MainUpdatePresenter? = null
     private var loadingView: LoadingView? = null
     protected var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "2020年3月28日更新")
-    protected var firm_update_time: String? by Preference(Constants.FIRM_UPDATE_TIME, "2020年3月28日更新")
+    protected var firm_update_time: String? by Preference(Constants.FIRM_UPDATE_TIME, "无连接")
     protected val sdf: SimpleDateFormat = SimpleDateFormat("yyyy年MM月dd日更新")
     override fun initView() {
         mPresenter = getMainPresent() as MainUpdatePresenter

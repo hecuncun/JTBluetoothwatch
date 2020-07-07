@@ -1,6 +1,7 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
@@ -70,6 +71,11 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     private fun downloadUpdate() {
+        if (!connectState) {
+            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         when (update_type) {
             UPDATE_WATCH -> {
                 updateWatch()
@@ -238,7 +244,12 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     override fun initWatchUI(apolloVersion: String, bleVersion: String) {
         tv_apollo_version.text = "Apollo $apolloVersion"
         tv_ble_version.text = "Ble $bleVersion"
-        tv_watch_update_date.text = "无连接"
+        if (TextUtils.isEmpty(apolloVersion) && TextUtils.isEmpty(bleVersion)) {
+            tv_watch_update_date.text = "无连接"
+        } else {
+            tv_watch_update_date.text = firm_update_time
+        }
+
     }
 
 
