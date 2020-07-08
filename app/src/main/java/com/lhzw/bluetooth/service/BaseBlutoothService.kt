@@ -262,8 +262,8 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
-                EventBus.getDefault().post(HideDialogEvent(true))
             }
+            EventBus.getDefault().post(HideDialogEvent(true))
         }
     }
 

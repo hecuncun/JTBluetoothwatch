@@ -57,6 +57,8 @@ class LoginActivity : AppCompatActivity() {
                     return@setOnClickListener
                 }
                 //login()
+                //todo 调试
+                http_token="test"
                 jumpToMain()
             }
         }

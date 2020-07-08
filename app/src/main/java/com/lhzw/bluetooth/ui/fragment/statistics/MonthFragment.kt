@@ -38,51 +38,57 @@ class MonthFragment : BaseFragment() {
     }
 
     private fun getOneMonthData() {
-        val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()
-        val split = todayDataAndWeekdayBefore.split(",")
-        val dataString = split[0]//2020-1-18
-        val year = dataString.split("-")[0].toInt()
-        val month = dataString.split("-")[1]
-        val days = dataString.split("-")[2].toInt() - 1//前面第几天是1号
-        val monthSize = getMonthSize(month, year)
-        Logger.e("当前日期==$dataString")
-        Logger.e("本月==$month,本日=$days")
-        // val days=split[1].toInt()//前面第几天是周一
-        val stepValues = ArrayList<BarEntry>()//月步数集合
-        val calValues = ArrayList<BarEntry>()//月cal集合
-        val monthOne = DateUtils.getDateMinusStr(dataString, days)
-        Logger.e("当前月一号的日期==$monthOne")
-        var monthStepTotal = 0f//月步数
-        var monthCalTotal = 0f//月cal
+        Thread(Runnable {
+            val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()
+            val split = todayDataAndWeekdayBefore.split(",")
+            val dataString = split[0]//2020-1-18
+            val year = dataString.split("-")[0].toInt()
+            val month = dataString.split("-")[1]
+            val days = dataString.split("-")[2].toInt() - 1//前面第几天是1号
+            val monthSize = getMonthSize(month, year)
+            Logger.e("当前日期==$dataString")
+            Logger.e("本月==$month,本日=$days")
+            // val days=split[1].toInt()//前面第几天是周一
+            val stepValues = ArrayList<BarEntry>()//月步数集合
+            val calValues = ArrayList<BarEntry>()//月cal集合
+            val monthOne = DateUtils.getDateMinusStr(dataString, days)
+            Logger.e("当前月一号的日期==$monthOne")
+            var monthStepTotal = 0f//月步数
+            var monthCalTotal = 0f//月cal
 
-        for (i in 0 until monthSize) {
-          //  Logger.e("本月日期==${DateUtils.getDatePlusStr(monthOne, i)}")
-            //当前天的数据从动态数据拿
-            if (i == days) {//当前日期
-                //查询当前步数,cal
-                var currentStepNum = 0f
-                var currentCalNum = 0f
-                val currentList = LitePal.findAll<CurrentDataBean>()
-                if (currentList.isNotEmpty()) {
-                    currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
-                    currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+            for (i in 0 until monthSize) {
+                //  Logger.e("本月日期==${DateUtils.getDatePlusStr(monthOne, i)}")
+                //当前天的数据从动态数据拿
+                if (i == days) {//当前日期
+                    //查询当前步数,cal
+                    var currentStepNum = 0f
+                    var currentCalNum = 0f
+                    val currentList = LitePal.findAll<CurrentDataBean>()
+                    if (currentList.isNotEmpty()) {
+                        currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
+                        currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+                    }
+                    monthStepTotal += currentStepNum
+                    monthCalTotal += currentCalNum
+                    stepValues.add(BarEntry(i.toFloat(), currentStepNum))
+                    calValues.add(BarEntry(i.toFloat(), currentCalNum))
+                } else {
+                    monthStepTotal += getOnDayStepData(DateUtils.getDatePlusStr(monthOne, i))
+                    monthCalTotal += getOnDayCalData(DateUtils.getDatePlusStr(monthOne, i))
+                    stepValues.add(BarEntry(i.toFloat(), getOnDayStepData(DateUtils.getDatePlusStr(monthOne, i))))
+                    calValues.add(BarEntry(i.toFloat(), getOnDayCalData(DateUtils.getDatePlusStr(monthOne, i))))
                 }
-                monthStepTotal += currentStepNum
-                monthCalTotal += currentCalNum
-                stepValues.add(BarEntry(i.toFloat(), currentStepNum))
-                calValues.add(BarEntry(i.toFloat(), currentCalNum))
-            } else {
-                monthStepTotal += getOnDayStepData(DateUtils.getDatePlusStr(monthOne, i))
-                monthCalTotal += getOnDayCalData(DateUtils.getDatePlusStr(monthOne, i))
-                stepValues.add(BarEntry(i.toFloat(), getOnDayStepData(DateUtils.getDatePlusStr(monthOne, i))))
-                calValues.add(BarEntry(i.toFloat(), getOnDayCalData(DateUtils.getDatePlusStr(monthOne, i))))
+
+            }
+            requireActivity().runOnUiThread {
+                tv_step_num.text = monthStepTotal.toInt().toString()
+                tv_cal_num.text = monthCalTotal.toInt().toString()
+                initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
+                initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
             }
 
-        }
-        tv_step_num.text = monthStepTotal.toInt().toString()
-        tv_cal_num.text = monthCalTotal.toInt().toString()
-        initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
-        initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
+        }).start()
+
 
     }
 

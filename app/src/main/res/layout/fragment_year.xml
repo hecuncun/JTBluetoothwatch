@@ -42,7 +42,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="25dp"
-                android:text="123213"
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
         </RelativeLayout>
@@ -90,7 +90,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentEnd="true"
                 android:layout_marginRight="25dp"
-                android:text="123213"
+                android:text="0"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
         </RelativeLayout>

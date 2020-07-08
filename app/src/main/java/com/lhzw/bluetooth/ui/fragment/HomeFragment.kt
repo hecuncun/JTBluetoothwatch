@@ -27,6 +27,7 @@ import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.XAxisValueFormatter
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_home.*
+import me.jessyan.autosize.internal.CancelAdapt
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
@@ -38,7 +39,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by hecuncun on 2019/11/13
  */
-class HomeFragment : BaseFragment() {
+class HomeFragment : BaseFragment(),CancelAdapt {
     private var bleManager: BluetoothManager? = null
     private var state = false
     override fun useEventBus() = true
@@ -60,6 +61,8 @@ class HomeFragment : BaseFragment() {
             //跳转统计页
             startActivity(Intent(activity,StatisticsActivity::class.java))
         }
+
+
     }
 
     //初始化图表
@@ -176,7 +179,6 @@ class HomeFragment : BaseFragment() {
     }
 
     override fun lazyLoad() {
-
         if (connectState) {
             //处于连接状态,就显示数据
             setConnectedState()
@@ -291,7 +293,9 @@ class HomeFragment : BaseFragment() {
                 //val num = (Math.random() * 1000).toFloat()
                 val num = dailyInfoList[i].daily_steps.toFloat() + dailyInfoList[i].sport_steps.toFloat()
                 stepValues.add(Entry(i.toFloat(), num))
+                //Logger.e("$i 小时,步数==$num")
             }
+
             initLineData(step_line_chart, stepValues, R.color.green_path, R.color.blue_path)
             //初始化24小时cal表的值
             val calValues = ArrayList<Entry>()
@@ -424,7 +428,8 @@ class HomeFragment : BaseFragment() {
     //
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
-        if (event.success) {
+        if (event.success){
+          //  Logger.e("homeFragment 接收到数据同步成功信息")
             initWatchData()
         }
 

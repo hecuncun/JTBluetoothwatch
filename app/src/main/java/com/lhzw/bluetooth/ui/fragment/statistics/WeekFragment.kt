@@ -43,45 +43,51 @@ class WeekFragment : BaseFragment() {
 
     }
     private fun getOneWeekData() {
-        val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()//2020-7-7,1
-        val split = todayDataAndWeekdayBefore.split(",")
-        val dataString =split[0]//20-1-18
-        val days=split[1].toInt()//前面第几天是周一
-        val stepValues = ArrayList<BarEntry>()//7天步数集合
-        val calValues = ArrayList<BarEntry>()//7天cal集合
-        Logger.e("当前日期==$dataString")
-        val monday = DateUtils.getDateMinusStr(dataString, days)
-        Logger.e("当前周一的日期==$monday")
-        var weekStepTotal = 0f//周步数
-        var weekCalTotal = 0f//周cal
-        for(i in 0..6){
-            //Logger.e("本周日期==${DateUtils.getDatePlusStr(monday,i)}")
-            //当前天的数据从动态数据拿
-            if (i==days){//当前日期
-                //查询当前步数,cal
-                var currentStepNum = 0f
-                var currentCalNum = 0f
-                val currentList = LitePal.findAll<CurrentDataBean>()
-                if (currentList.isNotEmpty()) {
-                    currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
-                    currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+        Thread(Runnable {
+            val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()//2020-7-7,1
+            val split = todayDataAndWeekdayBefore.split(",")
+            val dataString =split[0]//20-1-18
+            val days=split[1].toInt()//前面第几天是周一
+            val stepValues = ArrayList<BarEntry>()//7天步数集合
+            val calValues = ArrayList<BarEntry>()//7天cal集合
+            Logger.e("当前日期==$dataString")
+            val monday = DateUtils.getDateMinusStr(dataString, days)
+            Logger.e("当前周一的日期==$monday")
+            var weekStepTotal = 0f//周步数
+            var weekCalTotal = 0f//周cal
+            for(i in 0..6){
+                //Logger.e("本周日期==${DateUtils.getDatePlusStr(monday,i)}")
+                //当前天的数据从动态数据拿
+                if (i==days){//当前日期
+                    //查询当前步数,cal
+                    var currentStepNum = 0f
+                    var currentCalNum = 0f
+                    val currentList = LitePal.findAll<CurrentDataBean>()
+                    if (currentList.isNotEmpty()) {
+                        currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
+                        currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+                    }
+                    weekStepTotal+=currentStepNum
+                    weekCalTotal+=currentCalNum
+                    stepValues.add(BarEntry(i.toFloat(),currentStepNum))
+                    calValues.add(BarEntry(i.toFloat(), currentCalNum))
+                }else{
+                    weekStepTotal+=getOnDayStepData(DateUtils.getDatePlusStr(monday,i))
+                    weekCalTotal+= getOnDayCalData(DateUtils.getDatePlusStr(monday,i))
+                    stepValues.add(BarEntry(i.toFloat(), getOnDayStepData(DateUtils.getDatePlusStr(monday,i))))
+                    calValues.add(BarEntry(i.toFloat(), getOnDayCalData(DateUtils.getDatePlusStr(monday,i))))
                 }
-                weekStepTotal+=currentStepNum
-                weekCalTotal+=currentCalNum
-                stepValues.add(BarEntry(i.toFloat(),currentStepNum))
-                calValues.add(BarEntry(i.toFloat(), currentCalNum))
-            }else{
-                weekStepTotal+=getOnDayStepData(DateUtils.getDatePlusStr(monday,i))
-                weekCalTotal+= getOnDayCalData(DateUtils.getDatePlusStr(monday,i))
-                stepValues.add(BarEntry(i.toFloat(), getOnDayStepData(DateUtils.getDatePlusStr(monday,i))))
-                calValues.add(BarEntry(i.toFloat(), getOnDayCalData(DateUtils.getDatePlusStr(monday,i))))
+
+            }
+            requireActivity().runOnUiThread {
+                tv_step_num.text=weekStepTotal.toInt().toString()
+                tv_cal_num.text=weekCalTotal.toInt().toString()
+                initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
+                initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
             }
 
-        }
-        tv_step_num.text=weekStepTotal.toInt().toString()
-        tv_cal_num.text=weekCalTotal.toInt().toString()
-        initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
-        initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
+        }).start()
+
 
     }
 //获取1天总步数

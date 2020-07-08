@@ -52,50 +52,57 @@ class YearFragment:BaseFragment() {
     }
 
     private fun getOneYearData() {
-        //先算当前的月步数和cal
-        val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()
-        val split = todayDataAndWeekdayBefore.split(",")
-        val dataString = split[0]//2020-1-18
-        val year = dataString.split("-")[0].toInt()
-        val month = dataString.split("-")[1]
-       // Logger.e("当前日期==$dataString")
+        Thread(Runnable {
+            //先算当前的月步数和cal
+            val todayDataAndWeekdayBefore = DateUtils.getTodayDataAndWeekdayBefore()
+            val split = todayDataAndWeekdayBefore.split(",")
+            val dataString = split[0]//2020-1-18
+            val year = dataString.split("-")[0].toInt()
+            val month = dataString.split("-")[1]
+            // Logger.e("当前日期==$dataString")
 
-        var yearStepTotal = 0f//年步数
-        var yearCalTotal = 0f//年cal
+            var yearStepTotal = 0f//年步数
+            var yearCalTotal = 0f//年cal
 
-        val stepValues = ArrayList<BarEntry>()//12个月步数集合
-        val calValues = ArrayList<BarEntry>()//12个月cal集合
+            val stepValues = ArrayList<BarEntry>()//12个月步数集合
+            val calValues = ArrayList<BarEntry>()//12个月cal集合
 
 
-        for (i in 0..11) {
-            //当前天的数据从动态数据拿
-            if (i == (month.toInt()-1)) {//当前月
-                //查询当前天步数,cal
-                var currentStepNum = 0f
-                var currentCalNum = 0f
-                val currentList = LitePal.findAll<CurrentDataBean>()
-                if (currentList.isNotEmpty()) {
-                    currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
-                    currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+            for (i in 0..11) {
+                //当前天的数据从动态数据拿
+                if (i == (month.toInt()-1)) {//当前月
+                    //查询当前天步数,cal
+                    var currentStepNum = 0f
+                    var currentCalNum = 0f
+                    val currentList = LitePal.findAll<CurrentDataBean>()
+                    if (currentList.isNotEmpty()) {
+                        currentStepNum = (currentList[0].dailyStepNumTotal + currentList[0].sportStepNumTotal).toFloat()
+                        currentCalNum = (currentList[0].dailyCalTotal + currentList[0].sportCalTotal).toFloat()
+                    }
+                    val currentMonthStepData = getOneMonthStepData((i + 1).toString(), year)+currentStepNum
+                    val currentMonthCalData = getOneMonthCalData((i + 1).toString(), year)+currentCalNum
+                    yearStepTotal += currentMonthStepData
+                    yearCalTotal += currentMonthCalData
+                    stepValues.add(BarEntry(i.toFloat(), currentMonthStepData))
+                    calValues.add(BarEntry(i.toFloat(), currentMonthCalData))
+                } else {
+                    yearStepTotal += getOneMonthStepData((i+1).toString(),year)
+                    yearCalTotal +=  getOneMonthCalData((i+1).toString(),year)
+                    stepValues.add(BarEntry(i.toFloat(), getOneMonthStepData((i+1).toString(),year)))
+                    calValues.add(BarEntry(i.toFloat(),  getOneMonthCalData((i+1).toString(),year)))
                 }
-                val currentMonthStepData = getOneMonthStepData((i + 1).toString(), year)+currentStepNum
-                val currentMonthCalData = getOneMonthCalData((i + 1).toString(), year)+currentCalNum
-                yearStepTotal += currentMonthStepData
-                yearCalTotal += currentMonthCalData
-                stepValues.add(BarEntry(i.toFloat(), currentMonthStepData))
-                calValues.add(BarEntry(i.toFloat(), currentMonthCalData))
-            } else {
-                yearStepTotal += getOneMonthStepData((i+1).toString(),year)
-                yearCalTotal +=  getOneMonthCalData((i+1).toString(),year)
-                stepValues.add(BarEntry(i.toFloat(), getOneMonthStepData((i+1).toString(),year)))
-                calValues.add(BarEntry(i.toFloat(),  getOneMonthCalData((i+1).toString(),year)))
+
+            }
+            requireActivity().runOnUiThread {
+                tv_step_num.text = yearStepTotal.toInt().toString()
+                tv_cal_num.text = yearCalTotal.toInt().toString()
+                initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
+                initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
             }
 
-        }
-        tv_step_num.text = yearStepTotal.toInt().toString()
-        tv_cal_num.text = yearCalTotal.toInt().toString()
-        initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
-        initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
+        }).start()
+
+
 
     }
 
