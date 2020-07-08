@@ -79,7 +79,7 @@ class WeekFragment : BaseFragment() {
                 }
 
             }
-            requireActivity().runOnUiThread {
+            activity?.runOnUiThread {
                 tv_step_num.text=weekStepTotal.toInt().toString()
                 tv_cal_num.text=weekCalTotal.toInt().toString()
                 initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))

@@ -93,7 +93,7 @@ class YearFragment:BaseFragment() {
                 }
 
             }
-            requireActivity().runOnUiThread {
+           activity?.runOnUiThread {
                 tv_step_num.text = yearStepTotal.toInt().toString()
                 tv_cal_num.text = yearCalTotal.toInt().toString()
                 initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))

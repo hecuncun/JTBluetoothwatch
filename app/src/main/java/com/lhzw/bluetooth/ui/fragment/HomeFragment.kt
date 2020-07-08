@@ -39,7 +39,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by hecuncun on 2019/11/13
  */
-class HomeFragment : BaseFragment(),CancelAdapt {
+class HomeFragment : BaseFragment(){
     private var bleManager: BluetoothManager? = null
     private var state = false
     override fun useEventBus() = true
