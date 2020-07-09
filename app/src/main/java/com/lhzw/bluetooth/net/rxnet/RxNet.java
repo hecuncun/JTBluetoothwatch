@@ -1,6 +1,5 @@
 package com.lhzw.bluetooth.net.rxnet;
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
@@ -12,6 +11,7 @@ import com.lhzw.bluetooth.net.rxnet.utils.CommonUtils;
 import com.lhzw.bluetooth.net.rxnet.utils.LogUtils;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -20,7 +20,7 @@ import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
 /**
- *  支持断点续传
+ * 支持断点续传
  * Date： 2020/6/2 0002
  * Time： 10:06
  * Created by xtqb.
@@ -96,7 +96,7 @@ public class RxNet {
         }
     }
 
-    private void writeFileToDisk(ResponseBody responseBody, String filePath, final DownloadCallback callback) throws IOException {
+    private void writeFileToDisk(ResponseBody responseBody, String filePath, final DownloadCallback callback) {
         long totalByte = responseBody.contentLength();
         long downloadByte = 0;
         File file = new File(filePath);
@@ -104,20 +104,35 @@ public class RxNet {
             file.getParentFile().mkdirs();
         }
 
-        byte[] buffer = new byte[1024 * 4];
-        RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rwd");
-        long tempFileLen = file.length();
-        randomAccessFile.seek(tempFileLen);
-        while (true) {
-            int len = responseBody.byteStream().read(buffer);
-            if (len == -1) {
-                break;
+        RandomAccessFile randomAccessFile = null;
+        try {
+            randomAccessFile = new RandomAccessFile(file, "rwd");
+            byte[] buffer = new byte[1024 * 4];
+            long tempFileLen = file.length();
+            randomAccessFile.seek(tempFileLen);
+            while (true) {
+                int len = responseBody.byteStream().read(buffer);
+                if (len == -1) {
+                    break;
+                }
+                randomAccessFile.write(buffer, 0, len);
+                downloadByte += len;
+                callbackProgress(tempFileLen + totalByte, tempFileLen + downloadByte, callback);
             }
-            randomAccessFile.write(buffer, 0, len);
-            downloadByte += len;
-            callbackProgress(tempFileLen + totalByte, tempFileLen + downloadByte, callback);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                randomAccessFile.close();
+            } catch (IOException e) {
+                LogUtils.e(e.getMessage());
+            }
+
         }
-        randomAccessFile.close();
+
+
     }
 
     private void callbackProgress(final long totalByte, final long downloadByte, final DownloadCallback callback) {
