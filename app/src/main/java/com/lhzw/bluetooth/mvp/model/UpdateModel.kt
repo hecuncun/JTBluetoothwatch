@@ -127,6 +127,6 @@ class UpdateModel : UpdateContract.IModel {
         if (file.exists()) {
             file.delete()
         }
-        RxNet.download(url, path, listener)
+        RxNet().download(App.instance.getToken(), url, path, listener)
     }
 }

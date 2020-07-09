@@ -38,7 +38,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private val DOWNLOAD_FIRM = 0x0020
     private var update_type = DOWNLOAD_FIRM
     private var loadingView: LoadingView? = null
-    private var isChecking = false
     private val DOWNLOADING = 0
     private val UPDATEFIRM = 1
     private val FREE = 2
@@ -71,7 +70,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     private fun checkVersion() {
-        if (isChecking) return
         showLoadingView("检查版本...")
         mPresenter?.checkUpdate(this)
     }
@@ -297,62 +295,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }
 
     }
-
-    fun publishApkProgress(event: DownLoadEvent) {
-        when (event.progress) {
-            0 -> {
-                tv_update_app_status.text = "开始下载数据..."
-                progesss_app.max = event.total
-            }
-            event.total -> {
-                runOnUiThread {
-                    tv_update_app_status.text = "下载完成"
-                }
-                // 安装
-
-            }
-            else -> {
-                progesss_app.max = event.total
-                progesss_app.progress = event.progress
-            }
-        }
-    }
-
-    fun publishFirmProgress(event: DownLoadEvent) {
-        when (event.progress) {
-            0 -> {
-                tv_update_watch_status.text = "开始下载数据..."
-                progesss_watch.max = event.total
-            }
-            event.total -> {
-                runOnUiThread {
-                    tv_update_watch_status.text = "下载完成"
-                }
-                // 空口传输
-
-            }
-            else -> {
-                progesss_watch.max = event.total
-                progesss_watch.progress = event.progress
-            }
-        }
-    }
-
-    private val mHandler = object : Handler() {
-        override fun handleMessage(msg: Message?) {
-            when (msg?.what) {
-                Constants.DOWNLOAD_APK -> {
-                    val event = msg.obj as DownLoadEvent
-                    publishApkProgress(event)
-                }
-                Constants.DOWNLOAD_DFU -> {
-                    val event = msg.obj as DownLoadEvent
-                    publishFirmProgress(event)
-                }
-            }
-        }
-    }
-
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && interceptFinish()) {
