@@ -1,8 +1,6 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
-import android.os.Handler
-import android.os.Message
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -15,8 +13,6 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseUpdateActivity
 import com.lhzw.bluetooth.bus.RxBus
-import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.event.DownLoadEvent
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback
 import com.lhzw.bluetooth.net.rxnet.utils.LogUtils
@@ -114,9 +110,9 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
-                if(progress ==100) {
+                if (currentByte == totalByte) {
                     tv_update_watch_status.text = "下载完成"
-                }else {
+                } else {
                     tv_update_watch_status.text = "已下载数据  ${progress}%"
                 }
                 progesss_watch.progress = progress
@@ -149,9 +145,9 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
-                if(progress ==100) {
+                if (currentByte == totalByte) {
                     tv_update_app_status.text = "下载完成"
-                }else {
+                } else {
                     tv_update_app_status.text = "已下载数据  ${progress}%"
                 }
                 progesss_app.progress = progress
