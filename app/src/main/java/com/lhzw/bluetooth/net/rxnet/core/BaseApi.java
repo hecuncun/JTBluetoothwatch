@@ -8,8 +8,9 @@ import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
 /**
- * @author LvQiSheng
- * @date 2019/1/30
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public interface BaseApi {
 

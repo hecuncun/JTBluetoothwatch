@@ -15,8 +15,9 @@ import okio.Okio;
 import okio.Source;
 
 /**
- * @author LvQiSheng
- * @date 2019/7/16
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public class DownloadResponseBody extends ResponseBody {
     private final ResponseBody responseBody;

@@ -5,8 +5,9 @@ import java.io.File;
 import io.reactivex.disposables.Disposable;
 
 /**
- * @author LvQiSheng
- * @date 2019/7/15
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public interface DownloadCallback {
     void onStart(Disposable d);

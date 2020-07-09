@@ -4,11 +4,12 @@ import android.util.Log;
 
 import com.lhzw.bluetooth.net.rxnet.RxNet;
 
-
 /**
- * @author LvQiSheng
- * @date 2019/6/14
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
+
 public class LogUtils {
     private static final String TAG = "RxNet";
 

@@ -3,8 +3,9 @@ package com.lhzw.bluetooth.net.rxnet.utils;
 import java.io.File;
 
 /**
- * @author LvQiSheng
- * @date 2019/7/22
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public class CommonUtils {
 

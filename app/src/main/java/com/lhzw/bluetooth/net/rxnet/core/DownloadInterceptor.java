@@ -10,8 +10,9 @@ import okhttp3.Interceptor;
 import okhttp3.Response;
 
 /**
- * @author LvQiSheng
- * @date 2019/7/19
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public class DownloadInterceptor implements Interceptor {
 

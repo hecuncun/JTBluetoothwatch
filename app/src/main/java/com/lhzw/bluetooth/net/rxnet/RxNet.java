@@ -20,8 +20,9 @@ import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
 /**
- * @author LvQiSheng
- * @date 2019/5/28
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public class RxNet {
 

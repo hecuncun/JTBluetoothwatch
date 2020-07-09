@@ -24,8 +24,9 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * @author LvQiSheng
- * @date 2019/6/3
+ * Date： 2020/6/2 0002
+ * Time： 10:06
+ * Created by xtqb.
  */
 public class RetrofitFactory {
     private static final int TIME_OUT_SECNOD = 15;
