@@ -114,7 +114,11 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
-                tv_update_watch_status.text = "已下载数据  ${progress}%"
+                if(progress ==100) {
+                    tv_update_watch_status.text = "下载完成"
+                }else {
+                    tv_update_watch_status.text = "已下载数据  ${progress}%"
+                }
                 progesss_watch.progress = progress
             }
 
@@ -145,10 +149,12 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
-                tv_update_app_status.text = "已下载数据  ${progress}%"
+                if(progress ==100) {
+                    tv_update_app_status.text = "下载完成"
+                }else {
+                    tv_update_app_status.text = "已下载数据  ${progress}%"
+                }
                 progesss_app.progress = progress
-
-
             }
 
             override fun onError(msg: String?) {

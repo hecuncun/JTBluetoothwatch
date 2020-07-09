@@ -42,12 +42,7 @@ public class RxNet {
             return;
         }
 
-        DownloadListener listener = new DownloadListener() {
-            @Override
-            public void onStart(ResponseBody responseBody) {
-                saveFile(responseBody, url, filePath, callback);
-            }
-        };
+        DownloadListener listener = responseBody -> saveFile(responseBody, url, filePath, callback);
 
         RetrofitFactory.downloadFile(token, url, CommonUtils.getTempFile(url, filePath).length(), listener, new Observer<ResponseBody>() {
             @Override
@@ -128,13 +123,9 @@ public class RxNet {
     }
 
     private void callbackProgress(final long totalByte, final long downloadByte, final DownloadCallback callback) {
-        new Handler(Looper.getMainLooper()).post(new Runnable() {
-            @SuppressLint("DefaultLocale")
-            @Override
-            public void run() {
-                if (null != callback) {
-                    callback.onProgress(totalByte, downloadByte, (int) ((downloadByte * 100) / totalByte));
-                }
+        new Handler(Looper.getMainLooper()).post(() -> {
+            if (null != callback) {
+                callback.onProgress(totalByte, downloadByte, (int) ((downloadByte * 100) / totalByte));
             }
         });
     }
