@@ -56,10 +56,8 @@ class LoginActivity : AppCompatActivity() {
                     showToast("请检查登录信息是否为空！")
                     return@setOnClickListener
                 }
-                //login()
-                //todo 调试
-                http_token="test"
-                jumpToMain()
+                login()
+//                jumpToMain()
             }
         }
     }

@@ -15,6 +15,7 @@ import com.lhzw.bluetooth.service.BlutoothService
 import com.lhzw.bluetooth.service.SmsAndPhoneService
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LogCatStrategy
+import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import com.orhanobut.logger.PrettyFormatStrategy
@@ -40,6 +41,8 @@ class App : MultiDexApplication() {
 
     private var refWatcher: RefWatcher? = null
 
+    private var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
+
     companion object {
 
         private val TAG = "App"
@@ -49,7 +52,7 @@ class App : MultiDexApplication() {
         var context: Context by Delegates.notNull()
             private set//  对于属性context，如果你想改变访问的可见性，但是又不想改变它的默认实现，那么你就可以定义set和get但不进行实现。
 
-        lateinit var instance: Application
+        lateinit var instance: App
 
         fun getRefWatcher(context: Context): RefWatcher? {
             val app = context.applicationContext as App
@@ -64,6 +67,8 @@ class App : MultiDexApplication() {
             this.activityContext = activityContext
         }
     }
+
+    fun getToken() = http_token
 
     override fun onCreate() {
         super.onCreate()

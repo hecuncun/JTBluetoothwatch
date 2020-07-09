@@ -1,6 +1,8 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.os.Handler
+import android.os.Message
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -13,9 +15,15 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseUpdateActivity
 import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.event.DownLoadEvent
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
+import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback
+import com.lhzw.bluetooth.net.rxnet.utils.LogUtils
 import com.lhzw.bluetooth.widget.LoadingView
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_update_func_list.*
+import java.io.File
 
 /**
  * Date： 2020/6/18 0018
@@ -38,7 +46,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
     override fun initData() {
-        RxBus.getInstance().register(this)
         // 初始化界面
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
@@ -70,21 +77,17 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     private fun downloadUpdate() {
-        if (!connectState) {
-            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
-            return
-        }
+//        if (!connectState) {
+//            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
+//            return
+//        }
 
         when (update_type) {
             UPDATE_WATCH -> {
-                updateWatch()
+                wirelessSend()
             }
             DOWNLOAD_FIRM -> {
-                state = DOWNLOADING
-                tv_update_watch.isEnabled = false
-                tv_update_watch.setTextColor(getColor(R.color.gray))
-                tv_update_watch_status.text = "下载数据中..."
-                startProgress1()
+                downloadDfu()
             }
         }
     }
@@ -92,12 +95,39 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     /**
      * 腕表版本校验  判断是否升级
      */
-    private fun updateWatch() {
+    private fun wirelessSend() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
         showLoadingView("进行数据解压中...")
         RxBus.getInstance().post("reconnet", "")
         Log.e("UPDATEWATCH", "updateWatch ---------  ++++")
+    }
+
+    private fun downloadDfu() {
+        state = DOWNLOADING
+        tv_update_watch.isEnabled = false
+        tv_update_watch.setTextColor(getColor(R.color.gray))
+        tv_update_watch_status.text = "准备下载数据..."
+        mPresenter?.downloadDfu(object : DownloadCallback {
+            override fun onFinish(file: File?) {
+                LogUtils.d("onFinish " + file!!.absolutePath)
+                tv_update_watch_status.text = "下载完成"
+                Toast.makeText(this@UpdateFuncActivity, "下载完成", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
+                tv_update_watch_status.text = "已下载数据  ${progress}%"
+                progesss_watch.progress = progress
+            }
+
+            override fun onError(msg: String?) {
+                LogUtils.d("onError $msg")
+            }
+
+            override fun onStart(msg: Disposable?) {
+
+            }
+        })
     }
 
     /**
@@ -107,16 +137,33 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private fun updateApk() {
         state = DOWNLOADING
         tv_update_app.setTextColor(getColor(R.color.gray))
-        tv_update_app_status.text = "下载数据中..."
+        tv_update_app_status.text = "准备下载数据..."
         tv_update_app.isEnabled = false
-        startProgress()
+        mPresenter?.downloadApk(object : DownloadCallback {
+            override fun onFinish(file: File?) {
+                LogUtils.d("onFinish " + file!!.absolutePath)
+                tv_update_app_status.text = "下载完成"
+                Toast.makeText(this@UpdateFuncActivity, "下载完成", Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
+                tv_update_app_status.text = "已下载数据  ${progress}%"
+                progesss_app.progress = progress
+
+
+            }
+
+            override fun onError(msg: String?) {
+                LogUtils.d("onError $msg")
+            }
+
+            override fun onStart(msg: Disposable?) {
+
+            }
+        })
     }
 
     override fun initListener() {
-//        startProgress()
-
-//        startProgress1()
-
         im_back.setOnClickListener {
             if (!interceptFinish()) {
                 this.finish()
@@ -140,6 +187,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }
     }
 
+    /*
     fun startProgress() {
         progesss_app.max = 100
         progesss_app.progress = 0
@@ -166,7 +214,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
         }.start()
     }
-
+    */
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdateprogress")])
     fun onUpdateProgress(progress: String) {
         val value = progress.toInt()
@@ -185,7 +233,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        RxBus.getInstance().unregister(this)
         loadingView?.let {
             if (it.isShowing) {
                 it.dismiss()
@@ -224,7 +271,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
         if (apolloState || bleState) {
             tv_update_watch_status.visibility = View.VISIBLE
-            tv_update_watch_status.text = "准备下载数据"
+            tv_update_watch_status.text = "等待下载"
             tv_watch_update_date.visibility = View.GONE
             progesss_watch.visibility = View.VISIBLE
             tv_update_watch.visibility = View.VISIBLE
@@ -249,6 +296,61 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             tv_watch_update_date.text = firm_update_time
         }
 
+    }
+
+    fun publishApkProgress(event: DownLoadEvent) {
+        when (event.progress) {
+            0 -> {
+                tv_update_app_status.text = "开始下载数据..."
+                progesss_app.max = event.total
+            }
+            event.total -> {
+                runOnUiThread {
+                    tv_update_app_status.text = "下载完成"
+                }
+                // 安装
+
+            }
+            else -> {
+                progesss_app.max = event.total
+                progesss_app.progress = event.progress
+            }
+        }
+    }
+
+    fun publishFirmProgress(event: DownLoadEvent) {
+        when (event.progress) {
+            0 -> {
+                tv_update_watch_status.text = "开始下载数据..."
+                progesss_watch.max = event.total
+            }
+            event.total -> {
+                runOnUiThread {
+                    tv_update_watch_status.text = "下载完成"
+                }
+                // 空口传输
+
+            }
+            else -> {
+                progesss_watch.max = event.total
+                progesss_watch.progress = event.progress
+            }
+        }
+    }
+
+    private val mHandler = object : Handler() {
+        override fun handleMessage(msg: Message?) {
+            when (msg?.what) {
+                Constants.DOWNLOAD_APK -> {
+                    val event = msg.obj as DownLoadEvent
+                    publishApkProgress(event)
+                }
+                Constants.DOWNLOAD_DFU -> {
+                    val event = msg.obj as DownLoadEvent
+                    publishFirmProgress(event)
+                }
+            }
+        }
     }
 
 

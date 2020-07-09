@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.net.ApkBean
+import com.lhzw.bluetooth.uitls.Preference
 
 /**
  *
@@ -137,4 +138,7 @@ object Constants {
 
     // 当前腕表类型 暂时
     const val WATCH_TYPE = "sw2500"
+
+    const val DOWNLOAD_APK = 0
+    const val DOWNLOAD_DFU = 5
 }

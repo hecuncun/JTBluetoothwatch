@@ -3,17 +3,25 @@ package com.lhzw.bluetooth.mvp.presenter
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.os.Environment
+import android.os.Handler
+import android.os.Message
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.net.ApkBean
 import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.event.DownLoadEvent
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.model.UpdateModel
+import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback
 import com.lhzw.bluetooth.uitls.BaseUtils
-import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
+import okhttp3.ResponseBody
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 
 /**
  * Date： 2020/7/6 0006
@@ -24,8 +32,19 @@ import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContract.IPresenter {
     private var mModel: UpdateContract.IModel? = null
     private val TAG = "MainUpdatePresenter"
-    private var firm: FirmBean? = null
+    private var dfu: FirmBean? = null
     private var apk: ApkBean? = null
+
+    // apk 文件路径
+    private val APK_PATH by lazy {
+        Environment.getExternalStorageDirectory().toString() + "/apk_file/apk-release.apk"
+    }
+
+    // apk 文件路径
+    private val DFU_PATH by lazy {
+        Environment.getExternalStorageDirectory().toString() + "/dfu_file/dfu.zip"
+    }
+
     override fun checkUpdate(mContext: Context) {
         // 腕表信息
         val watchInfo = mModel?.queryWatchData()
@@ -36,20 +55,20 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                     Log.e(TAG, "${it.getApolloAppVersion()}  ${it.getBleAppVersion()}")
                     var isApolloUpdate = false
                     var isBleUpdate = false
-                    firm = null
+                    dfu = null
                     if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION) {
                         // 说明有新的更新 暂时不支持退版本，仅支持升级
                         isApolloUpdate = true
-                        firm = it
+                        dfu = it
                     }
 
                     if (it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
                         isBleUpdate = true
-                        firm = it
+                        dfu = it
                     }
                     var apolloVersion = ""
                     var bleVersion = ""
-                    if (firm == null) {
+                    if (dfu == null) {
                         apolloVersion = BaseUtils.apolloOrBleToVersion(watchInfo[0].APOLLO_APP_VERSION)
                         bleVersion = BaseUtils.apolloOrBleToVersion(watchInfo[0].BLE_APP_VERSION)
                     } else {
@@ -120,7 +139,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         mModel?.onDettach()
         mModel = null
         apk = null
-        firm = null
+        dfu = null
     }
 
     override fun initWatchUI() {
@@ -133,4 +152,94 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
             mView?.initWatchUI("", "")
         }
     }
+
+    override fun downloadApk(listener: DownloadCallback) {
+        /*
+        Log.e(TAG, "下载apk...")
+        Log.e("downloadApk", "----------------------------------------------------1")
+        apk?.let { bean ->
+            Log.e("downloadApk", "----------------------------------------------------2")
+            mModel?.downloadApk(bean.getAttachmentId()) { response ->
+                Log.e("downloadApk", "----------------------------------------------------3")
+                response?.let {
+                    Log.e("downloadApk", "----------------------------------------------------4")
+                    writeFile(it.body()!!, File(getApkPaht()), mHandler, Constants.DOWNLOAD_APK)
+                }
+            }
+        }
+         */
+        mModel?.dowloadFile("attachments/apks/${apk?.getAttachmentId()}", getApkPaht(), listener)
+    }
+
+    override fun downloadDfu(listener: DownloadCallback) {
+        Log.e(TAG, "下载firm...")
+        /*
+        dfu?.let { bean ->
+            mModel?.downloadDfu(bean.getAttachmentId()) { response ->
+                response?.let {
+                    writeFile(it.body()!!, File(getDfuPaht()), mHandler, Constants.DOWNLOAD_DFU)
+                }
+            }
+        }
+         */
+        mModel?.dowloadFile("attachments/firms/${dfu?.getAttachmentId()}", getDfuPaht(), listener)
+    }
+
+    /**
+     * 将输入流写入文件
+     * @param inputString
+     * @param file
+     */
+    private fun writeFile(response: ResponseBody, file: File, mHandler: Handler, downloadType: Int) {
+        var inputStream: InputStream? = null
+        var outputStream: FileOutputStream? = null
+        try {
+            //文件大小
+            val contentLength = response.contentLength()
+            //读取文件
+            inputStream = response.byteStream()
+
+            if (file.exists()) {
+                file.delete()
+            }
+            if (!file.parentFile.exists()) {
+                file.parentFile.mkdirs();
+            }
+            //创建一个文件夹
+            outputStream = FileOutputStream(file)
+            val bytes = ByteArray(1024)
+            var len = 0
+            var progress = 0
+            val event = DownLoadEvent(contentLength.toInt(), progress)
+            val msg = Message()
+            msg.what = downloadType
+            msg.obj = event
+            mHandler.sendMessage(msg)
+            //循环读取文件的内容，把他放到新的文件目录里面
+            while (inputStream.read(bytes).also { len = it } != -1) {
+                outputStream.write(bytes, 0, len)
+                val length: Long = file.length()
+                //获取下载的大小，并把它传给页面
+                progress += len
+                val event = DownLoadEvent(contentLength.toInt(), progress)
+                val msg = Message()
+                msg.what = downloadType
+                msg.obj = event
+                mHandler.sendMessage(msg)
+                Thread.sleep(if(downloadType == Constants.DOWNLOAD_APK) 1 else 5)
+            }
+//         //当下载完成后，利用粘性发送，并安装
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            outputStream?.flush()
+            outputStream?.close()
+            inputStream?.close()
+        }
+
+    }
+
+    override fun getApkPaht() = APK_PATH
+    override fun getDfuPaht() = DFU_PATH
+
 }

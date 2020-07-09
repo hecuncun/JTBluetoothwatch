@@ -70,25 +70,27 @@ class SLMRetrofit {
                 .retryOnConnectionFailure(true) //失败后，是否重新连接，
                 //启用Log日志
                 .addInterceptor(loggingInterceptor) //添加拦截器  拦截器拿到了request之后，可以对request进行重写，可以添加，移除，替换请求头，也能对response的header进行重写，改变response的body
-                .addInterceptor(object : Interceptor {
-                    @Throws(IOException::class)
-                    override fun intercept(chain: Interceptor.Chain): Response? {
-//                        CacheControl.Builder builder = new CacheControl.Builder().maxAge(10, TimeUnit.MINUTES);
-                        val request: Request = chain.request()
-                                .newBuilder() //                                .header("Cache-Control", builder.build().toString())
-                                //                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
-                                .addHeader("Content-Type", "application/json; charset=UTF-8") //                                .addHeader("Accept-Encoding", "gzip, deflate")
-                                //                                .addHeader("Accept-Encoding", "gzip,sdch")
-                                .addHeader("Connection", "keep-alive")
-                                .addHeader("Accept", "*/*")
-                                .addHeader("x-access-token", http_token) // .addHeader("Cookie", cookie)
-                                //.addHeader("Authorization","APPCODE " + Constant.OCR_APP_CODE)
-                                .build()
-                        return chain.proceed(request)
-                    }
-                })
+                .addInterceptor { chain -> //                        CacheControl.Builder builder = new CacheControl.Builder().maxAge(10, TimeUnit.MINUTES);
+                    val request: Request = chain.request()
+                            .newBuilder() //                                .header("Cache-Control", builder.build().toString())
+                            //                                .addHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8")
+                            .addHeader("Content-Type", "application/json; charset=UTF-8") //                                .addHeader("Accept-Encoding", "gzip, deflate")
+                            //                                .addHeader("Accept-Encoding", "gzip,sdch")
+                            .addHeader("Connection", "keep-alive")
+                            .addHeader("Accept", "*/*")
+                            .addHeader("x-access-token", http_token) // .addHeader("Cookie", cookie)
+                            //.addHeader("Authorization","APPCODE " + Constant.OCR_APP_CODE)
+                            .build()
+                    chain.proceed(request)
+                }
                 .build()
     }
+
+    /**
+
+
+
+     */
 
     private val mService: SLMRetrofit by lazy {
         SLMRetrofit()

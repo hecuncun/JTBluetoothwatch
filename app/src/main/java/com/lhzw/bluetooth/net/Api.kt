@@ -6,6 +6,7 @@ import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.bean.net.UserInfo
 import io.reactivex.Observable;
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -32,8 +33,8 @@ interface Api {
     /**
      * apk 下载
      */
-    @GET("attachments/apks/{id:\\d+}")
-    fun downloadApk(@Path("id") id: Long): Observable<ResponseBody>
+    @GET("attachments/apks/{id}")
+    fun downloadApk(@Path("id") id: Long): Observable<Response<ResponseBody>>
 
     /**
      * 获取最新腕表固件
@@ -44,6 +45,6 @@ interface Api {
     /**
      * 腕表固件 下载
      */
-    @GET("attachments/firms/{id:\\d+}")
-    fun downloadFirm(@Path("id") id: Long): Observable<ResponseBody>
+    @GET("attachments/firms/{id}")
+    fun downloadDfu(@Path("id") id: Long): Observable<Response<ResponseBody>>
 }

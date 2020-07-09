@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.base
 
+import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
@@ -25,8 +26,8 @@ abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : Ba
             it.attachView(this)
             it?.onAttach()
         }
+        RxBus.getInstance().register(this)
     }
-
 
     protected fun showLoadingView(note: String) {
         if (loadingView == null) {
@@ -58,6 +59,7 @@ abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : Ba
             it.detachView()
             mPresenter = null
         }
+        RxBus.getInstance().unregister(this)
     }
 
     abstract fun getMainPresent(): T?
