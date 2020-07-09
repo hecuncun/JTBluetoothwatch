@@ -20,6 +20,7 @@ import io.reactivex.disposables.Disposable;
 import okhttp3.ResponseBody;
 
 /**
+ *  支持断点续传
  * Date： 2020/6/2 0002
  * Time： 10:06
  * Created by xtqb.
@@ -87,18 +88,14 @@ public class RxNet {
 
         if (downloadSuccss) {
             final boolean renameSuccess = tempFile.renameTo(new File(filePath));
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    if (null != callback && renameSuccess) {
-                        callback.onFinish(new File(filePath));
-                    }
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (null != callback && renameSuccess) {
+                    callback.onFinish(new File(filePath));
                 }
             });
         }
     }
 
-    @SuppressLint("DefaultLocale")
     private void writeFileToDisk(ResponseBody responseBody, String filePath, final DownloadCallback callback) throws IOException {
         long totalByte = responseBody.contentLength();
         long downloadByte = 0;
