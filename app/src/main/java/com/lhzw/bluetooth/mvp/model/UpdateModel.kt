@@ -1,5 +1,10 @@
 package com.lhzw.bluetooth.mvp.model
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.support.v4.content.FileProvider
 import android.util.Log
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.WatchInfoBean
@@ -20,6 +25,7 @@ import io.reactivex.disposables.Disposable
 import okhttp3.ResponseBody
 import retrofit2.Response
 import java.io.File
+
 
 /**
  * Date： 2020/7/6 0006
@@ -128,5 +134,26 @@ class UpdateModel : UpdateContract.IModel {
             file.delete()
         }
         RxNet().download(App.instance.getToken(), url, path, listener)
+    }
+
+    /**
+     * 安装apk,私有目录
+     * @param mContext
+     * @param filePath
+     */
+    override fun installApk(mContext: Context, filePath: String?) {
+        val apkFile = File(filePath)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Log.e(UpdateModel::class.java.simpleName, "版本大于 N ，开始使用 fileProvider 进行安装")
+            intent.flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            val contentUri = FileProvider.getUriForFile(mContext
+                    , "com.lhzw.bluetooth.fileprovider", apkFile)
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive")
+        } else {
+            intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive")
+        }
+        mContext.startActivity(intent)
     }
 }

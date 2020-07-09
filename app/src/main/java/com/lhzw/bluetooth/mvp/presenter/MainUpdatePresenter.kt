@@ -1,11 +1,13 @@
 package com.lhzw.bluetooth.mvp.presenter
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Message
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
@@ -40,7 +42,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         Environment.getExternalStorageDirectory().toString() + "/apk_file/apk-release.apk"
     }
 
-    // apk 文件路径
+    // dfu 文件路径
     private val DFU_PATH by lazy {
         Environment.getExternalStorageDirectory().toString() + "/dfu_file/dfu.zip"
     }
@@ -154,8 +156,8 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
     }
 
     override fun downloadApk(listener: DownloadCallback) {
-        /*
         Log.e(TAG, "下载apk...")
+        /*
         Log.e("downloadApk", "----------------------------------------------------1")
         apk?.let { bean ->
             Log.e("downloadApk", "----------------------------------------------------2")
@@ -226,7 +228,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                 msg.what = downloadType
                 msg.obj = event
                 mHandler.sendMessage(msg)
-                Thread.sleep(if(downloadType == Constants.DOWNLOAD_APK) 1 else 5)
+                Thread.sleep(if (downloadType == Constants.DOWNLOAD_APK) 1 else 5)
             }
 //         //当下载完成后，利用粘性发送，并安装
         } catch (e: Exception) {
@@ -242,4 +244,29 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
     override fun getApkPaht() = APK_PATH
     override fun getDfuPaht() = DFU_PATH
 
+    /**
+     * 兼容8.0的安装apk
+     * @param mContext
+     */
+    override fun installApk(mContext: Context) {
+        val filePath = File(getApkPaht())
+        if (!filePath.exists()) {
+            Toast.makeText(mContext, "安装文件不存在", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (Build.VERSION.SDK_INT >= 26) {
+            val b = mContext.packageManager.canRequestPackageInstalls()
+            if (b) {
+                mModel?.installApk(mContext, getApkPaht())
+                //安装应用的逻辑(写自己的就可以)
+            } else {
+                //设置安装未知应用来源的权限
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                mContext.startActivity(intent)
+            }
+        } else {
+            mModel?.installApk(mContext, getApkPaht())
+        }
+    }
 }

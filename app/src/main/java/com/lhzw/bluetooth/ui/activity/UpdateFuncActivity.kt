@@ -56,12 +56,18 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
 
     private fun checkPermission() {
-        if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET))) {
+        if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.REQUEST_INSTALL_PACKAGES))) {
             Log.e(TAG, "已获取存储网络权限")
             checkVersion()
         } else {
             Log.e(TAG, "请求存储网络权限")
-            requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET), PERMISS_REQUEST_CODE)
+            requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE)
         }
     }
 
@@ -147,6 +153,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
                 if (currentByte == totalByte) {
                     tv_update_app_status.text = "下载完成"
+                    mPresenter?.installApk(this@UpdateFuncActivity)
                 } else {
                     tv_update_app_status.text = "已下载数据  ${progress}%"
                 }
