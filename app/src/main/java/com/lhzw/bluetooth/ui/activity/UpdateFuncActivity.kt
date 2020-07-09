@@ -57,10 +57,10 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     private fun checkPermission() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET))) {
-            Log.e(TAG, "已获取存储权限")
+            Log.e(TAG, "已获取存储网络权限")
             checkVersion()
         } else {
-            Log.e(TAG, "请求存储权限")
+            Log.e(TAG, "请求存储网络权限")
             requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.INTERNET), PERMISS_REQUEST_CODE)
         }
     }
@@ -71,10 +71,10 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     private fun downloadUpdate() {
-//        if (!connectState) {
-//            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
-//            return
-//        }
+        if (!connectState) {
+            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         when (update_type) {
             UPDATE_WATCH -> {
@@ -187,34 +187,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }
     }
 
-    /*
-    fun startProgress() {
-        progesss_app.max = 100
-        progesss_app.progress = 0
-        var counter = 0
-        Thread {
-            while (counter < 101) {
-                counter++
-                progesss_app.progress = counter
-                Thread.sleep(50)
-            }
-        }.start()
-    }
-
-
-    fun startProgress1() {
-        progesss_watch.max = 100
-        progesss_watch.progress = 0
-        var counter = 0
-        Thread {
-            while (counter < 101) {
-                counter++
-                progesss_watch.progress = counter
-                Thread.sleep(50)
-            }
-        }.start()
-    }
-    */
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdateprogress")])
     fun onUpdateProgress(progress: String) {
         val value = progress.toInt()
