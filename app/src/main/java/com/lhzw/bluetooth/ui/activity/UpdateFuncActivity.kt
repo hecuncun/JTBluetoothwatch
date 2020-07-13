@@ -118,6 +118,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
                 if (currentByte == totalByte) {
                     tv_update_watch_status.text = "下载完成"
+                    wirelessSend()
                 } else {
                     tv_update_watch_status.text = "已下载数据  ${progress}%"
                 }

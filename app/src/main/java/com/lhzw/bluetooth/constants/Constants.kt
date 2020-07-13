@@ -3,8 +3,6 @@ package com.lhzw.bluetooth.constants
 import android.graphics.Color
 import android.graphics.Typeface
 import com.lhzw.bluetooth.application.App
-import com.lhzw.bluetooth.bean.net.ApkBean
-import com.lhzw.bluetooth.uitls.Preference
 
 /**
  *
@@ -17,7 +15,7 @@ import com.lhzw.bluetooth.uitls.Preference
 object Constants {
     const val PHOTO_PATH = "photo_path"
     const val IVBACKGROUND = "iv_background"
-    
+
     const val APK_UPDATE_TIME = "apk_update_time"
     const val FIRM_UPDATE_TIME = "firm_update_time"
 
@@ -126,7 +124,8 @@ object Constants {
     val font_futurn_num = Typeface.createFromAsset(App.context.assets, "fonts/futurn_num.ttf")
     val font_normal = Typeface.createFromAsset(App.context.assets, "fonts/fuji_normal.ttf")
 
-    const val IP_ADD = "http://192.168.1.223:8084/"
+//    const val IP_ADD = "http://192.168.1.223:8084/"
+    const val IP_ADD = "http://49.235.154.43:8084/"
     const val HTTP_TOOKEN = "x-access-token"
     const val FIREST_LOGIN = "FIREST_LOGIN"
 

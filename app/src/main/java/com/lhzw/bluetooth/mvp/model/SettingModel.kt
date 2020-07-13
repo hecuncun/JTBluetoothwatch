@@ -38,7 +38,11 @@ class SettingModel : BaseModel(), SettingContract.Model {
                     if (it.isSuccessed()) {
                         val beans = it.getData()
                         beans?.let {
-                            body(beans[0])
+                            if (beans.size > 0) {
+                                body(beans[0])
+                            } else {
+                                body(null)
+                            }
                         }
                     }
                 }
@@ -58,7 +62,11 @@ class SettingModel : BaseModel(), SettingContract.Model {
                     if (it.isSuccessed()) {
                         val beans = it.getData()
                         beans?.let {
-                            body(beans[0])
+                            if (beans.size > 0) {
+                                body(beans[0])
+                            } else {
+                                body(null)
+                            }
                         }
                     }
                 }
