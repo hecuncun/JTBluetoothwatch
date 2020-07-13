@@ -31,6 +31,7 @@ import java.io.File
  * Date： 2020/7/6 0006
  * Time： 15:09
  * Created by xtqb.
+ *
  */
 class UpdateModel : UpdateContract.IModel {
     override fun onDettach() {
