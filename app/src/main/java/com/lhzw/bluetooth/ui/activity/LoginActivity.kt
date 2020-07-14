@@ -39,7 +39,7 @@ class LoginActivity : AppCompatActivity() {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
         setContentView(R.layout.activity_login)
 
-        if (!"".equals(http_token)) {
+        if ("" != http_token) {
             jumpToMain()
         } else {
             requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT//使activity都竖屏

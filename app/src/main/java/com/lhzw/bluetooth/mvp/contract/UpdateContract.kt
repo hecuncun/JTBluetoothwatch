@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.mvp.contract
 
+import android.app.Activity
 import android.content.Context
 import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.bean.WatchInfoBean
@@ -30,7 +31,9 @@ interface UpdateContract {
 
         fun dowloadFile(url: String, path: String, listener: DownloadCallback)
 
-        fun installApk(mContext: Context, filePath: String?)
+        fun installApk(mContext: Activity, filePath: String?)
+
+        fun startInstallPermissionSettingActivity(mContext: Activity)
     }
 
     interface IView : BaseIView {
@@ -48,6 +51,6 @@ interface UpdateContract {
         fun downloadDfu(listener: DownloadCallback)
         fun getApkPaht(): String
         fun getDfuPaht(): String
-        fun installApk(mContext: Context)
+        fun installApk(mContext: Activity)
     }
 }

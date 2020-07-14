@@ -5,8 +5,11 @@
       <w>dowload</w>
       <w>fileprovider</w>
       <w>lhzw</w>
+      <w>onupdateprogress</w>
+      <w>onupdatestatus</w>
       <w>paht</w>
       <w>reconnet</w>
+      <w>updatewatch</w>
     </words>
   </dictionary>
 </component>

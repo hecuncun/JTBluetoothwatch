@@ -1,9 +1,12 @@
 package com.lhzw.bluetooth.mvp.model
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
+import android.provider.Settings
+import android.support.annotation.RequiresApi
 import android.support.v4.content.FileProvider
 import android.util.Log
 import com.lhzw.bluetooth.application.App
@@ -150,7 +153,7 @@ class UpdateModel : UpdateContract.IModel {
      * @param mContext
      * @param filePath
      */
-    override fun installApk(mContext: Context, filePath: String?) {
+    override fun installApk(mContext: Activity, filePath: String?) {
         val apkFile = File(filePath)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
@@ -163,6 +166,16 @@ class UpdateModel : UpdateContract.IModel {
         } else {
             intent.setDataAndType(Uri.fromFile(apkFile), "application/vnd.android.package-archive")
         }
-        mContext.startActivity(intent)
+        mContext.startActivityForResult(intent, 0x6666)
+    }
+
+    /**
+     * 跳转到设置-允许安装未知来源-页面
+     */
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    override fun startInstallPermissionSettingActivity(mContext: Activity) {
+        //后面跟上包名，可以直接跳转到对应APP的未知来源权限设置界面。使用startActivityForResult 是为了在关闭设置界面之后，获取用户的操作结果，然后根据结果做其他处理
+        val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + mContext.packageName))
+        mContext.startActivityForResult(intent, 0x5555)
     }
 }

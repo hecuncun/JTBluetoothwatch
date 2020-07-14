@@ -1,6 +1,8 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -35,6 +37,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private var update_type = DOWNLOAD_FIRM
     private var loadingView: LoadingView? = null
     private val DOWNLOADING = 0
+    private val COMPLETE = 3
     private val UPDATEFIRM = 1
     private val FREE = 2
     private var state = FREE
@@ -155,6 +158,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 if (currentByte == totalByte) {
                     tv_update_app_status.text = "下载完成"
                     mPresenter?.installApk(this@UpdateFuncActivity)
+                    state = COMPLETE
                 } else {
                     tv_update_app_status.text = "已下载数据  ${progress}%"
                 }
@@ -179,12 +183,39 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }
 
         tv_update_app.setOnClickListener {
-            updateApk()
+            if (state == COMPLETE) {
+                mPresenter?.installApk(this)
+                return@setOnClickListener
+            }
+            //updateApk()
         }
 
         tv_update_watch.setOnClickListener {
-            downloadUpdate()
+//            downloadUpdate()
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == 0x5555) {
+                mPresenter?.installApk(this)
+                state == FREE
+                return
+            }
+        } else if (resultCode == RESULT_CANCELED) {
+            if (requestCode == 0x6666 || requestCode == 0x5555) {
+                if (state == COMPLETE) {
+                    val file = File(mPresenter?.getApkPaht())
+                    if (file.exists()) {
+                        tv_update_app.setTextColor(getColor(R.color.yellow))
+                        tv_update_app.isEnabled = true
+                        tv_update_app.text = "安装"
+                    }
+                    return
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
@@ -200,6 +231,12 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         val value = progress.toInt()
         if (value > 0) {
             cancelLoadingView()
+        } else if (value == 1) {
+            if (tv_update_app.text == "安装") {
+                state = COMPLETE
+            } else {
+                state = FREE
+            }
         }
         progesss_watch.progress = value
         Log.e("UPDATEWATCH", "onUpdateProgress ---------  ++++")
@@ -293,6 +330,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             Toast.makeText(this, "正在升级腕表固件", Toast.LENGTH_SHORT).show()
             return true
         } else if (state == FREE) {
+            return false
+        } else if (state == COMPLETE) {
             return false
         }
         return false

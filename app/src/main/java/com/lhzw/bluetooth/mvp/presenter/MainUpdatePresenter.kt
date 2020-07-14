@@ -1,13 +1,12 @@
 package com.lhzw.bluetooth.mvp.presenter
 
+import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import android.os.Handler
 import android.os.Message
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
@@ -24,6 +23,7 @@ import okhttp3.ResponseBody
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
+
 
 /**
  * Date： 2020/7/6 0006
@@ -248,7 +248,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
      * 兼容8.0的安装apk
      * @param mContext
      */
-    override fun installApk(mContext: Context) {
+    override fun installApk(mContext: Activity) {
         val filePath = File(getApkPaht())
         if (!filePath.exists()) {
             Toast.makeText(mContext, "安装文件不存在", Toast.LENGTH_SHORT).show()
@@ -261,9 +261,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                 //安装应用的逻辑(写自己的就可以)
             } else {
                 //设置安装未知应用来源的权限
-                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                mContext.startActivity(intent)
+                mModel?.startInstallPermissionSettingActivity(mContext)
             }
         } else {
             mModel?.installApk(mContext, getApkPaht())
