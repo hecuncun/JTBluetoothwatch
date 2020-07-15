@@ -1,6 +1,9 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
@@ -93,7 +96,17 @@ class BLEWatchListActivity : BaseActivity() {
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         loadingView = LoadingView(this)
         drawable = progress_iv.background as ClipDrawable
-        //initProgress()
+
+        initViewAnimator()
+
+    }
+    private var animatorWatch:ObjectAnimator?=null//手表渐现动画
+    private fun initViewAnimator() {
+        val holder1 = PropertyValuesHolder.ofFloat("scaleX", 0f,1f)
+        val holder2 = PropertyValuesHolder.ofFloat("scaleY", 0f,1f)
+        val holder3 = PropertyValuesHolder.ofFloat("alpha", 0f,1f)
+        animatorWatch  = ObjectAnimator.ofPropertyValuesHolder(iv_simple, holder1, holder2, holder3)
+        animatorWatch?.duration=3000
     }
 
     private fun initConnectState() {
@@ -191,6 +204,14 @@ class BLEWatchListActivity : BaseActivity() {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (connectState){
+            animatorWatch?.start()
+
+        }
+    }
+
     private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
         if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
             val intent = Intent(this, ScanQRCodeActivity::class.java)
@@ -226,7 +247,7 @@ class BLEWatchListActivity : BaseActivity() {
                 //showToast("扫描结果为$result")
                 Logger.e("result=$result")
                 //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
-                if (result!!.split(",")[0] == "SW2500") {//如果为手表设备,扫码成功就保存设备
+                if (result!!.split(",")[0].contains( "SW")) {//如果为手表设备,扫码成功就保存设备
                     lastDeviceMacAddress = result.split(",")[2]
                     connectedDeviceName = result.split(",")[1]
                     autoConnect = false //扫码成功就不自动连接,等连接成功后再设置为自动成功
@@ -236,7 +257,7 @@ class BLEWatchListActivity : BaseActivity() {
                     EventBus.getDefault().post(ScanBleEvent())
                     Logger.e("发送开始扫描的EventBus")
                 } else {
-                    showToast("请扫描SW2500腕表")
+                    showToast("请扫描SW腕表")
                 }
 
             } else {

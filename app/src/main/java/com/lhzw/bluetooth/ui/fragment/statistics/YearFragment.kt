@@ -94,8 +94,8 @@ class YearFragment:BaseFragment() {
 
             }
            activity?.runOnUiThread {
-                tv_step_num.text = yearStepTotal.toInt().toString()
-                tv_cal_num.text = yearCalTotal.toInt().toString()
+                tv_step_num?.text = yearStepTotal.toInt().toString()
+                tv_cal_num?.text = yearCalTotal.toInt().toString()
                 initBarData(bar_step, stepValues, resources.getColor(R.color.green_path), resources.getColor(R.color.green_33CC99))
                 initBarData(bar_cal, calValues, resources.getColor(R.color.color_pink_FF00FF), resources.getColor(R.color.color_pink_FF0099))
             }
@@ -237,9 +237,9 @@ class YearFragment:BaseFragment() {
 
     }
 
-    private fun initBarData(barChat: BarChart, values: ArrayList<BarEntry>, startColor: Int, endColor: Int) {
+    private fun initBarData(barChat: BarChart?, values: ArrayList<BarEntry>, startColor: Int, endColor: Int) {
         val set1: BarDataSet?
-        if (barChat.data != null && barChat.data.dataSetCount > 0) {
+        if (barChat?.data != null && barChat.data!!.dataSetCount > 0) {
             set1 = barChat.data.getDataSetByIndex(0) as BarDataSet
             set1.values = values
             barChat.notifyDataSetChanged()
@@ -258,9 +258,9 @@ class YearFragment:BaseFragment() {
             dataSets.add(set1)
             val data = BarData(dataSets)
             data.barWidth = 0.5f
-            barChat.data = data
-            barChat.setFitBars(true) // 在bar开头结尾两边添加一般bar宽的留白
+            barChat?.data = data
+            barChat?.setFitBars(true) // 在bar开头结尾两边添加一般bar宽的留白
         }
-        barChat.invalidate()
+        barChat?.invalidate()
     }
 }

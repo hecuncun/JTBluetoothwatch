@@ -29,6 +29,7 @@ import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.MineFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
+import com.lhzw.bluetooth.uitls.KeepLiveUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
@@ -115,6 +116,14 @@ class MainActivity : BaseActivity(), View.OnClickListener {
 //        val pm =  getSystemService(Context.POWER_SERVICE) as PowerManager;
 //         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
 //         wakeLock?.acquire()
+        //白名单
+        if (KeepLiveUtil().isIgnoringBatteryOptimizations()){
+             Logger.e("已在白名单")
+        }else{
+            Logger.e("不在白名单")
+            KeepLiveUtil().requestIgnoreBatteryOptimizations()
+        }
+
     }
 
     private var wakeLock: PowerManager.WakeLock? = null
