@@ -58,7 +58,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                     var isApolloUpdate = false
                     var isBleUpdate = false
                     dfu = null
-                    if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION) {
+                    if (it.getApolloAppVersion() > watchInfo[0].APOLLO_APP_VERSION) {
                         // 说明有新的更新 暂时不支持退版本，仅支持升级
                         isApolloUpdate = true
                         dfu = it

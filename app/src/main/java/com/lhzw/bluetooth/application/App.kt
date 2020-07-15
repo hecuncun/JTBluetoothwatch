@@ -49,6 +49,8 @@ class App : MultiDexApplication() {
 
         private var activityContext : Activity? = null
 
+        private var isSynState = false
+
         var context: Context by Delegates.notNull()
             private set//  对于属性context，如果你想改变访问的可见性，但是又不想改变它的默认实现，那么你就可以定义set和get但不进行实现。
 
@@ -66,6 +68,12 @@ class App : MultiDexApplication() {
         fun setActivityContext(activityContext : Activity?){
             this.activityContext = activityContext
         }
+
+        fun setSynState(state:Boolean){
+            isSynState = state
+        }
+
+        fun isSynState() = isSynState
     }
 
     fun getToken() = http_token

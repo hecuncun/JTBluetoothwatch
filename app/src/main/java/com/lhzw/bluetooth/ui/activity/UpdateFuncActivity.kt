@@ -15,6 +15,7 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseUpdateActivity
 import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback
 import com.lhzw.bluetooth.net.rxnet.utils.LogUtils
@@ -41,6 +42,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private val UPDATEFIRM = 1
     private val FREE = 2
     private var state = FREE
+    private var status: String? = null
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
     override fun initData() {
@@ -50,7 +52,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_update_date.text = apk_update_time
         tv_watch_update_date.text = firm_update_time
         mPresenter?.initWatchUI()
-        checkPermission()
+//        checkPermission()
     }
 
     override fun initView() {
@@ -81,7 +83,12 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     private fun downloadUpdate() {
         if (!connectState) {
-            Toast.makeText(this, "蓝牙腕表已断开连接", Toast.LENGTH_SHORT).show()
+            showToast("蓝牙腕表已断开连接")
+            return
+        }
+
+        if(!App.isSynState()){
+            showToast("蓝牙腕表未同步完成")
             return
         }
 
@@ -103,7 +110,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         progesss_watch.max = 100
         showLoadingView("进行数据解压中...")
         RxBus.getInstance().post("reconnet", "")
-        Log.e("UPDATEWATCH", "updateWatch ---------  ++++")
     }
 
     private fun downloadDfu() {
@@ -115,7 +121,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             override fun onFinish(file: File?) {
                 LogUtils.d("onFinish " + file!!.absolutePath)
                 tv_update_watch_status.text = "下载完成"
-                Toast.makeText(this@UpdateFuncActivity, "下载完成", Toast.LENGTH_SHORT).show()
+                showToast("下载完成")
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
@@ -151,7 +157,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             override fun onFinish(file: File?) {
                 LogUtils.d("onFinish " + file!!.absolutePath)
                 tv_update_app_status.text = "下载完成"
-                Toast.makeText(this@UpdateFuncActivity, "下载完成", Toast.LENGTH_SHORT).show()
+                showToast("下载完成")
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
@@ -183,15 +189,23 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }
 
         tv_update_app.setOnClickListener {
+            if (state == DOWNLOADING || state == UPDATEFIRM) {
+                showToast("正在下载升级")
+                return@setOnClickListener
+            }
             if (state == COMPLETE) {
                 mPresenter?.installApk(this)
                 return@setOnClickListener
             }
-            //updateApk()
+            updateApk()
         }
 
         tv_update_watch.setOnClickListener {
-//            downloadUpdate()
+            if (state == DOWNLOADING) {
+                showToast("正在下载数据")
+                return@setOnClickListener
+            }
+            downloadUpdate()
         }
     }
 
@@ -229,23 +243,29 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdateprogress")])
     fun onUpdateProgress(progress: String) {
         val value = progress.toInt()
-        if (value > 0) {
+        if (value >= 0) {
             cancelLoadingView()
-        } else if (value == 1) {
-            if (tv_update_app.text == "安装") {
-                state = COMPLETE
-            } else {
-                state = FREE
+            progesss_watch.progress = value
+            tv_update_watch_status.text = "$status  $value%"
+            if (value == 100) {
+                if (tv_update_app.text == "安装") {
+                    state = COMPLETE
+                } else {
+                    state = FREE
+                }
+                connectState = false
+                App.setSynState(false)
+                this.finish()
             }
+        } else if (value == -1) {
+            showLoadingView("准备腕表升级...")
+            state == UPDATEFIRM
         }
-        progesss_watch.progress = value
-        Log.e("UPDATEWATCH", "onUpdateProgress ---------  ++++")
     }
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("onupdatestatus")])
     fun onUpdateStatus(status: String) {
-        tv_update_watch_status.text = status
-        Log.e("UPDATEWATCH", "onUpdateStatus ---------  ++++")
+        this.status = status
     }
 
     override fun onDestroy() {
@@ -256,6 +276,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
         }
         loadingView = null
+        status = null
     }
 
     override fun getMainPresent() = MainUpdatePresenter()
@@ -323,11 +344,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     }
 
     private fun interceptFinish(): Boolean {
-        if (state == DOWNLOADING) {
-            Toast.makeText(this, "正在下载数据", Toast.LENGTH_SHORT).show()
-            return true
-        } else if (state == UPDATEFIRM) {
-            Toast.makeText(this, "正在升级腕表固件", Toast.LENGTH_SHORT).show()
+        if (state == DOWNLOADING || state == UPDATEFIRM) {
+            showToast("正在下载升级")
             return true
         } else if (state == FREE) {
             return false

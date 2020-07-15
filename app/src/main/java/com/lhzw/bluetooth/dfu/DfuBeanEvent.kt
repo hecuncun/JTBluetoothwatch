@@ -13,7 +13,7 @@ import java.io.File
  * Created by xtqb.
  */
 
-class DfuBeanEvent(val mContext: Context, val filePath: String, val path: String) {
+class DfuBeanEvent(val mContext: Context, private val filePath: String, val path: String) {
     private var apolloConfig: String? = null
     private var apolloBinSize: Int = 0
     private var apolloBinPath: String? = null

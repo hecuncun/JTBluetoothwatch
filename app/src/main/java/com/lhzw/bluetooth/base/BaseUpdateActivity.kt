@@ -32,8 +32,8 @@ abstract class BaseUpdateActivity<T : BaseIPresenter<UpdateContract.IView>> : Ba
     protected fun showLoadingView(note: String) {
         if (loadingView == null) {
             loadingView = LoadingView(this@BaseUpdateActivity)
-
         }
+        loadingView?.setCancelable(false)
         loadingView?.setLoadingTitle(note)
         loadingView?.show()
     }

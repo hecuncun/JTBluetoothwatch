@@ -8,6 +8,7 @@ import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.dfu.DfuBeanEvent
 import com.lhzw.bluetooth.dfu.DfuConfigCallBack
@@ -313,7 +314,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
 
     override fun onDfuProgress(progress: Int) {
         Log.e("UPDATEWATCH", "onDfuProgress ---------  ++++")
-        com.lhzw.bluetooth.bus.RxBus.getInstance().post("onupdateprogress", progress.toString())
+        RxBus.getInstance().post("onupdateprogress", progress.toString())
     }
 
     override fun onReconnectResponse(response: ByteArray?) {
@@ -339,6 +340,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     override fun onDfuConfigCallback(response: String) {
 //        tv_update_watch_status.text = "解压完成，等待升级..."
         myBleManager?.connection_update()
+        RxBus.getInstance().post("onupdateprogress", "-1")
         Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
     }
 

@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.*
 import android.util.Log
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.ble.*
 import com.lhzw.bluetooth.bus.RxBus
@@ -245,6 +246,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             //开始接受消息提醒
             lastConnectedDevice = lastDeviceMacAddress
             BleConnectService.isConnecting = false
+            App.setSynState(true)
             acceptMsg = true
             if (hasSports) {
                 sportActivityBeanList.forEach {
@@ -286,6 +288,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response(response, Constants.CONNECT_RESPONSE_CODE) {
 //            myBleManager?.mtu_update()
             mHandler.sendEmptyMessage(MTU_DELAY)
+            App.setSynState(false)
         }
     }
 
@@ -839,7 +842,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     } else {
                         removeMessages(MTU_UPDATE_DELAY)
                         requestTimes = 0
-                        showToast("MTU同步失败")
+//                        showToast("MTU同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
                     }
                 }

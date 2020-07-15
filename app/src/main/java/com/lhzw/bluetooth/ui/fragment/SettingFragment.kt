@@ -3,8 +3,6 @@ package com.lhzw.bluetooth.ui.fragment
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.content.Intent
-import android.os.Handler
-import android.os.Message
 import android.util.Log
 import android.view.View
 import android.widget.SeekBar
@@ -99,6 +97,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     // 刷新更新状态
     override fun refleshUpdateState(state: Boolean) {
+        Log.e(TAG, "5555555555555555555555555555555555555555 ")
         iv_update_note.visibility = if (state) View.VISIBLE else View.GONE
         isChecking = false
         Log.e(TAG, "--------------------------------------------------------------------")
