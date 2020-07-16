@@ -93,9 +93,11 @@ class SportModel(var mark: String) : SportConstract.Model {
         var pos = 0
         var max = 0
         Log.e("Distance", "---------------------------------1  " + distance_list?.size)
+        var dis_total = 0
         distance_list?.forEach {
             Log.e("Distance", "--------------------------------- 2  " +it.value)
             total += it.value
+            dis_total += it.value
             if (total == 100000) {
                 pos++
                 distance_map!![pos] = second + 60
@@ -117,6 +119,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 second += 60
             }
         }
+        Log.e("Distance", "total  ============================== $dis_total")
         val bar_speed_list = ArrayList<BarBean>()
         total = 0
         distance_map?.also {
@@ -225,7 +228,6 @@ class SportModel(var mark: String) : SportConstract.Model {
         // 横向柱状图
         var detail = queryData<FlatSportBean>(mark)
         var count = 4
-        var range = 100
         var colorBar = mutableListOf<Int>(activity.resources.getColor(R.color.red_dot_color),
                 activity.resources.getColor(R.color.yellow_little1), activity.resources.getColor(R.color.green2),
                 activity.resources.getColor(R.color.blue_little2), activity.resources.getColor(R.color.white))

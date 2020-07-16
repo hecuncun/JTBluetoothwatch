@@ -141,10 +141,13 @@ class LocationUtils : AMapLocationListener {
             var lastColorId = -1
             val points = ArrayList<LatLng>()
             val classify = classifyColor(distanceMap)
-            if(classify != null && classify.size > 0) {
+            var dis_total = 0.0
+            var pathCounter = 0
+            if (classify != null && classify.isNotEmpty()) {
                 list.forEach { it ->
                     val tem = AMapUtils.calculateLineDistance(oldLatLng, it)
                     distance += tem
+                    dis_total += tem
                     if (distance > 1000) {
                         distance = 0.0f
                         points.add(it)
@@ -158,16 +161,16 @@ class LocationUtils : AMapLocationListener {
                             polyLineList.add(calculateRoute(points, path_colors[lastColorId], path_colors[classify[counter] + 1])!!)
                             lastColorId = classify[counter] + 1
                         }
-//                    polyLineList.add(calculateRoute(points, path_colors[classify[counter]], path_colors[classify[counter] + 1])!!)
                         points.clear()
-                        points.add(it)
                         counter++
-                        markers?.add(aMap.addMarker(getMarkerOption(it, "$counter")))
+                        pathCounter++
+                        markers?.add(aMap.addMarker(getMarkerOption(it, "$pathCounter")))
                     } else {
                         points.add(it)
                     }
                     oldLatLng = it;
                 }
+                Log.e("Distance", "total ---------------   $dis_total")
                 if (points.size > 0) {
                     if (lastColorId == -1) {
                         polyLineList.add(calculateRoute(points, path_colors[0], path_colors[path_colors.size - 1])!!)
