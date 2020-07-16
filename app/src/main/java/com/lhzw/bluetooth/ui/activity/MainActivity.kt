@@ -34,6 +34,7 @@ import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.toolbar.*
+import me.jessyan.autosize.internal.CancelAdapt
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -41,7 +42,7 @@ import org.litepal.LitePal
 import org.litepal.extension.find
 
 
-class MainActivity : BaseActivity(), View.OnClickListener {
+class MainActivity : BaseActivity(),CancelAdapt, View.OnClickListener {
 
     private val FRAGMENT_HOME = 0x01
     private val FRAGMENT_SPORTS = 0X02

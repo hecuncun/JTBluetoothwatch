@@ -39,7 +39,7 @@ import kotlin.collections.ArrayList
 /**
  * Created by hecuncun on 2019/11/13
  */
-class HomeFragment : BaseFragment(){
+class HomeFragment : BaseFragment(),CancelAdapt{
     private var bleManager: BluetoothManager? = null
     private var state = false
     override fun useEventBus() = true
@@ -224,7 +224,8 @@ class HomeFragment : BaseFragment(){
         } else { // create a dataset and give it a type
             set1 = LineDataSet(values, "DataSet 1")
             //set1.mode = LineDataSet.Mode.CUBIC_BEZIER// 设置线条的模式
-            set1.mode = LineDataSet.Mode.HORIZONTAL_BEZIER// 设置线条的模式
+             set1.mode = LineDataSet.Mode.HORIZONTAL_BEZIER// 设置线条的模式
+           // set1.mode = LineDataSet.Mode.CUBIC_BEZIER// 设置线条的模式
             set1.setDrawIcons(false)
             set1.setDrawValues(false)
             set1.setDrawHighlightIndicators(false)//设置高亮辅助线

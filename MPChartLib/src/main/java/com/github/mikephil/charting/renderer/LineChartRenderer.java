@@ -735,6 +735,29 @@ public class LineChartRenderer extends LineRadarRenderer {
                     c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
                 }
                 }
+
+//
+//                Entry e = dataSet.getEntryForIndex(j);
+//
+//                if (e == null) break;
+//
+//                mCirclesBuffer[0] = e.getX();
+//                mCirclesBuffer[1] = e.getY() * phaseY;
+//
+//                trans.pointValuesToPixel(mCirclesBuffer);
+//
+//                if (!mViewPortHandler.isInBoundsRight(mCirclesBuffer[0]))
+//                    break;
+//
+//                if (!mViewPortHandler.isInBoundsLeft(mCirclesBuffer[0]) ||
+//                        !mViewPortHandler.isInBoundsY(mCirclesBuffer[1]))
+//                    continue;
+//
+//                Bitmap circleBitmap = imageCache.getBitmap(j);
+//
+//                if (circleBitmap != null) {
+//                    c.drawBitmap(circleBitmap, mCirclesBuffer[0] - circleRadius, mCirclesBuffer[1] - circleRadius, null);
+//                }
             }
         }
     }
