@@ -274,6 +274,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
                 file.delete()
             }
             // 保存原始地图数据
+
             scBitmapMap = bitmap
             //从屏幕整张图片中截取指定区域
             scBitmapShot = Bitmap.createBitmap(bitmap, 0, 100, bitmap?.width!!, bitmap?.width!!)
