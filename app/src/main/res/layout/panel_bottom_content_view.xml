@@ -214,7 +214,7 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/ll_steps_num"
-            android:text="18247"
+            tools:text="18247"
             android:textColor="@color/white"
             android:textSize="28sp" />
 

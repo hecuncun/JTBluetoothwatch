@@ -158,7 +158,10 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             pain.isAntiAlias = true
             pain.color = getColor(R.color.gray_little1)
             cv.drawRect(Rect(0, 0, dataBitmap.width, dataBitmap.height + window.windowManager.defaultDisplay.height + space_map), pain)
-
+            if (scBitmapMap==null){
+                showToast("没有轨迹")
+                return@setOnClickListener
+            }
             cv.drawBitmap(scBitmapMap, Rect(0, 0, scBitmapMap!!.width, scBitmapMap!!.height), Rect(0, 0, scBitmapMap!!.width, scBitmapMap!!.height), null)
             cv.drawBitmap(toolbarBitmap, Rect(0, 0, toolbarBitmap!!.width, toolbarBitmap!!.height), Rect(0, 0, toolbarBitmap!!.width, toolbarBitmap!!.height), null)
             val im_margin_h = BaseUtils.dip2px(30)

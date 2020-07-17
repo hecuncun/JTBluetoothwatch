@@ -219,7 +219,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             convertView.findViewById<TextView>(R.id.tv_step_stride_av).text = "${step / list?.size!!}"
         }
         convertView.findViewById<TextView>(R.id.tv_steps_num).text = "$step"
-        convertView.findViewById<TextView>(R.id.tv_steps_num).text = "$step"
+        convertView.findViewById<TextView>(R.id.tv_steps_num_top).text = "$step"
         // 图表数据适配
         convertView.findViewById<TextView>(R.id.tv_step_stride_best).text = "$step_max"
 
