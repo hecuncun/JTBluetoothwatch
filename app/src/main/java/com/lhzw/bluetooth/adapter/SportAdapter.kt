@@ -38,6 +38,7 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
 
                 }
             }
+            helper.setText(R.id.tv_ymt,ymt)
             helper.setText(R.id.tv_duration, "${duration}")
             helper.setText(R.id.tv_allocation_speed, "${allocation_speed}")
             helper.setText(R.id.tv_calorie, "${calorie}")
@@ -67,6 +68,8 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
                     v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
 //                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.white)!!)
                     v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.date)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
+                    v?.findViewById<TextView>(R.id.tv_ymt)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                 }
                 MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
                     v?.findViewById<TextView>(R.id.tv_duration_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
@@ -79,6 +82,8 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
                     v?.findViewById<TextView>(R.id.tv_steps)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
 //                    v?.findViewById<View>(R.id.splite)?.setBackgroundColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_distance)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.date)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
+                    v?.findViewById<TextView>(R.id.tv_ymt)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                 }
                 else -> {
                 }

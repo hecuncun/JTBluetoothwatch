@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="65dp">
+    android:layout_height="120dp">
 
     <ImageView
         android:id="@+id/im_portrait"
@@ -45,11 +45,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_16"
-        android:layout_marginBottom="10dp"
+        android:layout_marginTop="15dp"
         android:text="@string/sport_calorie"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_duration"
         app:layout_constraintLeft_toRightOf="@+id/im_portrait" />
 
     <TextView
@@ -57,12 +57,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_12"
-        android:layout_marginBottom="10dp"
         android:gravity="center_vertical"
         android:text="12:58"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
         app:layout_constraintLeft_toRightOf="@+id/tv_calorie_title" />
 
     <TextView
@@ -95,11 +94,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_20"
-        android:layout_marginBottom="10dp"
         android:text="@string/step_num"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
         app:layout_constraintLeft_toRightOf="@+id/tv_duration" />
 
     <TextView
@@ -107,12 +105,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_12"
-        android:layout_marginBottom="10dp"
         android:gravity="center_vertical"
         android:text="12:58"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
         app:layout_constraintLeft_toRightOf="@+id/tv_steps_title" />
 
     <View
@@ -137,27 +134,34 @@
         android:text="909m"
         android:textColor="@color/gray"
         android:textSize="@dimen/dp_24"
-
         android:textStyle="bold|italic"
         android:typeface="monospace"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/splite"
         app:layout_constraintTop_toTopOf="parent" />
-
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_16"
+        android:text="日期"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/sp_14"
+        app:layout_constraintTop_toTopOf="@+id/tv_ymt"
+        app:layout_constraintLeft_toRightOf="@+id/im_portrait" />
 
     <TextView
+        android:layout_marginTop="15dp"
         android:id="@+id/tv_ymt"
         android:layout_width="95dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:gravity="center_vertical"
         android:text="2019-12-28"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/im_portrait"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="@color/gray"
+        android:textSize="@dimen/sp_14"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/tv_calorie_title"
+        app:layout_constraintLeft_toLeftOf="@+id/tv_calorie"/>
 
     <TextView
         android:id="@+id/tv_time"
@@ -171,12 +175,6 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/tv_ymt"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:layout_width="65dp"
-        android:layout_height="1dp"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
