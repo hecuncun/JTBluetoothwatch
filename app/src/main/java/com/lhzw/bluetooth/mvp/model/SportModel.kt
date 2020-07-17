@@ -95,7 +95,7 @@ class SportModel(var mark: String) : SportConstract.Model {
         Log.e("Distance", "---------------------------------1  " + distance_list?.size)
         var dis_total = 0
         distance_list?.forEach {
-            Log.e("Distance", "--------------------------------- 2  " +it.value)
+            Log.e("Distance", "--------------------------------- 2  " + it.value)
             total += it.value
             dis_total += it.value
             if (total == 100000) {
