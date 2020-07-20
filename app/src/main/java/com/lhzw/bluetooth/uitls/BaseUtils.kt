@@ -404,31 +404,39 @@ object BaseUtils {
             foder.mkdirs()
         }
         val myCaptureFile = File(foder, fileName)
+        var bos: BufferedOutputStream? = null
         try {
             if (!myCaptureFile.exists()) {
                 myCaptureFile.createNewFile()
             }
-            val bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
+            bos = BufferedOutputStream(FileOutputStream(myCaptureFile))
             //压缩保存到本地
             bm.compress(Bitmap.CompressFormat.JPEG, 100, bos)
-            bos.flush()
-            bos.close()
             return true
         } catch (e: IOException) {
             e.printStackTrace()
+        } finally {
+            bos?.let {
+                it.flush()
+                it.close()
+            }
         }
         return false
     }
 
     fun saveBitmapFile(bitmap: Bitmap, filepath: String?): File? {
         val file = File(filepath) //将要保存图片的路径
+        var bos: BufferedOutputStream? = null
         try {
-            val bos = BufferedOutputStream(FileOutputStream(file))
+            bos = BufferedOutputStream(FileOutputStream(file))
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos)
-            bos.flush()
-            bos.close()
         } catch (e: IOException) {
             e.printStackTrace()
+        } finally {
+            bos?.let {
+                it.flush()
+                it.close()
+            }
         }
         return file
     }
@@ -465,7 +473,7 @@ object BaseUtils {
         return false
     }
 
-    // 将ble、apollo Long值装换未版本号
+    // 将ble、apollo Long值转换为版本号
     fun apolloOrBleToVersion(value: Int): String {
         val builder = java.lang.StringBuilder()
         builder.append("v ")
