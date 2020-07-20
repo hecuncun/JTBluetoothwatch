@@ -49,6 +49,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
 
     override fun checkUpdate(mContext: Context) {
         // 腕表信息
+        /*
         val watchInfo = mModel?.queryWatchData()
         if (watchInfo != null && watchInfo.isNotEmpty()) {
             // 说明已连接过手表
@@ -96,6 +97,11 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
             checkApkUpdate(mContext) { state, version ->
                 mView?.updateApkState(state, version)
             }
+        }
+        */
+        // 检查Apk
+        checkApkUpdate(mContext) { state, version ->
+            mView?.updateApkState(state, version)
         }
     }
 

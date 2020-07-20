@@ -7,7 +7,6 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
-import android.widget.Toast
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
@@ -52,7 +51,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_update_date.text = apk_update_time
         tv_watch_update_date.text = firm_update_time
         mPresenter?.initWatchUI()
-//        checkPermission()
+        checkPermission()
     }
 
     override fun initView() {
@@ -87,7 +86,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             return
         }
 
-        if(!App.isSynState()){
+        if (!App.isSynState()) {
             showToast("蓝牙腕表未同步完成")
             return
         }
@@ -237,6 +236,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         if (PERMISS_REQUEST_CODE == requestCode) {
             //未初始化就 先初始化一个用户对象
             checkVersion()
+        } else {
+            showToast("权限申请失败")
         }
     }
 

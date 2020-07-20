@@ -17,10 +17,8 @@ class AppStartReceiver : BroadcastReceiver() {
         mContext?.let {
             val action = intent!!.action
             //取得AppStartReceiver所在的App的包名
-            //取得AppStartReceiver所在的App的包名
             val localPkgName = it.packageName
             val data: Uri = intent!!.data
-            //取得安装的Apk的包名，只在该app覆盖安装后自启动
             //取得安装的Apk的包名，只在该app覆盖安装后自启动
             val installedPkgName: String = data.schemeSpecificPart
             if ((action == Intent.ACTION_PACKAGE_ADDED || action == Intent.ACTION_PACKAGE_REPLACED) && installedPkgName == localPkgName) {

@@ -97,10 +97,10 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
     // 刷新更新状态
     override fun refleshUpdateState(state: Boolean) {
-        Log.e(TAG, "5555555555555555555555555555555555555555 ")
+        Log.e(TAG, "刷新更新状态")
         iv_update_note.visibility = if (state) View.VISIBLE else View.GONE
+        // 防止切换fragment 访问平台频繁
         isChecking = false
-        Log.e(TAG, "--------------------------------------------------------------------")
     }
 
     override fun initView(view: View) {

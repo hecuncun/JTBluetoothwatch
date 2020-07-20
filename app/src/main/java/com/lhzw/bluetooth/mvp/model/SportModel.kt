@@ -107,7 +107,7 @@ class SportModel(var mark: String) : SportConstract.Model {
                 total = 0
                 second = 0
             } else if (total > 100000) {
-                var perent = 1 - (total - 100000).toFloat() / it.value.toFloat()
+                var perent = (total - 100000).toFloat() / it.value.toFloat() // 左边的长度百分比
                 pos++
                 distance_map!![pos] = (second + 60.0f * (1.0f - perent)).toInt()
                 if (max < distance_map!![pos]!!) {

@@ -162,6 +162,7 @@ class LocationUtils : AMapLocationListener {
                             lastColorId = classify[counter] + 1
                         }
                         points.clear()
+                        points.add(it)
                         counter++
                         pathCounter++
                         markers?.add(aMap.addMarker(getMarkerOption(it, "$pathCounter")))

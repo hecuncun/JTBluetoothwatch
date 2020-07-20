@@ -29,7 +29,7 @@ class SettingPresenter : BasePresenter<SettingContract.Model, SettingContract.Vi
                 if (it != null) {
                     Log.e(TAG, "${it.getApolloAppVersion()}  ${it.getBleAppVersion()}")
                     var isFirmUpdate = false
-                    if (it.getApolloAppVersion() > watchInfo[0].BLE_APP_VERSION || it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
+                    if (it.getApolloAppVersion() > watchInfo[0].APOLLO_APP_VERSION || it.getBleAppVersion() > watchInfo[0].BLE_APP_VERSION) {
                         // 说明有新的更新 暂时不支持退版本，仅支持升级
                         isFirmUpdate = true
                     }
