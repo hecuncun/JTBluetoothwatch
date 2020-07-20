@@ -273,6 +273,7 @@ class SportModel(var mark: String) : SportConstract.Model {
             Log.e("valueDescrip", "value : ${valueDescrip}")
             for (i in 0..count) {
                 yValus.add(BarEntry(i * spaceForBar, value[i], activity.resources.getDrawable(R.drawable.gradient_speed_heart)))
+                Log.e("barValue", "value[$i] :    ${value[i]}")
             }
             setHorizontalBar(convertView.findViewById(R.id.horizontalbar), yValus, barWidth, HorizontalBarXYFormatter(false, lables), HorizontalBarXYFormatter(true, lables), colorBar, valueDescrip)
         }

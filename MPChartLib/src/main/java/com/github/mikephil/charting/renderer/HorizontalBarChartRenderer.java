@@ -2,8 +2,11 @@ package com.github.mikephil.charting.renderer;
 
 import android.graphics.Canvas;
 import android.graphics.Paint.Align;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.buffer.BarBuffer;
@@ -191,9 +194,19 @@ public class HorizontalBarChartRenderer extends BarChartRenderer {
 //            c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
 //                    buffer.buffer[j + 3], mRenderPaint);
             float radiu = (buffer.buffer[j + 3] - buffer.buffer[j + 1]) / 2;
-            c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2] - radiu,
-                    buffer.buffer[j + 3], mRenderPaint);
-            c.drawCircle(buffer.buffer[j + 2] - radiu, buffer.buffer[j + 3] - radiu, radiu, mRenderPaint);
+//            c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2] - radiu,
+//                    buffer.buffer[j + 3], mRenderPaint);
+//            c.drawCircle(buffer.buffer[j + 2] - radiu, buffer.buffer[j + 3] - radiu, radiu, mRenderPaint);
+
+            float[] outerR = new float[] { 0, 0, radiu,radiu, radiu, radiu, 0, 0};
+            RoundRectShape rr = new RoundRectShape(outerR, null, null);
+            ShapeDrawable drawable = new ShapeDrawable(rr);
+
+            //   RectF rectF = new RectF(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2], buffer.buffer[j + 3]);
+            Rect rect = new Rect((int)buffer.buffer[j], (int) (buffer.buffer[j + 1]),(int) buffer.buffer[j + 2] , (int)buffer.buffer[j + 3]);
+            drawable.setBounds(rect);
+            drawable.getPaint().set(mRenderPaint);
+            drawable.draw(c);
 
             if (drawBorder) {
                 c.drawRect(buffer.buffer[j], buffer.buffer[j + 1], buffer.buffer[j + 2],
