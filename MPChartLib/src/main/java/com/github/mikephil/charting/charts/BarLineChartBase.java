@@ -232,7 +232,8 @@ public abstract class BarLineChartBase<T extends BarLineScatterCandleBubbleData<
 
         // make sure the data cannot be drawn outside the content-rect
         int clipRestoreCount = canvas.save();
-      //  canvas.clipRect(mViewPortHandler.getContentRect());
+        canvas.clipRect(mViewPortHandler.getContentRect());
+
         mRenderer.drawData(canvas);
 
         if (!mXAxis.isDrawGridLinesBehindDataEnabled())
