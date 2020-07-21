@@ -118,12 +118,16 @@ class MainActivity : BaseActivity(),CancelAdapt, View.OnClickListener {
 //         wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"")
 //         wakeLock?.acquire()
         //白名单
-        if (KeepLiveUtil().isIgnoringBatteryOptimizations()){
+        if (KeepLiveUtil.isIgnoringBatteryOptimizations()){
              Logger.e("已在白名单")
         }else{
             Logger.e("不在白名单")
-            KeepLiveUtil().requestIgnoreBatteryOptimizations()
+            KeepLiveUtil.requestIgnoreBatteryOptimizations()
         }
+        //点击按钮去实现后台运行管理,===优化设置方式,提升用户体验
+//        if (KeepLiveUtil.isHuawei()){
+//            KeepLiveUtil.goHuaweiSetting()
+//        }
 
     }
 

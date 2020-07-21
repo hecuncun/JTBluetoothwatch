@@ -181,8 +181,6 @@ public class DateUtils {
         Calendar calendar = Calendar.getInstance();
         calendar.roll(Calendar.DAY_OF_YEAR, 1);
         return calendar.getTime();
-
-
     }
 
     public static String getTodayStringData() {
