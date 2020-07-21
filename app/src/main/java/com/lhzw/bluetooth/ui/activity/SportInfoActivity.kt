@@ -25,6 +25,7 @@ import com.xw.repo.supl.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_sport_info.*
 import kotlinx.android.synthetic.main.panel_content_view.*
 import kotlinx.android.synthetic.main.toolbar.*
+import me.jessyan.autosize.internal.CancelAdapt
 import java.io.File
 
 
@@ -37,7 +38,7 @@ import java.io.File
  */
 
 @Suppress("DEPRECATION")
-class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener {
+class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener ,CancelAdapt{
     private var aMap: AMap? = null
     override fun getLayoutId(): Int {
         return R.layout.activity_sport_info
