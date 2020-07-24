@@ -106,10 +106,24 @@ object CommOperation {
     }
 
     /**
+     * 查询全部
+     */
+    inline fun <reified T : LitePalSupport> query(clazz: Class<T>, order: String): List<T> {
+        return LitePal.order("$order DESC").find(clazz)
+    }
+
+    /**
      * 单条件查询查询
      */
     inline fun <reified T : LitePalSupport> query(clazz: Class<T>, key: String, value: String): List<T> {
         return LitePal.where("$key = ?", value).find(clazz)
+    }
+
+    /**
+     * 单条件查询查询
+     */
+    inline fun <reified T : LitePalSupport> query(clazz: Class<T>, key: String, value: String, order: String): List<T> {
+        return LitePal.where("$key = ?", value).order("$order DESC").find(clazz)
     }
 
     /**
