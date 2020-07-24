@@ -100,6 +100,9 @@ public class RxNet {
         long totalByte = responseBody.contentLength();
         long downloadByte = 0;
         File file = new File(filePath);
+        if(file.delete()){
+            file.delete();
+        }
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }

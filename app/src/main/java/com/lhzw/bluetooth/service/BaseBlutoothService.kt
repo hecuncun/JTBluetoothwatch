@@ -47,6 +47,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private val DYNAMIC_DATE = 0x01
     private val MTU_DELAY = 0x02
     protected val MTU_UPDATE_DELAY = 0x03
+    protected val CONNET_UPDATE_DELAY = 0x9
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
@@ -847,12 +848,23 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     requestTimes++
                     if (requestTimes < 4) {
                         myBleManager?._mtu_update()
-                        sendEmptyMessageDelayed(MTU_UPDATE_DELAY, 3000)
+                        sendEmptyMessageDelayed(MTU_UPDATE_DELAY, 2000)
                     } else {
                         removeMessages(MTU_UPDATE_DELAY)
                         requestTimes = 0
 //                        showToast("MTU同步失败")
                         EventBus.getDefault().post(HideDialogEvent(false))
+                    }
+                }
+                CONNET_UPDATE_DELAY -> {
+                    requestTimes++
+                    if (requestTimes < 4) {
+                        myBleManager?.connection_update()
+                        sendEmptyMessageDelayed(CONNET_UPDATE_DELAY, 2000)
+                    } else {
+                        removeMessages(CONNET_UPDATE_DELAY)
+                        requestTimes = 0
+//                        showToast("MTU同步失败")
                     }
                 }
             }

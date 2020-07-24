@@ -9,6 +9,7 @@ import com.lhzw.bluetooth.net.rxnet.utils.LogUtils;
 import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observer;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
@@ -81,7 +82,7 @@ public class RetrofitFactory {
      */
     public static void downloadFile(String token, String url, long startPos, DownloadListener downloadListener, Observer<ResponseBody> observer) {
         getDownloadRetrofit(token, downloadListener).create(BaseApi.class).downloadFile("bytes=" + startPos + "-", url)
-                .subscribeOn(Schedulers.newThread())
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }

@@ -109,7 +109,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
         showLoadingView("进行数据解压中...")
-        RxBus.getInstance().post("reconnet", "")
+        Handler().postDelayed({RxBus.getInstance().post("reconnet", "")},1000)
     }
 
     private fun downloadDfu() {

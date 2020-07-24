@@ -177,7 +177,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     // 跟新连接参数
     public int connection_update() {
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
-            bleManagerCallbacks.onReconnectResponse(data.getValue());
+            bleManagerCallbacks._onReconnectResponse(data.getValue());
         });
         byte[] data = new byte[]{0x01, 0x0F, 0x00, 0x1E, 0x00, 0x00, 0x00, (byte) 0x90, 0x01};//高功耗，快速
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();

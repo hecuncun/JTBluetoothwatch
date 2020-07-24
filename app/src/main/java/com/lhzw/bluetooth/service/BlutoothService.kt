@@ -317,9 +317,10 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         RxBus.getInstance().post("onupdateprogress", progress.toString())
     }
 
-    override fun onReconnectResponse(response: ByteArray?) {
+    override fun _onReconnectResponse(response: ByteArray?) {
         Log.e("UPDATEWATCH", "onReconnectResponse ---------  ++++")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
+            mHandler.removeMessages(CONNET_UPDATE_DELAY)
             requestTimes = 0;
             mHandler.sendEmptyMessage(MTU_UPDATE_DELAY)
         }
@@ -328,6 +329,8 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     override fun _onMtuUpdateResponse(response: ByteArray?) {
         Log.e("UPDATEWATCH", "_onMtuUpdateResponse ---------  ++++")
         response(response, Constants.MTU_RESPONSE_CODE) {
+            mHandler.removeMessages(MTU_UPDATE_DELAY)
+            requestTimes = 0
             myBleManager?.dfu_start(dfuBean);
         }
     }
@@ -340,7 +343,8 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     override fun onDfuConfigCallback(response: String) {
         if("" != response) {
             //        tv_update_watch_status.text = "解压完成，等待升级..."
-            myBleManager?.connection_update()
+            requestTimes = 0;
+            mHandler.sendEmptyMessage(CONNET_UPDATE_DELAY)
             RxBus.getInstance().post("onupdateprogress", "-1")
             Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
         } else {
