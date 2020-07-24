@@ -183,9 +183,9 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
+                send.action = Intent.ACTION_SEND
                 send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
             }
@@ -207,9 +207,9 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
+                send.action = Intent.ACTION_SEND
                 send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.type = "image/*";
                 send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
             }

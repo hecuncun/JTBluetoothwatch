@@ -85,8 +85,7 @@
             android:layout_below="@+id/tv_time"
             android:layout_alignRight="@+id/im_bg_share"
             android:layout_marginTop="4dp"
-            android:layout_marginRight="@dimen/dp_23"
-            android:src="@mipmap/sport_running" />
+            android:layout_marginRight="@dimen/dp_23" />
 
         <TextView
             android:id="@+id/tv_allocation_speed_title"
