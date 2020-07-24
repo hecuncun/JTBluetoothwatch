@@ -82,7 +82,7 @@ public class RetrofitFactory {
      */
     public static void downloadFile(String token, String url, long startPos, DownloadListener downloadListener, Observer<ResponseBody> observer) {
         getDownloadRetrofit(token, downloadListener).create(BaseApi.class).downloadFile("bytes=" + startPos + "-", url)
-                .subscribeOn(Schedulers.io())
+                .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
