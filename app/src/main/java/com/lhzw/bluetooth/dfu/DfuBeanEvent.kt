@@ -38,9 +38,33 @@ class DfuBeanEvent(val mContext: Context, private val filePath: String, val path
 
         val file = File("$path/unZipDfu")
         if (file.exists()) {
-            FileHelper.deleteRecursive(file)
+            deleteFile(file)
         }
         createDfuFileFolder(file)
+    }
+
+    private fun deleteFile(file: File?) {
+        //判断文件不为null或文件目录存在
+        if (file == null || !file.exists()) {
+            println("文件删除失败,请检查文件路径是否正确")
+            return
+        }
+        //取得这个目录下的所有子文件对象
+        val files = file.listFiles()
+        //遍历该目录下的文件对象
+        for (f in files) {
+            //打印文件名
+            val name = file.name
+            println(name)
+            //判断子目录是否存在子目录,如果是文件则删除
+            if (f.isDirectory) {
+                deleteFile(f)
+            } else {
+                f.delete()
+            }
+        }
+        //删除空文件夹  for循环已经把上一层节点的目录清空。
+        file.delete()
     }
 
     private fun createDfuFileFolder(file: File) {
@@ -102,6 +126,7 @@ class DfuBeanEvent(val mContext: Context, private val filePath: String, val path
                 }
             } catch (e: Exception) {
                 Log.e(TAG, "解压失败 : ${e.message}")
+                dfuConfigCallbacks?.onDfuConfigCallback("")
             }
         }
     }

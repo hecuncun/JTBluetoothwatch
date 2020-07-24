@@ -338,10 +338,15 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     }
 
     override fun onDfuConfigCallback(response: String) {
-//        tv_update_watch_status.text = "解压完成，等待升级..."
-        myBleManager?.connection_update()
-        RxBus.getInstance().post("onupdateprogress", "-1")
-        Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
+        if("" != response) {
+            //        tv_update_watch_status.text = "解压完成，等待升级..."
+            myBleManager?.connection_update()
+            RxBus.getInstance().post("onupdateprogress", "-1")
+            Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
+        } else {
+            // 解析失败
+            RxBus.getInstance().post("onupdateprogress", "-2")
+        }
     }
 
     /*************************     OTA升级       ****************************************************/

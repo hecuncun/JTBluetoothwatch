@@ -153,7 +153,7 @@ class UpdateModel : UpdateContract.IModel {
      * @param mContext
      * @param filePath
      */
-    override fun installApk(mContext: Activity, filePath: String?) {
+    override fun installApk(mContext: Activity, filePath: String?, complete :()-> Unit) {
         val apkFile = File(filePath)
         val intent = Intent(Intent.ACTION_VIEW)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK

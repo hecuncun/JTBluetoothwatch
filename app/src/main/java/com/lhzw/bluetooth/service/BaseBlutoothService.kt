@@ -6,7 +6,10 @@ import android.bluetooth.BluetoothDevice
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.os.*
+import android.os.Handler
+import android.os.IBinder
+import android.os.Message
+import android.os.PowerManager
 import android.util.Log
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.*
@@ -22,6 +25,7 @@ import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
 import org.greenrobot.eventbus.EventBus
+import java.text.SimpleDateFormat
 
 
 /**
@@ -54,6 +58,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
     protected var isSending = false
     private var hasSports = false
+    private var firm_update_time: String? by Preference(Constants.FIRM_UPDATE_TIME, "")
 
     //    private var progresssBar: SyncProgressBar? = null
     private var sportActivityBeanList = ArrayList<SportActivityBean>()
@@ -140,7 +145,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         response?.let {
             if (it[0].toByte() == Constants.SEND_PHONE_RESPONSE_CODE) {
                 if (it[1].toInt() == 0) {
-                    if (listMsg.isNotEmpty()){
+                    if (listMsg.isNotEmpty()) {
                         listMsg.removeAt(0)
                     }
                     if (listMsg.size > 0) {
@@ -239,7 +244,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         // 设置手表为低功率状态
 //        Log.e("BluetoothCallBack", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         Log.e("callBackBluetooth", "onSettingConnectParameter....")
-        syncTime="最近一次同步时间 ${DateUtils.longToString(System.currentTimeMillis(),"yyyy-MM-dd HH:mm:ss")}"
+        syncTime = "最近一次同步时间 ${DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")}"
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
@@ -247,6 +252,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             lastConnectedDevice = lastDeviceMacAddress
             BleConnectService.isConnecting = false
             App.setSynState(true)
+            if ("" == firm_update_time) { // 说明第一次成功连接腕表
+                val sdf = SimpleDateFormat("yyyy年MM月dd日更新")
+                firm_update_time = sdf.format(System.currentTimeMillis())
+            }
             acceptMsg = true
             if (hasSports) {
                 sportActivityBeanList.forEach {
@@ -694,7 +703,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 progressBarMax++
             }
         }
-        if(progressBarMax > 0) {
+        if (progressBarMax > 0) {
             hasSports = true
             EventBus.getDefault().post(ProgressEvent(0.0f, 0))
             readSportDetailBean()

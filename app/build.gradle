@@ -13,8 +13,8 @@ android {
         applicationId "com.lhzw.bluetooth"
         minSdkVersion 23
         targetSdkVersion 28
-        versionCode 25
-        versionName "v 3.0.4"
+        versionCode 26
+        versionName "v 3.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         ndk {
@@ -27,7 +27,6 @@ android {
         key {
             keyAlias 'keystore'
             keyPassword '123456'
-            // storeFile file('D:/android/work/vswork/BluetoothWatch/keystore.jks')
             storeFile file('../keystore.jks')
             storePassword '123456'
         }
@@ -82,7 +81,7 @@ dependencies {
     debugImplementation 'com.simple:spiderman:1.1.3'
     releaseImplementation 'com.simple:spiderman-no-op:1.1.3'
     //日志库
-    implementation 'com.orhanobut:logger:2.1.1'
+    implementation 'com.orhanobut:logger:2.2.0'
     //EventBus
     implementation 'org.greenrobot:eventbus:3.1.1'
     //Glide

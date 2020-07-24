@@ -31,7 +31,7 @@ interface UpdateContract {
 
         fun dowloadFile(url: String, path: String, listener: DownloadCallback)
 
-        fun installApk(mContext: Activity, filePath: String?)
+        fun installApk(mContext: Activity, filePath: String?, complete :()-> Unit)
 
         fun startInstallPermissionSettingActivity(mContext: Activity)
     }
@@ -40,6 +40,7 @@ interface UpdateContract {
         fun updateApkState(state: Boolean, versionName: String)
         fun updateFirmState(apollo: Boolean, apolloVersionName: String, ble: Boolean, bleVersion: String)
         fun initWatchUI(apolloVersion: String, bleVersion: String)
+        fun complete()
     }
 
     interface IPresenter {

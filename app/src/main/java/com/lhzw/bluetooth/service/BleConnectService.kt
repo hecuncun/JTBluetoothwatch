@@ -40,8 +40,8 @@ class BleConnectService : Service() {
         return null
     }
 
-    companion object{
-        var isConnecting=false //是否正在连接
+    companion object {
+        var isConnecting = false //是否正在连接
     }
 
     override fun onCreate() {
@@ -49,7 +49,7 @@ class BleConnectService : Service() {
         Logger.e("BleConnectService  onCreate ")
         EventBus.getDefault().register(this)
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
-        if (autoConnect){
+        if (autoConnect) {
             startScan()
         }
         super.onCreate()
@@ -57,7 +57,7 @@ class BleConnectService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         //当Service因内存不足而被系统kill后，一段时间后内存再次空闲时，系统将会尝试重新创建此Service
-        isConnecting=false
+        isConnecting = false
         return START_STICKY
     }
 
@@ -102,13 +102,13 @@ class BleConnectService : Service() {
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
-        if (event.success){
-          showToast("数据同步成功")
+        if (event.success) {
+            showToast("数据同步成功")
         }
-        isConnecting=false
+        isConnecting = false
         try {
             loadingView?.dismiss()
-        }catch (e:java.lang.Exception){
+        } catch (e: java.lang.Exception) {
             e.printStackTrace()
         }
 
@@ -170,7 +170,7 @@ class BleConnectService : Service() {
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
-            Log.e("SCANCallBack","搜索设备中...size==${results.size}")
+            Log.e("SCANCallBack", "搜索设备中...size==${results.size}")
             for (result in results) {
                 if (result.device.name != null && result.device.name.contains("SW")) {
                     if (mListValues.size == 0) {
@@ -189,7 +189,7 @@ class BleConnectService : Service() {
                     }
 
                 }
-                   Logger.e("已找到周围腕表设备数量==${mListValues.size}")
+                Logger.e("已找到周围腕表设备数量==${mListValues.size}")
             }
             if (lastDeviceMacAddress.isNotEmpty()) {//目标设备不为空
                 if (autoConnect) {
@@ -200,20 +200,20 @@ class BleConnectService : Service() {
                     if (lastList.isNotEmpty()) {
                         if (!connectState) {
                             Logger.e("已找到蓝牙设备,发送连接请求...")
-                            if (!isConnecting){
+                            if (!isConnecting) {
                                 RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
-                                isConnecting=true
-                                if (loadingView==null){
-                                    if (App.getActivityContext()!=null){
+                                isConnecting = true
+                                if (loadingView == null) {
+                                    if (App.getActivityContext() != null) {
                                         loadingView = LoadingView(App.getActivityContext())
                                         loadingView?.setLoadingTitle("连接中...")
 
                                     }
                                 }
-                                if (App.getActivityContext()!=null){
+                                if (App.getActivityContext() != null) {
                                     try {
                                         loadingView?.show()
-                                    }catch (e:java.lang.Exception){
+                                    } catch (e: java.lang.Exception) {
                                         e.printStackTrace()
                                     }
 
@@ -235,9 +235,9 @@ class BleConnectService : Service() {
                         }[0]
                         if (!connectState) {
                             Logger.e("找到蓝牙设备发送连接指令...")
-                            if (!isConnecting){
+                            if (!isConnecting) {
                                 RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
-                                isConnecting=true
+                                isConnecting = true
                             }
 
                         }
@@ -288,7 +288,6 @@ class BleConnectService : Service() {
             }
         }, SCAN_DURATION)
     }
-
 
 
     override fun onDestroy() {

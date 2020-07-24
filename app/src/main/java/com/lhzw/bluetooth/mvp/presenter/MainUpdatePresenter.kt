@@ -49,7 +49,6 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
 
     override fun checkUpdate(mContext: Context) {
         // 腕表信息
-        /*
         val watchInfo = mModel?.queryWatchData()
         if (watchInfo != null && watchInfo.isNotEmpty()) {
             // 说明已连接过手表
@@ -98,11 +97,11 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                 mView?.updateApkState(state, version)
             }
         }
-        */
+
         // 检查Apk
-        checkApkUpdate(mContext) { state, version ->
-            mView?.updateApkState(state, version)
-        }
+//        checkApkUpdate(mContext) { state, version ->
+//            mView?.updateApkState(state, version)
+//    }
     }
 
     private fun checkApkUpdate(mContext: Context, body: (isUpdate: Boolean, versionName: String) -> Unit) {
@@ -263,14 +262,18 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
         if (Build.VERSION.SDK_INT >= 26) {
             val b = mContext.packageManager.canRequestPackageInstalls()
             if (b) {
-                mModel?.installApk(mContext, getApkPaht())
+                mModel?.installApk(mContext, getApkPaht()) {
+                    mView?.complete()
+                }
                 //安装应用的逻辑(写自己的就可以)
             } else {
                 //设置安装未知应用来源的权限
                 mModel?.startInstallPermissionSettingActivity(mContext)
             }
         } else {
-            mModel?.installApk(mContext, getApkPaht())
+            mModel?.installApk(mContext, getApkPaht()) {
+                mView?.complete()
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -46,11 +47,11 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun initData() {
         // 初始化界面
-        tv_app_version.text = "JIANGTAI ${App.instance
-                .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
         tv_app_update_date.text = apk_update_time
         tv_watch_update_date.text = firm_update_time
         mPresenter?.initWatchUI()
+        tv_app_version.text = "JIANGTAI ${App.instance
+                .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
         checkPermission()
     }
 
@@ -254,13 +255,20 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 } else {
                     state = FREE
                 }
+                Handler().postDelayed({
+                    this.finish()
+                }, 2000)
                 connectState = false
                 App.setSynState(false)
-                this.finish()
+                firm_update_time = sdf.format(System.currentTimeMillis())
+                showToast("腕表升级完成,退出升级功能")
             }
         } else if (value == -1) {
             showLoadingView("准备腕表升级...")
             state == UPDATEFIRM
+        } else if(value == -2){
+            cancelLoadingView()
+            showToast("升级失败")
         }
     }
 
@@ -337,8 +345,13 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     }
 
+    override fun complete() {
+        apk_update_time = sdf.format(System.currentTimeMillis())
+    }
+
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && interceptFinish()) {
+            showToast("正在下载升级")
             return false
         }
         return super.onKeyDown(keyCode, event)

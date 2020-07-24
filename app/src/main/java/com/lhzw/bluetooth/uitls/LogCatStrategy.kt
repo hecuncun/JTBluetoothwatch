@@ -12,7 +12,7 @@ class LogCatStrategy : LogStrategy {
 
     private var last: Int = 0
 
-    override fun log(priority: Int, tag: String, message: String) {
+    override fun log(priority: Int, tag: String?, message: String) {
         Log.println(priority, randomKey() + tag, message)
     }
 
@@ -24,4 +24,6 @@ class LogCatStrategy : LogStrategy {
         last = random
         return random.toString()
     }
+
+
 }

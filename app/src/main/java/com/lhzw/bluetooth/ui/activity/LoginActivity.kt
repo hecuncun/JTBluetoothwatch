@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private val TAG = "Login"
     private var mGlobalToast: Toast? = null
     private var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
-    private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "2020年3月28日更新")
+    private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
 
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -77,11 +77,13 @@ class LoginActivity : AppCompatActivity() {
                     if (it.isSuccessed()) {
                         http_token = it.getData()?.getToken()
                         showToast("登录成功")
-                        val sdf = SimpleDateFormat("yyyy年MM月dd日更新")
-                        apk_update_time = sdf.format(System.currentTimeMillis())
+                        if ("" == apk_update_time) {// 说明第一次登陆软件
+                            val sdf = SimpleDateFormat("yyyy年MM月dd日更新")
+                            apk_update_time = sdf.format(System.currentTimeMillis())
+                        }
                         jumpToMain()
                     } else {
-                        showToast("登录失败")
+                        showToast("${it.getMessage()}")
                         Log.e(TAG, "code ${it.getCode()}  message  ${it.getMessage()}")
                     }
                     if (loadingView != null && loadingView!!.isShowing) {

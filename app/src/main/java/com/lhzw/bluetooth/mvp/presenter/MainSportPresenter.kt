@@ -343,6 +343,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         BaseUtils.ifNotNull(latLngs, aMap) { it, amp ->
             var list = ArrayList<LatLng>()
             it.forEach {
+                if (BaseUtils.outOfChina(it.gps_latitude, it.gps_longitude)) return@forEach
                 var tmp = LatLng(it.gps_latitude, it.gps_longitude)
                 b.include(tmp)
                 list.add(tmp)

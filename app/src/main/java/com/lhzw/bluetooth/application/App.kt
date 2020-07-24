@@ -1,5 +1,7 @@
 package com.lhzw.bluetooth.application
 
+//import com.uuzuche.lib_zxing.activity.ZXingLibrary
+
 import android.app.Activity
 import android.app.Application
 import android.content.Context
@@ -16,9 +18,7 @@ import com.lhzw.bluetooth.service.SmsAndPhoneService
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.LogCatStrategy
 import com.lhzw.bluetooth.uitls.Preference
-import com.orhanobut.logger.AndroidLogAdapter
-import com.orhanobut.logger.Logger
-import com.orhanobut.logger.PrettyFormatStrategy
+import com.orhanobut.logger.*
 import com.simple.spiderman.SpiderMan
 import com.squareup.leakcanary.LeakCanary
 import com.squareup.leakcanary.RefWatcher
@@ -26,9 +26,9 @@ import com.tencent.bugly.crashreport.CrashReport
 import com.umeng.analytics.MobclickAgent
 import com.umeng.commonsdk.UMConfigure
 import com.umeng.socialize.PlatformConfig
-//import com.uuzuche.lib_zxing.activity.ZXingLibrary
 import org.litepal.LitePal
 import kotlin.properties.Delegates
+
 
 /**
  *
@@ -47,7 +47,7 @@ class App : MultiDexApplication() {
 
         private val TAG = "App"
 
-        private var activityContext : Activity? = null
+        private var activityContext: Activity? = null
 
         private var isSynState = false
 
@@ -61,15 +61,15 @@ class App : MultiDexApplication() {
             return app.refWatcher
         }
 
-        fun getActivityContext() : Activity?{
+        fun getActivityContext(): Activity? {
             return activityContext
         }
 
-        fun setActivityContext(activityContext : Activity?){
+        fun setActivityContext(activityContext: Activity?) {
             this.activityContext = activityContext
         }
 
-        fun setSynState(state:Boolean){
+        fun setSynState(state: Boolean) {
             isSynState = state
         }
 
@@ -90,18 +90,18 @@ class App : MultiDexApplication() {
             startService(Intent(context, BlutoothService::class.java))
         }
         //启动蓝牙连接服务
-        if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)){
-            startService(Intent(context,BleConnectService::class.java))
+        if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)) {
+            startService(Intent(context, BleConnectService::class.java))
         }
         //启动电话/短信监听服务
-        if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)){
-            startService(Intent(context,SmsAndPhoneService::class.java))
+        if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)) {
+            startService(Intent(context, SmsAndPhoneService::class.java))
         }
         initLoggerConfig()
         //初始化数据库
         LitePal.initialize(context)
         //初始化二维码扫描
-       // ZXingLibrary.initDisplayOpinion(this)
+        // ZXingLibrary.initDisplayOpinion(this)
         //设置LOG开关，默认为false
         UMConfigure.setLogEnabled(true);
         // 分享权限
@@ -137,6 +137,10 @@ class App : MultiDexApplication() {
                 return BuildConfig.DEBUG
             }
         })
+        val csvFormat = CsvFormatStrategy.newBuilder()
+                .tag("BLUETOOTH")
+                .build()
+        Logger.addLogAdapter(DiskLogAdapter(csvFormat))
     }
 
 
