@@ -249,7 +249,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         if (value >= 0) {
             cancelLoadingView()
             progesss_watch.progress = value
-            tv_update_watch_status.text = "$status  $value%"
+            tv_update_watch_status.text = "已升级腕表  $value%"
             if (value == 100) {
                 if (tv_update_app.text == "安装") {
                     state = COMPLETE

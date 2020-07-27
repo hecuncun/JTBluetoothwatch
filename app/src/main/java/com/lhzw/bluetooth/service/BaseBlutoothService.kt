@@ -60,7 +60,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     protected var isSending = false
     private var hasSports = false
     private var firm_update_time: String? by Preference(Constants.FIRM_UPDATE_TIME, "")
-    protected var isWatchUpdate = false
+
     //    private var progresssBar: SyncProgressBar? = null
     private var sportActivityBeanList = ArrayList<SportActivityBean>()
     protected var dfuBean: DfuBeanEvent? = null
