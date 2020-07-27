@@ -1,6 +1,7 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
@@ -11,6 +12,7 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
@@ -48,6 +50,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
     private var status: String? = null
     override fun attachLayoutRes() = R.layout.activity_update_func_list
 
+    @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
         // 初始化界面
         tv_app_update_date.text = apk_update_time
@@ -56,6 +59,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
 //        checkPermission()
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         checkVersion()
     }
 
@@ -63,10 +68,10 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         super.initView()
     }
 
-    private fun checkInstall() : Boolean{
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    private fun checkInstall(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val b = packageManager.canRequestPackageInstalls()
-            if(!b) {
+            if (!b) {
 //                requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE)
                 val uri: Uri = Uri.parse("package:$packageName")
                 val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, uri)
@@ -214,7 +219,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 mPresenter?.installApk(this)
                 return@setOnClickListener
             }
-            if(checkInstall()) {
+            if (checkInstall()) {
                 updateApk()
             }
         }
@@ -234,7 +239,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 mPresenter?.installApk(this)
                 state == FREE
                 return
-            } else if(requestCode == PERMISS_REQUEST_CODE) {
+            } else if (requestCode == PERMISS_REQUEST_CODE) {
                 updateApk()
             }
         } else if (resultCode == RESULT_CANCELED) {
@@ -248,7 +253,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                     }
                     return
                 }
-            }else if(requestCode == PERMISS_REQUEST_CODE) {
+            } else if (requestCode == PERMISS_REQUEST_CODE) {
                 showToast("权限获取失败")
             }
         }
