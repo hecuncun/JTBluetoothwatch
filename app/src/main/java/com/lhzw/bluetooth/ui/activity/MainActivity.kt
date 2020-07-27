@@ -61,7 +61,6 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
     private var mMineFragment: MineFragment? = null
     private val PERMISS_REQUEST_CODE = 0x100
     private val PERMISS_REQUEST_CODE_PHONE = 0x101
-    private val PERMISS_REQUEST_CODE_INTALL = 0x105
     private var tapId = Constants.TAP_HOME;
 
 
@@ -113,8 +112,6 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                     Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE_PHONE)
         }
 
-        checkInstall()
-
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
             Logger.e("已获取存储权限")
             //未初始化就 先初始化一个用户对象
@@ -157,15 +154,6 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
 //            KeepLiveUtil.goHuaweiSetting()
 //        }
 
-    }
-
-    private fun checkInstall(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val b = packageManager.canRequestPackageInstalls()
-            if(!b) {
-                requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE_INTALL)
-            }
-        }
     }
 
     private var wakeLock: PowerManager.WakeLock? = null

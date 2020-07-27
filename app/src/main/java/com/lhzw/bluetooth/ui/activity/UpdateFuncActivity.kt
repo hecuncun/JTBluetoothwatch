@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
 import android.os.Handler
 import android.text.TextUtils
 import android.util.Log
@@ -53,6 +54,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
 //        checkPermission()
+        checkInstall()
         checkVersion()
     }
 
@@ -60,6 +62,14 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         super.initView()
     }
 
+    private fun checkInstall(){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val b = packageManager.canRequestPackageInstalls()
+            if(!b) {
+                requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE)
+            }
+        }
+    }
 
     private fun checkPermission() {
         if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -237,7 +247,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (PERMISS_REQUEST_CODE == requestCode) {
             //未初始化就 先初始化一个用户对象
-            checkVersion()
+//            checkVersion()
         } else {
             showToast("权限申请失败")
         }
