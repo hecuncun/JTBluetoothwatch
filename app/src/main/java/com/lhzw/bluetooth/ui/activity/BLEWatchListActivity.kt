@@ -274,6 +274,7 @@ class BLEWatchListActivity : BaseActivity() {
     fun onWatchConnectChanged(event: ConnectEvent) {
         if (event.isConnected) {//已连接
             showConnectedContainer(true)
+            loadingView?.setLoadingTitle("同步数据中...")
         } else {//已断开显示UI布局
             showConnectedContainer(false)
             Logger.e("ConnectFragment  收到断开回调")

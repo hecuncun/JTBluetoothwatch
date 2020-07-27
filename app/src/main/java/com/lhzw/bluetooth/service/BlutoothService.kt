@@ -37,6 +37,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY;
     }
