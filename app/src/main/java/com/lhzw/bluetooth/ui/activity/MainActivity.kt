@@ -162,7 +162,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
     private fun checkInstall(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val b = packageManager.canRequestPackageInstalls()
-            if(b) {
+            if(!b) {
                 requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE_INTALL)
             }
         }
