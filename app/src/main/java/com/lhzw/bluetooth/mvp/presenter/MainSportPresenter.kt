@@ -60,7 +60,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private val ANIMATION = 0x0005
     private val SHOTSCREEN = 0x0010
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
-    private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
+    private var nickName: String? by Preference(Constants.NICK_NAME, "")
     private var currentMarker: Marker? = null
     private var isOver = false
     override fun activate(onLocationChangedListener: LocationSource.OnLocationChangedListener?) {

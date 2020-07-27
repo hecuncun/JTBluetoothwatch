@@ -48,7 +48,7 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
     private val QQ_QUEST = 0x0005
     private var path: String? = "/sdcard/share/xxxxxx.jpg"
     private var shareFile: File? = null
-    private var nickName: String? by Preference(Constants.NICK_NAME, "用户昵称")
+    private var nickName: String? by Preference(Constants.NICK_NAME, "")
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
