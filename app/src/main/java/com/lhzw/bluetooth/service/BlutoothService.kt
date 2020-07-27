@@ -324,6 +324,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Log.e("UPDATEWATCH", "onReconnectResponse ---------  ++++")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             mHandler.removeMessages(CONNET_UPDATE_DELAY)
+            isWatchUpdate = true
             requestTimes = 0;
             mHandler.sendEmptyMessage(MTU_UPDATE_DELAY)
         }
@@ -347,7 +348,6 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         if ("" != response) {
             //        tv_update_watch_status.text = "解压完成，等待升级..."
             requestTimes = 0;
-            isWatchUpdate = true
             mHandler.sendEmptyMessage(CONNET_UPDATE_DELAY)
             RxBus.getInstance().post("onupdateprogress", "-1")
             Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
