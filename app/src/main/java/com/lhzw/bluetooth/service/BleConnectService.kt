@@ -75,6 +75,7 @@ class BleConnectService : Service() {
             Logger.e(" BleConnectService收到连接成功回调event")
             connectState = true
             autoConnect = true//将自动连接打开
+            loadingView?.setLoadingTitle("同步数据中...")
         } else {//已断开显示UI布局
             mListValues.clear()
             Logger.e(" BleConnectService收到断开回调event")
