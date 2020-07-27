@@ -53,7 +53,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
     private var syncTime: String by Preference(Constants.SYNC_TIME, "")//最近同步时间
     private var isSyncAscending: Boolean by Preference(Constants.ISSYNCASCENDING, false)//缓存扫码的mac
-    private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
+    protected var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
     private var ERROR = ""
     protected var mContext: Activity? = null
     protected var listMsg = mutableListOf<NotificationEvent>()//所有消息集合
@@ -270,6 +270,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
+                Log.e("Tag", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
                 EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功

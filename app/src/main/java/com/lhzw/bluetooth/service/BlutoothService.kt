@@ -37,7 +37,6 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
-    protected var isWatchUpdate = false
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY;
     }
@@ -87,8 +86,6 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     fun updatePersonInfo(str: String) {
         myBleManager?.personal_info_save(PersonalInfoBean.createBytes())
     }
-
-    private var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
 
     // 向手推送消息
     override fun sendToPhoneData(event: NotificationEvent) {
@@ -316,7 +313,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Log.e("UPDATEWATCH", "onDfuProgress ---------  ++++")
         RxBus.getInstance().post("onupdateprogress", progress.toString())
         if (progress == 100) {
-            isWatchUpdate = false
+            acceptMsg = false
         }
     }
 
@@ -324,7 +321,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Log.e("UPDATEWATCH", "onReconnectResponse ---------  ++++")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             mHandler.removeMessages(CONNET_UPDATE_DELAY)
-            isWatchUpdate = true
+            acceptMsg = true
             requestTimes = 0;
             mHandler.sendEmptyMessage(MTU_UPDATE_DELAY)
         }
