@@ -314,7 +314,8 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Log.e("UPDATEWATCH", "onDfuProgress ---------  ++++")
         RxBus.getInstance().post("onupdateprogress", progress.toString())
         if (progress == 100) {
-            acceptMsg = false
+            acceptMsg = true
+            Log.e("onupdateprogress", "acceptMsg  end  $acceptMsg")
         }
     }
 
@@ -322,7 +323,8 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Log.e("UPDATEWATCH", "onReconnectResponse ---------  ++++")
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             mHandler.removeMessages(CONNET_UPDATE_DELAY)
-            acceptMsg = true
+            acceptMsg = false
+            Log.e("onupdateprogress", "acceptMsg  start  $acceptMsg")
             requestTimes = 0;
             mHandler.sendEmptyMessage(MTU_UPDATE_DELAY)
         }

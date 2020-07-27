@@ -110,7 +110,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
         showLoadingView("进行数据解压中...")
-        Handler().postDelayed({RxBus.getInstance().post("reconnet", "")},1000)
+        Handler().postDelayed({ RxBus.getInstance().post("reconnet", "") }, 1000)
     }
 
     private fun downloadDfu() {
@@ -267,7 +267,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         } else if (value == -1) {
             showLoadingView("准备腕表升级...")
             state == UPDATEFIRM
-        } else if(value == -2){
+        } else if (value == -2) {
             cancelLoadingView()
             showToast("升级失败")
         }
