@@ -2,7 +2,6 @@ package com.lhzw.bluetooth.service
 
 import android.content.Intent
 import android.os.Environment
-import android.os.Handler
 import android.util.Log
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
@@ -38,6 +37,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
+    protected var isWatchUpdate = false
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return START_STICKY;
     }
@@ -274,19 +274,19 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("notification")])
     fun notifyWatchMsg(event: NotificationEvent) {
         Logger.e("BlutoothService收到推送==>package==${event.packageName}")
-        Log.e("BluetoothService","信息是否可以推送==$acceptMsg,msg是否正在推送isSending==$isSending")
+        Log.e("BluetoothService", "信息是否可以推送==$acceptMsg,msg是否正在推送isSending==$isSending")
         if (acceptMsg) {
             listMsg.add(event)
             // 执行发送数据
             if (!isSending) {
                 isSending = true
                 sendToPhoneData(listMsg[0])
-            }else{
-               mHandler.postDelayed(Runnable {
-                   if (isSending && listMsg.isNotEmpty()){
-                       sendToPhoneData(listMsg[0])
-                   }
-               },3000)
+            } else {
+                mHandler.postDelayed(Runnable {
+                    if (isSending && listMsg.isNotEmpty()) {
+                        sendToPhoneData(listMsg[0])
+                    }
+                }, 3000)
             }
         }
     }
@@ -315,6 +315,9 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     override fun onDfuProgress(progress: Int) {
         Log.e("UPDATEWATCH", "onDfuProgress ---------  ++++")
         RxBus.getInstance().post("onupdateprogress", progress.toString())
+        if (progress == 100) {
+            isWatchUpdate = false
+        }
     }
 
     override fun _onReconnectResponse(response: ByteArray?) {
@@ -337,13 +340,14 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
 
     override fun onDfuStatus(message: String?) {
         Log.e("UPDATEWATCH", "onDfuStatus ---------  ++++")
-        com.lhzw.bluetooth.bus.RxBus.getInstance().post("onupdatestatus", message)
+        RxBus.getInstance().post("onupdatestatus", message)
     }
 
     override fun onDfuConfigCallback(response: String) {
-        if("" != response) {
+        if ("" != response) {
             //        tv_update_watch_status.text = "解压完成，等待升级..."
             requestTimes = 0;
+            isWatchUpdate = true
             mHandler.sendEmptyMessage(CONNET_UPDATE_DELAY)
             RxBus.getInstance().post("onupdateprogress", "-1")
             Log.e("UPDATEWATCH", "onDfuConfigCallback ---------  ++++")
@@ -364,7 +368,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         Logger.e("重置connectState=false")
         myBleManager?.device_disconnect()
         acceptMsg = false
-        isSending=false//断开连接将这个正在发送信息状态标记为可发送
+        isSending = false//断开连接将这个正在发送信息状态标记为可发送
         dfuBean = null
     }
 

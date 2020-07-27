@@ -59,7 +59,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     override fun lazyLoad() {
         //初始化数据
         mPresenter?.getPersonalInfo()
-        checkPermission()
+//        checkPermission()
+        checkUpdate()
     }
 
     private var personalInfoBean: PersonalInfoBean? = null

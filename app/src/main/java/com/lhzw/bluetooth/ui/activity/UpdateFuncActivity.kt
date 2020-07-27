@@ -52,7 +52,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         mPresenter?.initWatchUI()
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
-        checkPermission()
+//        checkPermission()
+        checkVersion()
     }
 
     override fun initView() {

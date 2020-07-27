@@ -270,7 +270,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
-                Log.e("Tag", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
                 EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
