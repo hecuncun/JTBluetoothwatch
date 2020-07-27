@@ -326,7 +326,6 @@ class HomeFragment : BaseFragment(),CancelAdapt{
 //            }
                 //initBarData(bar_chart_step, stepValues, resources.getColor(R.color.blue_light), resources.getColor(R.color.green_circle))
                 //initBarData(bar_chart_cal, calValues, resources.getColor(R.color.orange_light), resources.getColor(R.color.orange))
-
         }
     }
 
