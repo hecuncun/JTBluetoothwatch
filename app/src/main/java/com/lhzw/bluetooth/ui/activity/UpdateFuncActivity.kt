@@ -3,8 +3,10 @@ package com.lhzw.bluetooth.ui.activity
 import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Handler
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.KeyEvent
@@ -54,7 +56,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
 //        checkPermission()
-        checkInstall()
+//        checkInstall()
         checkVersion()
     }
 
@@ -62,13 +64,18 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         super.initView()
     }
 
-    private fun checkInstall(){
+    private fun checkInstall() : Boolean{
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val b = packageManager.canRequestPackageInstalls()
             if(!b) {
-                requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE)
+//                requestPermission(arrayOf(Manifest.permission.REQUEST_INSTALL_PACKAGES), PERMISS_REQUEST_CODE)
+                val uri: Uri = Uri.parse("package:$packageName")
+                val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, uri)
+                startActivityForResult(intent, PERMISS_REQUEST_CODE)
+                return false
             }
         }
+        return true
     }
 
     private fun checkPermission() {
@@ -208,7 +215,9 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 mPresenter?.installApk(this)
                 return@setOnClickListener
             }
-            updateApk()
+            if(checkInstall()) {
+                updateApk()
+            }
         }
 
         tv_update_watch.setOnClickListener {
@@ -226,6 +235,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 mPresenter?.installApk(this)
                 state == FREE
                 return
+            } else if(requestCode == PERMISS_REQUEST_CODE) {
+                updateApk()
             }
         } else if (resultCode == RESULT_CANCELED) {
             if (requestCode == 0x6666 || requestCode == 0x5555) {
@@ -238,6 +249,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                     }
                     return
                 }
+            }else if(requestCode == PERMISS_REQUEST_CODE) {
+                showToast("权限获取失败")
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
