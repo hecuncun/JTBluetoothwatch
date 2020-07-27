@@ -245,7 +245,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         // 设置手表为低功率状态
 //        Log.e("BluetoothCallBack", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         Log.e("callBackBluetooth", "onSettingConnectParameter....")
-        syncTime = "最近一次同步时间 ${DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")}"
+        syncTime = "${DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")}"
         response(response, Constants.CONNECT_RESPONSE_CODE) {
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")

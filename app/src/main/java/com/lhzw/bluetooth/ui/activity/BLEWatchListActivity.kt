@@ -62,7 +62,7 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     override fun initData() {
-        tv_sync_time.text=syncTime
+        tv_sync_time.text="最近一次同步时间 $syncTime"
     }
     private lateinit var drawable:ClipDrawable
     val animator = ValueAnimator.ofInt(10000)

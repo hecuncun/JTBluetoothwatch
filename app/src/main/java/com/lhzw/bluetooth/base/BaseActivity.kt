@@ -19,6 +19,7 @@ import android.view.WindowManager
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.uitls.CommonUtil
 import com.lhzw.bluetooth.uitls.KeyBoardUtil
 import com.lhzw.bluetooth.uitls.Preference
@@ -179,7 +180,8 @@ abstract class BaseActivity : AppCompatActivity() {
         }
         for (permission in permissions) {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                Log.e("permission", "$permission 没授权")
+                //Log.e("permission", "$permission 没授权")
+                showToast("$permission 还没授权")
                 return false
             }
         }

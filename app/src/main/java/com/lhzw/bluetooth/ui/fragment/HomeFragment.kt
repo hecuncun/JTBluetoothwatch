@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.ui.fragment
 import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.view.View
+import android.widget.Toast
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
@@ -17,13 +18,18 @@ import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bean.CurrentDataBean
 import com.lhzw.bluetooth.bean.DailyInfoDataBean
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.ConnectEvent
 import com.lhzw.bluetooth.event.HideDialogEvent
 import com.lhzw.bluetooth.event.RefreshTargetStepsEvent
+import com.lhzw.bluetooth.event.SyncDataEvent
+import com.lhzw.bluetooth.ext.showToast
+import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.ui.activity.DailyStatisticsActivity
 import com.lhzw.bluetooth.ui.activity.StatisticsActivity
 import com.lhzw.bluetooth.uitls.DateUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.uitls.XAxisValueFormatter
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -42,6 +48,7 @@ import kotlin.collections.ArrayList
 class HomeFragment : BaseFragment(),CancelAdapt{
     private var bleManager: BluetoothManager? = null
     private var state = false
+    private var syncTime: String by Preference(Constants.SYNC_TIME, "")//最近同步时间
     override fun useEventBus() = true
 
     companion object {
@@ -413,6 +420,8 @@ class HomeFragment : BaseFragment(),CancelAdapt{
         task_cal.setProgress(100)
         step_line_chart.clear()
         cal_line_chart.clear()
+        tv_step_chart.text="--"
+        tv_cal_chart.text="--"
     }
 
     /**
@@ -434,5 +443,26 @@ class HomeFragment : BaseFragment(),CancelAdapt{
             initWatchData()
         }
 
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && connectState && syncTime.isNotEmpty()){
+            //最近同步时间不是 同一天  就同步数据
+
+            val currentTime = DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")
+            Logger.e("同步检测  $currentTime  --- $syncTime")
+            if (syncTime.split(" ")[0] != currentTime.split(" ")[0]){
+                //同步数据
+                if (BleConnectService.isConnecting) {
+                   showToast( "正在进行同步中，请稍后同步")
+                } else {
+                    BleConnectService.isConnecting = true
+                    showToast( "开始同步")
+                    RxBus.getInstance().post("sync", SyncDataEvent("sync"))
+
+                }
+            }
+        }
     }
 }
