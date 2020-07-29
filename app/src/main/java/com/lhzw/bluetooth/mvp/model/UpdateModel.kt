@@ -156,6 +156,7 @@ class UpdateModel : UpdateContract.IModel {
     override fun installApk(mContext: Activity, filePath: String?, complete :()-> Unit) {
         val apkFile = File(filePath)
         val intent = Intent(Intent.ACTION_VIEW)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Log.e(UpdateModel::class.java.simpleName, "版本大于 N ，开始使用 fileProvider 进行安装")

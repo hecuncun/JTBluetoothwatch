@@ -283,7 +283,9 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
                 } else {
                     state = FREE
                 }
+                mPresenter?.updateDate()
                 Handler().postDelayed({
+                    setResult(Activity.RESULT_OK)
                     this.finish()
                 }, 2000)
                 connectState = false

@@ -1,6 +1,7 @@
 package com.lhzw.bluetooth.mvp.presenter
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -10,9 +11,11 @@ import android.os.Message
 import android.util.Log
 import android.widget.Toast
 import com.lhzw.bluetooth.application.App
+import com.lhzw.bluetooth.bean.WatchInfoBean
 import com.lhzw.bluetooth.bean.net.ApkBean
 import com.lhzw.bluetooth.bean.net.FirmBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.event.DownLoadEvent
 import com.lhzw.bluetooth.mvp.contract.UpdateContract
 import com.lhzw.bluetooth.mvp.model.UpdateModel
@@ -274,6 +277,16 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
             mModel?.installApk(mContext, getApkPaht()) {
                 mView?.complete()
             }
+        }
+    }
+
+    override fun updateDate() {
+        val watchInfo = mModel?.queryWatchData()
+        if (watchInfo != null && watchInfo.isNotEmpty() && dfu != null) {
+            val values = ContentValues()
+            values.put("APOLLO_APP_VERSION", dfu!!.getApolloAppVersion().toInt())
+            values.put("BLE_APP_VERSION", dfu!!.getBleAppVersion().toInt())
+            CommOperation.update(WatchInfoBean::class.java, values, watchInfo[0].id)
         }
     }
 }

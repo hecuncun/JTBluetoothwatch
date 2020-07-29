@@ -78,4 +78,11 @@ data class WatchInfoBean(
             return null
         }
     }
+    fun setApolloVer(version : Int){
+        this.APOLLO_APP_VERSION = version
+    }
+
+    fun setBleVer(version : Int){
+        this.BLE_APP_VERSION = version
+    }
 }

@@ -209,7 +209,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 step_max = it.value
             }
         }
-        if (step == 0) {
+        if (step <= 0) {
             convertView.findViewById<TextView>(R.id.tv_stride_frequency).text = "$step"
             convertView.findViewById<TextView>(R.id.tv_stride_frequency_top).text = "$step"
             convertView.findViewById<TextView>(R.id.tv_step_stride_av).text = "$step"

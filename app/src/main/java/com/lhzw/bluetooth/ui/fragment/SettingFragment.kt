@@ -43,6 +43,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
+    private val UPDATE_REQUEST_CODE = 0x0045
     private val TAG = "SettingFragment"
     private val PERMISS_REQUEST_CODE = 0x000056
     private var isChecking = false
@@ -316,7 +317,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
 
         ll_update_sortware.setOnClickListener {
-            startActivity(Intent(activity, UpdateFuncActivity::class.java))
+            startActivityForResult(Intent(activity, UpdateFuncActivity::class.java),UPDATE_REQUEST_CODE)
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
@@ -336,6 +337,9 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                     } else {
                         showToast("图片出现问题")
                     }
+                }
+                UPDATE_REQUEST_CODE -> {
+                    checkUpdate()
                 }
             }
         }

@@ -236,7 +236,6 @@ class SportModel(var mark: String) : SportConstract.Model {
         var yValus = ArrayList<BarEntry>()
 
         var lables = activity.resources.getStringArray(R.array.heart_rate_types)
-        var valueDescrip = arrayOf("01:53", "09:11", "13:20", "01:18", "06:24")
         detail?.let {
             var sum = it[0].warmup_heart_rate + it[0].flaming_heart_rate + it[0].aerobic_heart_rate + it[0].anaerobic_heart_rate + it[0].limitation_heart_rate
             if (sum == 0) {

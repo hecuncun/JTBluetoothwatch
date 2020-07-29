@@ -53,5 +53,6 @@ interface UpdateContract {
         fun getApkPaht(): String
         fun getDfuPaht(): String
         fun installApk(mContext: Activity)
+        fun updateDate()
     }
 }
