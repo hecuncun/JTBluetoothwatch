@@ -82,9 +82,9 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
     @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("InvalidWakeLockTag")
     override fun initData() {
+        //  Manifest.permission.READ_PHONE_NUMBERS, Manifest.permission.READ_PHONE_NUMBERS,
         if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG,
                         Manifest.permission.READ_PHONE_STATE,
-                        Manifest.permission.READ_PHONE_NUMBERS,
                         Manifest.permission.READ_SMS,
                         Manifest.permission.RECEIVE_MMS,
                         Manifest.permission.RECEIVE_SMS,
@@ -98,7 +98,6 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
         } else {
             requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG,
                     Manifest.permission.READ_PHONE_STATE,
-                    Manifest.permission.READ_PHONE_NUMBERS,
                     Manifest.permission.READ_SMS,
                     Manifest.permission.RECEIVE_MMS,
                     Manifest.permission.RECEIVE_SMS,
