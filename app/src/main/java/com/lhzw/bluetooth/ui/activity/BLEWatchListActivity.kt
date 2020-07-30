@@ -214,6 +214,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
         if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
+
             val intent = Intent(this, ScanQRCodeActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         } else {
@@ -250,7 +251,7 @@ class BLEWatchListActivity : BaseActivity() {
                 if (result!!.split(",")[0].contains( "SW")) {//如果为手表设备,扫码成功就保存设备
                     lastDeviceMacAddress = result.split(",")[2]
                     connectedDeviceName = result.split(",")[1]
-                    autoConnect = false //扫码成功就不自动连接,等连接成功后再设置为自动成功
+                    autoConnect = false //扫码成功就不自动连接,等连接成功后再设置为自动连接
                     //下面为连接流程
                     loadingView?.setLoadingTitle("连接中...")
                     loadingView?.show()

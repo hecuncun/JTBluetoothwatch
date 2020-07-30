@@ -58,6 +58,6 @@ class NotifyService :NotificationListenerService() {
 
     override fun onNotificationRemoved(sbn: StatusBarNotification, rankingMap: RankingMap) {//通知移除调用
         super.onNotificationRemoved(sbn, rankingMap)
-        Logger.e("onNotificationRemoved收到通知 ID=${sbn.id}<==>tickerText==${sbn.notification.tickerText}<==>packageName==${sbn.packageName}")
+       // Logger.e("onNotificationRemoved收到通知 ID=${sbn.id}<==>tickerText==${sbn.notification.tickerText}<==>packageName==${sbn.packageName}")
     }
 }

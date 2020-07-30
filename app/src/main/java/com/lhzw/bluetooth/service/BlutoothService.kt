@@ -39,7 +39,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
     private var enableWx: Boolean by Preference(Constants.TYPE_WX, true)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return START_STICKY;
+        return START_STICKY
     }
 
     // duf 文件路径
