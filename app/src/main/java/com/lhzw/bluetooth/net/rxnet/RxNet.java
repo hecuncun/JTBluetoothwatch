@@ -122,6 +122,8 @@ public class RxNet {
                 downloadByte += len;
                 callbackProgress(tempFileLen + totalByte, tempFileLen + downloadByte, callback);
             }
+            randomAccessFile.close();
+            callbackProgress(-1, -1, callback);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -141,7 +143,11 @@ public class RxNet {
     private void callbackProgress(final long totalByte, final long downloadByte, final DownloadCallback callback) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (null != callback) {
-                callback.onProgress(totalByte, downloadByte, (int) ((downloadByte * 100) / totalByte));
+                if(totalByte != -1 && downloadByte != -1){
+                    callback.onProgress(totalByte, downloadByte, (int) ((downloadByte * 100) / totalByte));
+                } else {
+                    callback.onProgress(-1, -1, -3);
+                }
             }
         });
     }

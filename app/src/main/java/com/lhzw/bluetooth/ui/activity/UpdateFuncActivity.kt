@@ -131,7 +131,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         progesss_watch.progress = 0
         progesss_watch.max = 100
         showLoadingView("进行数据解压中...")
-        Handler().postDelayed({ RxBus.getInstance().post("reconnet", "") }, 1000)
     }
 
     private fun downloadDfu() {
@@ -147,9 +146,13 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             }
 
             override fun onProgress(totalByte: Long, currentByte: Long, progress: Int) {
-                if (currentByte == totalByte) {
+                if (totalByte == -1L && currentByte == -1L && progress == -3) {
+                    Handler().postDelayed({ RxBus.getInstance().post("reconnet", "") }, 1000)
+                    return
+                } else if (currentByte == totalByte) {
                     tv_update_watch_status.text = "下载完成"
                     wirelessSend()
+                    return
                 } else {
                     tv_update_watch_status.text = "已下载数据  ${progress}%"
                 }
