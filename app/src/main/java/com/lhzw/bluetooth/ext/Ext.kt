@@ -5,6 +5,9 @@ import android.content.Context
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.UnderlineSpan
 import android.widget.TextView
 import android.widget.Toast
 import com.lhzw.bluetooth.R
@@ -38,6 +41,21 @@ fun Fragment.showSnackMsg(msg: String) {
     val view = snackbar.view
     view.findViewById<TextView>(R.id.snackbar_text).setTextColor(ContextCompat.getColor(this.activity!!, R.color.white))
     snackbar.show()
+}
+
+fun TextView.underline() {
+    if (text.isNotEmpty()) {
+        val spannableString = SpannableString(text.toString().trim())
+        val underlineSpan = UnderlineSpan()
+        spannableString.setSpan(
+                underlineSpan,
+                0,
+                spannableString.length,
+                Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+        )
+        text = spannableString
+    }
+
 }
 
 /**

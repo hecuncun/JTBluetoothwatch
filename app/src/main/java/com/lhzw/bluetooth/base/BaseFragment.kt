@@ -32,6 +32,7 @@ abstract class BaseFragment :Fragment(){
     protected var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)
     protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
     protected var nickName: String by Preference(Constants.NICK_NAME, "")
+    protected var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
     /**
      * 视图是否加载完毕
      */

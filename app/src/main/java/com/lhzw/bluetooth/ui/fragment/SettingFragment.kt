@@ -20,6 +20,7 @@ import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SettingContract
 import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
+import com.lhzw.bluetooth.ui.activity.LoginNewActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
@@ -319,6 +320,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         ll_update_sortware.setOnClickListener {
             startActivityForResult(Intent(activity, UpdateFuncActivity::class.java),UPDATE_REQUEST_CODE)
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        }
+
+        ll_logout.setOnClickListener {//退出登录
+            showToast("退出成功")
+            http_token=""
+            startActivity(Intent(requireContext(),LoginNewActivity::class.java))
+
         }
 
 

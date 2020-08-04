@@ -12,10 +12,10 @@
     <color name="white">#FFFFFF</color>
     <color name="text_yellow">#F7BD33</color>
     <color name="shate_text_color">#10F1FF</color>
-    <color name="orange">#F15A24</color>
+    <color name="orange">#EF6737</color>
     <color name="gradient_left_start">#E85521</color>
     <color name="gradient_left_end">#E58716</color>
-    <color name="gradient_medi_start">#E58716</color>
+    <color name="gradient_medi_start">#A5A290</color>
     <color name="gradient_medi_end">#11AD41</color>
     <color name="gradient_right_start">#11AD41</color>
     <color name="gradient_right_end">#11837F</color>

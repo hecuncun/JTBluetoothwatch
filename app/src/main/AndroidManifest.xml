@@ -119,6 +119,8 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".ui.activity.StatisticsActivity" />
         <activity android:name=".ui.activity.ScanQRCodeActivity" />
+        <activity android:name=".ui.activity.LoginNewActivity"  android:launchMode="singleTask"/>
+        <activity android:name=".ui.activity.RegisterActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

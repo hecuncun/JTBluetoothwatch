@@ -35,6 +35,8 @@ abstract class BaseActivity : AppCompatActivity() {
     protected var firest_login: Boolean by Preference(Constants.FIREST_LOGIN, true)
     protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
 
+    protected var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
+
     /**
      * 布局文件id
      */
