@@ -57,6 +57,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     private var aMap: AMap? = null
     private var locationUtils: LocationUtils? = null
     private val DRAWPATH = 0x0001
+    private var isMapAnimOver = false
     private val ANIMATION = 0x0005
     private val SHOTSCREEN = 0x0010
     private var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
@@ -232,7 +233,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
             val detail = model.queryData<FlatSportBean>(mark)
             detail?.let {
 //                convertView.findViewById<TextView>(R.id.tv_step_num).text = "${it[0].step_num}"
-                activity.tv_distance.text = "${it[0].distance}"
+//                activity.tv_distance.text = "${it[0].distance}"
                 convertView.findViewById<TextView>(R.id.tv_heart_rate).text = "${it[0].average_heart_rate}"
                 convertView.findViewById<TextView>(R.id.tv_heart_rate_top).text = "${it[0].average_heart_rate}"
                 convertView.findViewById<TextView>(R.id.tv_speed_heart_av).text = "${it[0].average_heart_rate}"
@@ -292,7 +293,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
         true
     }
 
-    private fun drawPaths(activity: Activity) {
+    fun drawPaths(activity: Activity) {
 
         // 绘制轨迹
         /*
@@ -348,14 +349,16 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 b.include(tmp)
                 list.add(tmp)
             }
+            setMapAnimOver(false)
             val bounds: LatLngBounds = b.build()
             val top_padding: Int = BaseUtils.dip2px(50)
             val bottom_padding: Int = BaseUtils.dip2px(40 + 30 + 160)
             val left_right_padding: Int = BaseUtils.dip2px(50)
             var douglasList = Douglas(list, 3.0).compress()
-            amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 1000L, object : AMap.CancelableCallback {
+            amp.animateCamera(CameraUpdateFactory.newLatLngBoundsRect(bounds, left_right_padding, left_right_padding, top_padding, bottom_padding), 900L, object : AMap.CancelableCallback {
                 override fun onFinish() {
                     Log.e("onMap", "draw path success ....")
+                    setMapAnimOver(true)
 //                    mHandler.sendEmptyMessageDelayed(ANIMATION, 150)
                     activity?.trailview.setOnClickListener {
                         Toast.makeText(activity, "等待动画结束", Toast.LENGTH_LONG).show()
@@ -434,5 +437,10 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
 
     fun getAnimationState(): Boolean {
         return isOver
+    }
+
+    fun isMapAnimOver() = isMapAnimOver
+    fun setMapAnimOver(state: Boolean) {
+        isMapAnimOver = state
     }
 }

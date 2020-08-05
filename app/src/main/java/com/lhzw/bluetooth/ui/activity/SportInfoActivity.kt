@@ -38,7 +38,7 @@ import java.io.File
  */
 
 @Suppress("DEPRECATION")
-class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener ,CancelAdapt{
+class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener, CancelAdapt {
     private var aMap: AMap? = null
     override fun getLayoutId(): Int {
         return R.layout.activity_sport_info
@@ -95,12 +95,21 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             }
         }
         v_cover.setOnClickListener {
-            if(!isIndoor) {
+            if (!isIndoor) {
                 if (mPresenter == null || !getAnimationState()) {
                     return@setOnClickListener
                 }
             }
             it.visibility = View.GONE
+        }
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        mPresenter?.let {
+            if (!it.isMapAnimOver()) {
+                Thread { it.drawPaths(this@SportInfoActivity) }.start()
+            }
         }
     }
 
@@ -159,7 +168,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             pain.isAntiAlias = true
             pain.color = getColor(R.color.gray_little1)
             cv.drawRect(Rect(0, 0, dataBitmap.width, dataBitmap.height + window.windowManager.defaultDisplay.height + space_map), pain)
-            if (scBitmapMap==null){
+            if (scBitmapMap == null) {
                 showToast("没有轨迹")
                 return@setOnClickListener
             }

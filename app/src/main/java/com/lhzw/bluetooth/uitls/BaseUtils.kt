@@ -14,6 +14,7 @@ import android.os.Build
 import android.os.Environment
 import android.util.Log
 import android.view.ViewConfiguration
+import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.constants.Constants
 import java.io.BufferedOutputStream
@@ -23,6 +24,7 @@ import java.io.IOException
 import java.lang.reflect.Method
 import java.util.*
 import java.util.regex.Pattern
+import kotlin.math.*
 
 
 /**
@@ -483,6 +485,19 @@ object BaseUtils {
         builder.append(".")
         builder.append("${value and 0xffff}")
         return builder.toString()
+    }
+
+    fun calculateDistance(start:LatLng, end : LatLng) : Float{
+        var total = 0.0
+        ifNotNull(start, end){ it, vt->
+            val radLat1: Double = it.latitude * 3.14159 / 180.0
+            val radLat2: Double = vt.latitude * 3.14159 / 180.0
+            val a = radLat1 - radLat2
+            val b = it.longitude * 3.14159 / 180.0 - vt.longitude * 3.14159 / 180.0
+            val s = 2 * asin(sqrt(sin(a / 2).pow(2.0) + cos(radLat1) * cos(radLat2) * sin(b / 2).pow(2.0)))
+            total =  s * 6378137.0
+        }
+        return total.toFloat()
     }
 
 }

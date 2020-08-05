@@ -146,6 +146,7 @@ class LocationUtils : AMapLocationListener {
             if (classify != null && classify.isNotEmpty()) {
                 list.forEach { it ->
                     val tem = AMapUtils.calculateLineDistance(oldLatLng, it)
+//                    val tem = BaseUtils.calculateDistance(oldLatLng, it)
                     distance += tem
                     dis_total += tem
                     if (distance > 1000) {

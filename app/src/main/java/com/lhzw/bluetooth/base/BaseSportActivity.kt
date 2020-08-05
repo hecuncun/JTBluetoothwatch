@@ -11,6 +11,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.amap.api.maps.MapView
@@ -27,6 +28,7 @@ import com.lhzw.kotlinmvp.presenter.BaseIPresenter
 import com.xw.repo.supl.ISlidingUpPanel
 import com.xw.repo.supl.SlidingUpPanelLayout
 import kotlinx.android.synthetic.main.activity_sport_info.*
+
 
 /**
  *
@@ -139,6 +141,8 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        Log.e("onKeyDown","$keyCode" )
+
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!isIndoor && !getAnimationState()) {
                 return false
