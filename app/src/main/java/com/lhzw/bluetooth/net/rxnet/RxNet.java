@@ -100,9 +100,9 @@ public class RxNet {
         long totalByte = responseBody.contentLength();
         long downloadByte = 0;
         File file = new File(filePath);
-        if(file.delete()){
-            file.delete();
-        }
+//        if(file.delete()){
+//            file.delete();
+//        }
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
@@ -111,8 +111,8 @@ public class RxNet {
         try {
             randomAccessFile = new RandomAccessFile(file, "rwd");
             byte[] buffer = new byte[1024 * 4];
-            long tempFileLen = file.length();
-            randomAccessFile.seek(tempFileLen);
+//            long tempFileLen = file.length();
+            randomAccessFile.seek(0);
             while (true) {
                 int len = responseBody.byteStream().read(buffer);
                 if (len == -1) {
@@ -120,7 +120,7 @@ public class RxNet {
                 }
                 randomAccessFile.write(buffer, 0, len);
                 downloadByte += len;
-                callbackProgress(tempFileLen + totalByte, tempFileLen + downloadByte, callback);
+                callbackProgress(totalByte, downloadByte, callback);
             }
             randomAccessFile.close();
             callbackProgress(-1, -1, callback);
@@ -143,7 +143,7 @@ public class RxNet {
     private void callbackProgress(final long totalByte, final long downloadByte, final DownloadCallback callback) {
         new Handler(Looper.getMainLooper()).post(() -> {
             if (null != callback) {
-                if(totalByte != -1 && downloadByte != -1){
+                if (totalByte != -1 && downloadByte != -1) {
                     callback.onProgress(totalByte, downloadByte, (int) ((downloadByte * 100) / totalByte));
                 } else {
                     callback.onProgress(-1, -1, -3);

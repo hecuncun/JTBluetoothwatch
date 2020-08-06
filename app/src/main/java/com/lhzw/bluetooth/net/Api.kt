@@ -1,15 +1,10 @@
 package com.lhzw.bluetooth.net
 
-import com.lhzw.bluetooth.bean.net.ApkBean
-import com.lhzw.bluetooth.bean.net.BaseBean
-import com.lhzw.bluetooth.bean.net.FirmBean
-import com.lhzw.bluetooth.bean.net.UserInfo
+import com.lhzw.bluetooth.bean.net.*
 import io.reactivex.Observable;
 import okhttp3.ResponseBody
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 /**
  * Date： 2020/6/2 0002
@@ -47,4 +42,11 @@ interface Api {
      */
     @GET("attachments/firms/{id}")
     fun downloadDfu(@Path("id") id: Long): Observable<Response<ResponseBody>>
+
+    /**
+     * 注册用户信息
+     */
+    @POST(value = "security/insert/bean")
+    fun insertUser(@Body user: LoginUser): Observable<BaseBean<String>>
+
 }
