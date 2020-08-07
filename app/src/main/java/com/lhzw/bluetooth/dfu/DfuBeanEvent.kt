@@ -119,6 +119,7 @@ class DfuBeanEvent(val mContext: Context, private val filePath: String, val path
                         nrf52BootSettingPath = nrf52DatFile.absolutePath
                     }
                 }
+                Log.e("UPDATEWATCH", "apollo : $apolloConfig   nrf52Config ： $nrf52Config")
                 BaseUtils.ifNotNull(apolloConfig, nrf52Config) { apollo, nrf52 ->
                     if (apollo.isNotEmpty() && nrf52.isNotEmpty()) {
                         dfuConfigCallbacks?.onDfuConfigCallback("升级包：\r\nAPOLLO:\r\n$apolloConfig\r\nNRF52832:\r\n$nrf52Config")

@@ -3,6 +3,7 @@ package com.lhzw.bluetooth.net.rxnet;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback;
 import com.lhzw.bluetooth.net.rxnet.callback.DownloadListener;
@@ -30,23 +31,23 @@ public class RxNet {
     public static boolean enableLog = true;
 
     public void download(String token, final String url, final String filePath, final DownloadCallback callback) {
-        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filePath)) {
+        if (TextUtils.isEmpty(url) || TextUtils.isEmpty(filePath) || callback == null) {
             if (null != callback) {
                 callback.onError("url or path empty");
             }
             return;
         }
-        File oldFile = new File(filePath);
-        if (oldFile.exists()) {
-            if (null != callback) {
-                callback.onFinish(oldFile);
-            }
-            return;
-        }
+//        File oldFile = new File(filePath);
+//        if (oldFile.exists()) {
+//            if (null != callback) {
+//                callback.onFinish(oldFile);
+//            }
+//            return;
+//        }
 
         DownloadListener listener = responseBody -> saveFile(responseBody, url, filePath, callback);
 
-        RetrofitFactory.downloadFile(token, url, CommonUtils.getTempFile(url, filePath).length(), listener, new Observer<ResponseBody>() {
+        new RetrofitFactory().downloadFile(token, url, CommonUtils.getTempFile(url, filePath).length(), listener, new Observer<ResponseBody>() {
             @Override
             public void onSubscribe(Disposable d) {
                 if (null != callback) {
@@ -110,7 +111,7 @@ public class RxNet {
         RandomAccessFile randomAccessFile = null;
         try {
             randomAccessFile = new RandomAccessFile(file, "rwd");
-            byte[] buffer = new byte[1024 * 4];
+            byte[] buffer = new byte[1024];
 //            long tempFileLen = file.length();
             randomAccessFile.seek(0);
             while (true) {
@@ -121,8 +122,10 @@ public class RxNet {
                 randomAccessFile.write(buffer, 0, len);
                 downloadByte += len;
                 callbackProgress(totalByte, downloadByte, callback);
+                Log.e("UPDATEWATCH", "downloadByte : " + downloadByte);
             }
             randomAccessFile.close();
+            randomAccessFile = null;
             callbackProgress(-1, -1, callback);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -130,7 +133,9 @@ public class RxNet {
             e.printStackTrace();
         } finally {
             try {
-                randomAccessFile.close();
+                if(randomAccessFile != null) {
+                    randomAccessFile.close();
+                }
             } catch (IOException e) {
                 LogUtils.e(e.getMessage());
             }

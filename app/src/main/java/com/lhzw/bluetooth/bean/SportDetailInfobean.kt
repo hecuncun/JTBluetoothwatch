@@ -112,17 +112,18 @@ data class SportDetailInfobean(
             var tmp = LatLng(0.0, 0.0)
             var conter = 0
             val total = len / interval
-            for (index in 0 until total - 1) {
+            var index = 0
+            while (index < total) {
                 var lat = BaseUtils.byteToInt(content.subList(index * interval + interval / 2, (index + 1) * interval)).toDouble()
                 var lgt = BaseUtils.byteToInt(content.subList(index * interval, index * interval + interval / 2)).toDouble()
-
 //                Log.e("GPS_LATLGT", "mark  ${mark}  lat : ${lat}, lgt  ${lgt}")
-                if (lat > 0.0 && lgt > 0) {
+                if (lat > 0.0 && lgt > 0.0) {
                     var start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
                     if (!isStart) {
                         if (conter > 0) {
                             conter--
                         } else {
+                            // 第一个点或者出现零点时重新定位基准点
                             isStart = true
                             tmp = LatLng(start[0], start[1])
                             val bean = SportDetailInfobean(
@@ -137,9 +138,9 @@ data class SportDetailInfobean(
                             CommOperation.insert(bean)
                         }
                     } else {
-                        val latLng = LatLng(start[0], start[1])
+                        var latLng = LatLng(start[0], start[1])
                         val distance = AMapUtils.calculateLineDistance(latLng, tmp)
-                        if (distance > 3.0 && distance < 30.0) {
+                        if (distance > 5.0 && distance <= 50.0) {
                             tmp = latLng
                             val bean = SportDetailInfobean(
                                     mark,
@@ -152,22 +153,24 @@ data class SportDetailInfobean(
                                     start[1])
                             CommOperation.insert(bean)
                         } else {
-                            var conter = 4
-                            if (index + 4 < total) {
-                                var currentPos = index + 1
-                                var isGreater = true
-                                while (conter > 0) {
-                                    var lat = BaseUtils.byteToInt(content.subList(currentPos * interval + interval / 2, (currentPos + 1) * interval)).toDouble()
-                                    var lgt = BaseUtils.byteToInt(content.subList(currentPos * interval, currentPos * interval + interval / 2)).toDouble()
-                                    val latLng = LatLng(start[0], start[1])
-                                    val distance = AMapUtils.calculateLineDistance(latLng, tmp)
-                                    if (distance < 30.0) {
-                                        isGreater = false;
+                            if (distance > 50) {
+                                conter = Constants.FILTER_CONTER
+                                if (index + 4 < total) {
+                                    var currentPos = index + 1
+                                    var isGreater = true
+                                    while (conter > 0 && isGreater) {
+                                        var lat = BaseUtils.byteToInt(content.subList(currentPos * interval + interval / 2, (currentPos + 1) * interval)).toDouble()
+                                        var lgt = BaseUtils.byteToInt(content.subList(currentPos * interval, currentPos * interval + interval / 2)).toDouble()
+                                        start = BaseUtils.gps84_To_Gcj02(lat / 100000, lgt / 100000)
+                                        latLng = LatLng(start[0], start[1])
+                                        val distance = AMapUtils.calculateLineDistance(latLng, tmp)
+                                        if (distance < 50.0) {
+                                            isGreater = false;
+                                        } else {
+                                            conter--
+                                            currentPos++
+                                        }
                                     }
-                                    conter--
-                                    currentPos++
-                                }
-                                if (isGreater) {
                                     tmp = latLng
                                     val bean = SportDetailInfobean(
                                             mark,
@@ -179,6 +182,11 @@ data class SportDetailInfobean(
                                             start[0],
                                             start[1])
                                     CommOperation.insert(bean)
+                                    index = currentPos
+                                    conter = 0
+                                } else {
+                                    // 直接跳出
+                                    index = total
                                 }
                             }
                         }
@@ -186,9 +194,10 @@ data class SportDetailInfobean(
                 } else {
                     if (isStart) {
                         isStart = false
-                        conter = Constants.FILTER_CONTER
+                        conter = 7
                     }
                 }
+                index++
             }
         }
 

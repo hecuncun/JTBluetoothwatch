@@ -28,10 +28,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Created by xtqb.
  */
 public class RetrofitFactory {
-    private static final int TIME_OUT_SECNOD = 15;
-    private static OkHttpClient.Builder mBuilder;
+    private  final int TIME_OUT_SECNOD = 10;
+    private  OkHttpClient.Builder mBuilder;
 
-    private static Retrofit getDownloadRetrofit(String token, DownloadListener downloadListener) {
+    private Retrofit getDownloadRetrofit(String token, DownloadListener downloadListener) {
         Interceptor headerInterceptor = chain -> {
             Request originalRequest = chain.request();
             Request.Builder requestBuilder = originalRequest.newBuilder()
@@ -71,7 +71,7 @@ public class RetrofitFactory {
     /**
      * 取消网络请求
      */
-    public static void cancel(Disposable d) {
+    public void cancel(Disposable d) {
         if (null != d && !d.isDisposed()) {
             d.dispose();
         }
@@ -80,7 +80,7 @@ public class RetrofitFactory {
     /**
      * 下载文件请求
      */
-    public static void downloadFile(String token, String url, long startPos, DownloadListener downloadListener, Observer<ResponseBody> observer) {
+    public void downloadFile(String token, String url, long startPos, DownloadListener downloadListener, Observer<ResponseBody> observer) {
         getDownloadRetrofit(token, downloadListener).create(BaseApi.class).downloadFile("bytes=" + startPos + "-", url)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
