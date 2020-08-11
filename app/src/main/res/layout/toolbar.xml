@@ -31,10 +31,11 @@
         <TextView
             android:id="@+id/toolbar_title"
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-            android:layout_width="100dp"
+            android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
+            android:lines="1"
             android:text=""
             android:textColor="@color/white"
             android:textSize="18sp"
@@ -71,8 +72,8 @@
             style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
             android:layout_width="@dimen/dp_26"
             android:layout_height="@dimen/dp_26"
-            android:padding="5dp"
             android:layout_gravity="center|left"
+            android:padding="5dp"
             android:scaleType="centerCrop"
             android:visibility="visible" />
 
