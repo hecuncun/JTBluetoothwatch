@@ -125,7 +125,8 @@ object Constants {
     val font_normal = Typeface.createFromAsset(App.context.assets, "fonts/fuji_normal.ttf")
 
 //    const val IP_ADD = "http://192.168.1.223:8084/"
-    const val IP_ADD = "http://49.235.154.43:8084/"
+//    const val IP_ADD = "http://49.235.154.43:8084/"
+    const val IP_ADD = "http://120.26.83.121:8084/"
     const val HTTP_TOOKEN = "x-access-token"
     const val FIREST_LOGIN = "FIREST_LOGIN"
 
