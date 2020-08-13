@@ -121,6 +121,18 @@
         <activity android:name=".ui.activity.ScanQRCodeActivity" />
         <activity android:name=".ui.activity.LoginNewActivity"  android:launchMode="singleTask"/>
         <activity android:name=".ui.activity.RegisterActivity" />
+        <activity android:name=".ui.activity.login.LoginActivity">
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+        </activity>
+        <activity android:name=".ui.activity.login.AgreementActivity" />
+        <activity android:name=".ui.activity.login.RegisterActivity" />
+        <activity android:name=".ui.activity.login.SetNickNameActivity" />
+        <activity android:name=".ui.activity.login.SetAgeAndSexActivity" />
+        <activity android:name=".ui.activity.login.SetWeightActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

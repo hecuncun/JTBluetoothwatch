@@ -78,7 +78,7 @@
         android:id="@+id/et_pwd"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:inputType="text"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
         android:layout_marginHorizontal="30dp"
         android:layout_marginTop="5dp"
         android:background="@mipmap/et_yellow_bg"

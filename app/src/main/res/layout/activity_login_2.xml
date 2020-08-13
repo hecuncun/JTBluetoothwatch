@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/icon_login_bg">
+
+    <ImageView
+        android:id="@+id/iv_shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@mipmap/icon_shadow" />
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_shadow"
+        app:srcCompat="@mipmap/icon_jt_logo" />
+
+    <EditText
+        android:id="@+id/et_phone"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="52dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="52dp"
+        android:background="@null"
+        android:hint="手机号"
+        android:inputType="phone"
+        android:paddingLeft="60dp"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="60dp"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="@id/et_phone"
+        app:layout_constraintRight_toRightOf="@id/et_phone"
+        app:layout_constraintTop_toBottomOf="@id/et_phone" />
+
+    <EditText
+        android:id="@+id/et_pwd"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:background="@null"
+        android:drawableLeft="@drawable/ic_login_eye_open"
+        android:drawablePadding="30dp"
+        android:hint="密码"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
+        android:padding="10dp"
+        android:textColorHint="@color/white"
+        app:layout_constraintEnd_toEndOf="@+id/et_phone"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/et_phone"
+        app:layout_constraintTop_toBottomOf="@+id/et_phone" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="60dp"
+        android:background="@color/white"
+        app:layout_constraintLeft_toLeftOf="@id/et_phone"
+        app:layout_constraintRight_toRightOf="@id/et_phone"
+        app:layout_constraintTop_toBottomOf="@id/et_pwd" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="55dp"
+        android:layout_marginTop="65dp"
+        android:layout_marginEnd="55dp"
+        android:background="@color/color_yellow_primary"
+        android:text="@string/login"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/et_pwd" />
+
+    <TextView
+        android:id="@+id/tv_register"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/new_register"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_login" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:text="+86"
+        android:textAlignment="textEnd"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/et_phone"
+        app:layout_constraintStart_toStartOf="@+id/et_phone"
+        app:layout_constraintTop_toTopOf="@+id/et_phone" />
+
+    <ImageView
+        android:id="@+id/iv_clear"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginEnd="20dp"
+        android:padding="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/et_pwd"
+        app:layout_constraintEnd_toEndOf="@+id/et_pwd"
+        app:layout_constraintTop_toTopOf="@+id/et_pwd"
+        app:srcCompat="@mipmap/ic_white_clear" />
+
+    <ImageView
+        android:id="@+id/iv_wb"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="36dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@mipmap/ic_wb" />
+
+    <ImageView
+        android:id="@+id/iv_wx"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="23dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_wb"
+        app:layout_constraintEnd_toStartOf="@+id/iv_wb"
+        app:srcCompat="@mipmap/ic_wx" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="23dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_wb"
+        app:layout_constraintStart_toEndOf="@+id/iv_wb"
+        app:srcCompat="@mipmap/ic_qq" />
+
+    <TextView
+        android:id="@+id/tv_other_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:text="@string/third_login"
+        android:textColor="@color/color_yellow_primary"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/iv_wb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/color_yellow_primary"
+        app:layout_constraintBottom_toBottomOf="@id/tv_other_login"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/tv_other_login"
+        app:layout_constraintTop_toTopOf="@id/tv_other_login" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/color_yellow_primary"
+        app:layout_constraintBottom_toBottomOf="@id/tv_other_login"
+        app:layout_constraintLeft_toRightOf="@id/tv_other_login"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_other_login" />
+
+</android.support.constraint.ConstraintLayout>

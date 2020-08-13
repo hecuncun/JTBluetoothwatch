@@ -8,7 +8,13 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.bean.net.BaseBean
+import com.lhzw.bluetooth.bean.net.LoginUser
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.ext.showToast
+import com.lhzw.bluetooth.net.CallbackListObserver
+import com.lhzw.bluetooth.net.SLMRetrofit
+import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import kotlinx.android.synthetic.main.activity_register.*
 import kotlinx.android.synthetic.main.activity_register.checkbox
 import kotlinx.android.synthetic.main.activity_register.et_pwd
@@ -45,14 +51,38 @@ class RegisterActivity:BaseActivity() {
         tv_to_register.setOnClickListener {//去注册
             if (checkbox.isChecked){
                 if (et_user_name.text.toString().trim().isNotEmpty() && et_pwd.text.toString().trim().isNotEmpty() && et_pwd2.text.toString().trim().isNotEmpty()){
-                    if (et_user_name.text.toString().trim().length<6){
+                    if (et_user_name.text.toString().trim().length<4 ||et_user_name.text.toString().trim().length>12){
+                        tv_user_name_tip.visibility=View.VISIBLE
+                        showToast("用户名长度需在4-12位之间")
+                        return@setOnClickListener
+                    }
+                    tv_user_name_tip.visibility=View.INVISIBLE
+                    if (et_pwd.text.toString().trim().length<6){
                         showToast("不小于6位密码,区分大小写")
                         return@setOnClickListener
                     }
+
                     if (et_pwd.text.toString().trim() == et_pwd2.text.toString().trim()){
                         tv_pwd_tip.visibility= View.INVISIBLE
                         //走注册接口
-                        showToast("请求接口")
+
+                        val loginBean = LoginUser(et_user_name.text.toString().trim(),"",0,et_pwd.text.toString().trim(),"","")
+                        val insertUserCall = SLMRetrofit.getInstance().getApi()?.insertUser(loginBean)
+                        insertUserCall?.compose(ThreadSwitchTransformer())?.subscribe(object :CallbackListObserver<BaseBean<String>>(){
+                            override fun onSucceed(t: BaseBean<String>) {
+                              if (t.isSuccessed()){
+                                  showToast("注册成功")
+                                  finish()
+                                 }else if(t.getCode()=="-1"){
+                                  showToast(t.getMessage()+"")
+                              }
+                            }
+
+                            override fun onFailed() {
+
+                            }
+                        })
+
                     }else{
                         tv_pwd_tip.visibility= View.VISIBLE
                     }
