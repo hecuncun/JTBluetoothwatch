@@ -1,12 +1,14 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.content.Intent
+import android.os.Build
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.annotation.RequiresApi
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.net.BaseBean
@@ -37,6 +39,11 @@ class LoginNewActivity:BaseActivity() {
 
     override fun initView() {
         tv_register.underline()
+
+        if(packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.1"){
+            http_token = ""
+            return
+        }
         if ("" != http_token) {
             jumpToMain()
         }
