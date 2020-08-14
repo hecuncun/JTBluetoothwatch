@@ -1,14 +1,13 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.content.Intent
-import android.os.Build
+import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
-import androidx.annotation.RequiresApi
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.net.BaseBean
@@ -22,7 +21,6 @@ import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_login_new.*
-import kotlinx.android.synthetic.main.activity_login_new.tv_login
 import java.text.SimpleDateFormat
 
 /**
