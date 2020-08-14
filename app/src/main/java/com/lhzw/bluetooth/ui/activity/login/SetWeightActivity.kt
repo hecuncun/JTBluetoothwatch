@@ -1,8 +1,8 @@
 package com.lhzw.bluetooth.ui.activity.login
 
+import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
-import kotlinx.android.synthetic.main.activity_set_nick_name.*
 import kotlinx.android.synthetic.main.activity_set_weight.*
 import kotlinx.android.synthetic.main.activity_set_weight.iv_back
 
@@ -31,7 +31,9 @@ class SetWeightActivity:BaseActivity() {
         hv_hope.setOnItemChangedListener { index, value ->
             tv_hope.text=value.toString()
         }
-
+         btn_next.setOnClickListener {
+            // Intent(this,)
+         }
 
     }
 }

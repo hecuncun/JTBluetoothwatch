@@ -133,6 +133,7 @@
         <activity android:name=".ui.activity.login.SetNickNameActivity" />
         <activity android:name=".ui.activity.login.SetAgeAndSexActivity" />
         <activity android:name=".ui.activity.login.SetWeightActivity" />
+        <activity android:name=".ui.activity.login.SetStepAndCalTargetActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"
