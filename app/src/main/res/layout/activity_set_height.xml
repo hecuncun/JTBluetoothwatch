@@ -45,7 +45,7 @@
         android:id="@+id/iv_sex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
@@ -53,10 +53,10 @@
         app:srcCompat="@mipmap/ic_man" />
 
     <com.lhzw.bluetooth.widget.HeightView
-        android:id="@+id/hv_weight"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginHorizontal="65dp"
+        android:id="@+id/hv_height"
+        android:layout_width="wrap_content"
+        android:layout_height="180dp"
+        android:paddingLeft="30dp"
         android:layout_marginTop="15dp"
         app:backgroundColor="@color/transparent"
         android:focusable="true"
@@ -66,45 +66,23 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_sex"
         app:textColor="@color/white"
-        app:lines="70"
+        app:lines="80"
         app:markerSize="0dp"
-        app:orientation="HORIZONTAL"
-        app:startLineValue="30"
+        app:orientation="VERTICAL"
+        app:startLineValue="140"
         app:step_value="1" />
-
-    <LinearLayout
-        android:id="@+id/ll_current_container"
+    <TextView
+        android:id="@+id/tv_height"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="169"
         android:layout_marginTop="25dp"
-        android:orientation="horizontal"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hv_weight">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="当前体重"
-            android:textColor="@color/color_yellow_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_weight"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="58"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="KG"
-            android:textColor="@color/color_yellow_primary"
-            android:textSize="14sp" />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/hv_height"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="22sp" />
     <View
         android:id="@+id/view"
         android:layout_width="match_parent"
@@ -112,71 +90,19 @@
         android:layout_marginHorizontal="60dp"
         android:layout_marginTop="10dp"
         android:background="@color/white"
-        app:layout_constraintLeft_toLeftOf="@id/ll_current_container"
-        app:layout_constraintRight_toRightOf="@id/ll_current_container"
-        app:layout_constraintTop_toBottomOf="@id/ll_current_container" />
-    <com.lhzw.bluetooth.widget.HeightView
-        android:id="@+id/hv_hope"
-        android:layout_width="0dp"
-        android:layout_height="30dp"
-        android:layout_marginHorizontal="65dp"
-        android:layout_marginTop="15dp"
-        app:backgroundColor="@color/transparent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        app:highlightColor="@color/color_yellow_primary"
+        app:layout_constraintLeft_toLeftOf="@id/tv_height"
+        app:layout_constraintRight_toRightOf="@id/tv_height"
+        app:layout_constraintTop_toBottomOf="@id/tv_height" />
+    <TextView
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="厘米"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view"
-        app:lines="70"
-        app:markerSize="0dp"
-        app:orientation="HORIZONTAL"
-        app:textColor="@color/white"
-        app:startLineValue="30"
-        app:step_value="1" />
-    <LinearLayout
-        android:id="@+id/ll_hope_container"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:orientation="horizontal"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hv_hope">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="理想体重"
-            android:textColor="@color/color_yellow_primary"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tv_hope"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="58"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:textSize="18sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="KG"
-            android:textColor="@color/color_yellow_primary"
-            android:textSize="14sp" />
-    </LinearLayout>
-    <View
-        android:id="@+id/view2"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginHorizontal="60dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/white"
-        app:layout_constraintLeft_toLeftOf="@id/ll_hope_container"
-        app:layout_constraintRight_toRightOf="@id/ll_hope_container"
-        app:layout_constraintTop_toBottomOf="@id/ll_hope_container" />
+        android:textColor="@color/color_yellow_primary"
+        android:textSize="16sp"/>
 
     <Button
         android:id="@+id/btn_next"

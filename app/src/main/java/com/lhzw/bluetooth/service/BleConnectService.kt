@@ -41,7 +41,7 @@ class BleConnectService : Service() {
     }
 
     companion object {
-        var isConnecting = false //是否正在连接
+       var isConnecting = false //是否正在连接
     }
 
     override fun onCreate() {
@@ -164,7 +164,7 @@ class BleConnectService : Service() {
             Log.e("BLE_Error", "BT Adapter is not turned ON ...")
         }
     }
-
+    var scanAddress=""//搜索到的上个蓝牙mac
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
             Logger.e("onScanResult")
@@ -201,7 +201,10 @@ class BleConnectService : Service() {
                     val lastList = mListValues.filter {
                         it.device.address == lastDeviceMacAddress
                     }
-                    Logger.e("lastList=$lastList")
+                    if (lastList.isNotEmpty()){
+                        scanAddress =lastList[0].device.address
+                    }
+                    Logger.e("ScanResult==>BleAddress=$scanAddress,isConnecting=$isConnecting")
                     if (lastList.isNotEmpty()) {
                         if (!connectState) {
                             Logger.e("已找到蓝牙设备")

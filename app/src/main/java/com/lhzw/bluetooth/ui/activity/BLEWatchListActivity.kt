@@ -133,6 +133,7 @@ class BLEWatchListActivity : BaseActivity() {
             autoConnect = false
             RxBus.getInstance().post("disconnect", "")
             dialog_container.visibility = View.GONE
+            showConnectedContainer(false)
         }
         iv_canel.setOnClickListener {
             dialog_container.visibility = View.GONE
@@ -141,7 +142,6 @@ class BLEWatchListActivity : BaseActivity() {
         //断开连接
         iv_disconnect.setOnClickListener {
             //点击断开蓝牙,直接前端显示断开,不重新连接
-            //todo:弹窗提示
             iv_disconnect.visibility = View.GONE
             dialog_container.visibility = View.VISIBLE
         }
@@ -214,7 +214,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
         if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
-
+            BleConnectService.isConnecting=false//开始扫码操作   将正在连接重置为未连接
             val intent = Intent(this, ScanQRCodeActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         } else {

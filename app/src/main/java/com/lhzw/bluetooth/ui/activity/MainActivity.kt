@@ -14,21 +14,27 @@ import android.provider.Settings
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentTransaction
 import android.text.TextUtils
+import android.util.Log
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
+import com.lhzw.bluetooth.service.BleConnectService
+import com.lhzw.bluetooth.service.BlutoothService
+import com.lhzw.bluetooth.service.SmsAndPhoneService
 import com.lhzw.bluetooth.ui.fragment.HomeFragment
 import com.lhzw.bluetooth.ui.fragment.MineFragment
 import com.lhzw.bluetooth.ui.fragment.SettingFragment
 import com.lhzw.bluetooth.ui.fragment.SportsFragment
+import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.KeepLiveUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.orhanobut.logger.Logger
@@ -410,7 +416,27 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
 //
 //        }
         toolbar_title.text = "首页"
-
+        //检查服务是否存活
+        if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
+            Log.e("MainActivity","BlutoothService存活=false")
+            //状态清除
+            //重启服务
+            Logger.e("重启BlutoothService")
+            startService(Intent(App.context, BlutoothService::class.java))
+        }
+        //启动蓝牙连接服务
+        if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)) {
+            Log.e("MainActivity","BleConnectService存活=false")
+            Logger.e("重启BleConnectService")
+            connectState=false
+            BleConnectService.isConnecting=false
+            startService(Intent(App.context, BleConnectService::class.java))
+        }
+        //启动电话/短信监听服务
+        if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)) {
+            startService(Intent(App.context, SmsAndPhoneService::class.java))
+            Logger.e("重启SmsAndPhoneService")
+        }
 
         //获取蓝牙状态
         bleManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

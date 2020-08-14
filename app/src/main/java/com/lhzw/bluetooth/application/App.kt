@@ -86,6 +86,7 @@ class App : MultiDexApplication() {
         refWatcher = setupLeakCanary()
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks)
         // 启动服务
+        Log.e("application","判断服务")
         if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
             startService(Intent(context, BlutoothService::class.java))
         }
