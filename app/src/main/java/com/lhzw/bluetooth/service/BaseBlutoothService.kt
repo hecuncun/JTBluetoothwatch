@@ -168,6 +168,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     // 连接成功
     override fun onDeviceConnected(device: BluetoothDevice) {
+        acceptMsg = false
         Log.e("callBackBluetooth", "onDeviceConnected.... $currentAddrss  $lastConnectedDevice")
         if (currentAddrss.isNotEmpty() && !currentAddrss.equals(lastConnectedDevice)) {
             CommOperation.deleteAll(WatchInfoBean::class.java)

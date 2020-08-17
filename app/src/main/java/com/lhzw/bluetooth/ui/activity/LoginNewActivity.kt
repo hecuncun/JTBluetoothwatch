@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat
 class LoginNewActivity:BaseActivity() {
 
     private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
+    private var apk_ip_change: Boolean? by Preference(Constants.APK_IP_CHANGE, false)
     override fun attachLayoutRes(): Int= R.layout.activity_login_new
 
     override fun initData() {
@@ -37,9 +38,9 @@ class LoginNewActivity:BaseActivity() {
 
     override fun initView() {
         tv_register.underline()
-
-        if(packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.1"){
+        if(!apk_ip_change!! && packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.2"){
             http_token = ""
+            apk_ip_change = true
             return
         }
         if ("" != http_token) {

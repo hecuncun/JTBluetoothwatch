@@ -18,6 +18,8 @@ object Constants {
 
     const val APK_UPDATE_TIME = "apk_update_time"
     const val FIRM_UPDATE_TIME = "firm_update_time"
+    const val APK_IP_CHANGE = "apk_ip_change"
+
 
     // 运动类型
     const val ACTIVITY_RUNNING = 0xB1  //跑步
@@ -124,9 +126,9 @@ object Constants {
     val font_futurn_num = Typeface.createFromAsset(App.context.assets, "fonts/futurn_num.ttf")
     val font_normal = Typeface.createFromAsset(App.context.assets, "fonts/fuji_normal.ttf")
 
-//    const val IP_ADD = "http://192.168.1.223:8084/"
-    const val IP_ADD = "http://49.235.154.43:8084/"
- //   const val IP_ADD = "http://120.26.83.121:8084/"
+    //    const val IP_ADD = "http://192.168.1.223:8084/"
+//    const val IP_ADD = "http://49.235.154.43:8084/"
+    const val IP_ADD = "http://120.26.83.121:8084/"
     const val HTTP_TOOKEN = "x-access-token"
     const val FIREST_LOGIN = "FIREST_LOGIN"
 
