@@ -33,7 +33,6 @@ class LoginNewActivity:BaseActivity() {
     override fun attachLayoutRes(): Int= R.layout.activity_login_new
 
     override fun initData() {
-
     }
 
     override fun initView() {
