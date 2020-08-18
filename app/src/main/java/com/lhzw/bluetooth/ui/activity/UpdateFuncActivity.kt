@@ -59,7 +59,7 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_version.text = "JIANGTAI ${App.instance
                 .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
 //        checkPermission()
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         checkVersion()
     }
