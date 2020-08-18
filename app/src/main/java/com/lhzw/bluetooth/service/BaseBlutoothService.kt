@@ -174,13 +174,13 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             CommOperation.deleteAll(WatchInfoBean::class.java)
             //CommOperation.deleteAll(SportInfoBean::class.java)
             CommOperation.deleteAll(BoundaryAdrrBean::class.java)
-            CommOperation.deleteAll(ClimbingSportBean::class.java)
+//            CommOperation.deleteAll(ClimbingSportBean::class.java)
             CommOperation.deleteAll(CurrentDataBean::class.java)
             CommOperation.deleteAll(DailyDataBean::class.java)
             CommOperation.deleteAll(DailyInfoDataBean::class.java)
-            CommOperation.deleteAll(FlatSportBean::class.java)
-            CommOperation.deleteAll(SportActivityBean::class.java)
-            CommOperation.deleteAll(SportInfoAddrBean::class.java)
+//            CommOperation.deleteAll(FlatSportBean::class.java)
+//            CommOperation.deleteAll(SportActivityBean::class.java)
+//            CommOperation.deleteAll(SportInfoAddrBean::class.java)
 //            lastConnectedDevice = currentAddrss
             isSyncAscending = false
         }

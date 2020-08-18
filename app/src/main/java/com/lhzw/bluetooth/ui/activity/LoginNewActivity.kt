@@ -1,7 +1,6 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
@@ -10,9 +9,11 @@ import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.bean.net.BaseBean
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.ext.underline
 import com.lhzw.bluetooth.net.CallbackListObserver
@@ -26,18 +27,18 @@ import java.text.SimpleDateFormat
 /**
  * Created by heCunCun on 2020/7/31
  */
-class LoginNewActivity:BaseActivity() {
+class LoginNewActivity : BaseActivity() {
 
     private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
     private var apk_ip_change: Boolean? by Preference(Constants.APK_IP_CHANGE, false)
-    override fun attachLayoutRes(): Int= R.layout.activity_login_new
+    override fun attachLayoutRes(): Int = R.layout.activity_login_new
 
     override fun initData() {
     }
 
     override fun initView() {
         tv_register.underline()
-        if(!apk_ip_change!! && packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.2"){
+        if (!apk_ip_change!! && packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.2") {
             http_token = ""
             apk_ip_change = true
             return
@@ -49,13 +50,13 @@ class LoginNewActivity:BaseActivity() {
 
     override fun initListener() {
         tv_login.setOnClickListener {
-            if (et_user_name.text.toString().trim().isNotEmpty() && et_pwd.text.toString().trim().isNotEmpty()){
-                if (checkbox.isChecked){
+            if (et_user_name.text.toString().trim().isNotEmpty() && et_pwd.text.toString().trim().isNotEmpty()) {
+                if (checkbox.isChecked) {
                     login()
-                }else{
+                } else {
                     showToast("请先勾选我已阅读并同意《疆泰APP用户协议》")
                 }
-            }else{
+            } else {
                 showToast("请检查登录信息是否为空！")
             }
         }
@@ -65,11 +66,11 @@ class LoginNewActivity:BaseActivity() {
         }
 
         iv_eye.setOnClickListener {
-            switchPwdMode(et_pwd,iv_eye)
+            switchPwdMode(et_pwd, iv_eye)
         }
 
         tv_register.setOnClickListener {
-            startActivity(Intent(this,RegisterActivity::class.java))
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
@@ -101,7 +102,6 @@ class LoginNewActivity:BaseActivity() {
     }
 
 
-
     private var loadingView: LoadingView? = null
     private fun login() {
         if (loadingView == null) {
@@ -114,6 +114,9 @@ class LoginNewActivity:BaseActivity() {
             override fun onSucceed(bean: BaseBean<UserInfo>?) {
                 bean?.let {
                     if (it.isSuccessed()) {
+                        if(http_token != "" && http_token != it.getData()?.getToken()){
+                            deleteAllSport()
+                        }
                         http_token = it.getData()?.getToken()
                         showToast("登录成功")
                         if ("" == apk_update_time) {// 说明第一次登陆软件
@@ -123,7 +126,7 @@ class LoginNewActivity:BaseActivity() {
                         jumpToMain()
                     } else {
                         showToast("${it.getMessage()}")
-                        tv_user_name_tip.visibility= View.VISIBLE
+                        tv_user_name_tip.visibility = View.VISIBLE
                     }
                     if (loadingView != null && loadingView!!.isShowing) {
                         loadingView?.cancel()
@@ -139,6 +142,22 @@ class LoginNewActivity:BaseActivity() {
             }
         })
     }
+
+    /**
+     * 更改 用户删除基础数据
+     */
+    private fun deleteAllSport() {
+        CommOperation.deleteAll(WatchInfoBean::class.java)
+        CommOperation.deleteAll(BoundaryAdrrBean::class.java)
+        CommOperation.deleteAll(ClimbingSportBean::class.java)
+        CommOperation.deleteAll(CurrentDataBean::class.java)
+        CommOperation.deleteAll(DailyDataBean::class.java)
+        CommOperation.deleteAll(DailyInfoDataBean::class.java)
+        CommOperation.deleteAll(FlatSportBean::class.java)
+        CommOperation.deleteAll(SportActivityBean::class.java)
+        CommOperation.deleteAll(SportInfoAddrBean::class.java)
+    }
+
     private fun jumpToMain() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
