@@ -85,7 +85,7 @@
         android:layout_marginHorizontal="60dp"
         android:layout_marginTop="5dp"
         android:background="@mipmap/et_yellow_bg"
-        android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:gravity="center_vertical"
         android:hint="输入密码"
         android:importantForAutofill="no"
