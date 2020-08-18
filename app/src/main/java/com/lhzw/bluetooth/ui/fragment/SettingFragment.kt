@@ -326,7 +326,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             showToast("退出成功")
             http_token=""
             startActivity(Intent(requireContext(),LoginNewActivity::class.java))
-
+            activity?.finish()
         }
 
 

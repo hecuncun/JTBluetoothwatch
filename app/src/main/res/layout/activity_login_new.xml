@@ -6,9 +6,9 @@
     android:background="@mipmap/icon_login_bg">
 
     <ImageView
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
         android:scaleType="fitXY"
         android:src="@mipmap/icon_shadow" />
 
@@ -44,6 +44,7 @@
         android:gravity="center_vertical"
         android:hint="用户名"
         android:inputType="text"
+        android:importantForAutofill="no"
         android:paddingLeft="20dp"
         android:textColor="@color/white"
         android:textColorHint="@color/color_gray_757575"
@@ -87,6 +88,8 @@
         android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
         android:gravity="center_vertical"
         android:hint="输入密码"
+        android:importantForAutofill="no"
+        android:inputType="textPassword"
         android:paddingLeft="20dp"
         android:textColor="@color/white"
         android:textColorHint="@color/color_gray_757575"
@@ -98,7 +101,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:padding="2dp"
-        android:src="@drawable/ic_login_eye_open"
+        android:src="@drawable/ic_login_eye_close"
         app:layout_constraintBottom_toBottomOf="@id/et_pwd"
         app:layout_constraintLeft_toLeftOf="@+id/iv_clear_user_name"
         app:layout_constraintTop_toTopOf="@id/et_pwd" />
@@ -136,8 +139,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:button="@drawable/selector_check_box"
-        android:checked="false"
+        android:checked="true"
         android:paddingLeft="15dp"
+        android:visibility="invisible"
         android:text="我已阅读并同意《疆泰APP用户协议》"
         android:textColor="@color/orange_light"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -8,8 +8,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="10dp"
         android:scaleType="fitXY"
+        android:visibility="gone"
         android:src="@mipmap/icon_shadow"/>
     <TextView
         android:id="@+id/tv_1"
@@ -44,6 +44,7 @@
         android:hint="用户名"
         android:paddingLeft="30dp"
         android:textColor="@color/white"
+        android:importantForAutofill="no"
         android:textColorHint="@color/color_gray_757575"
         android:textSize="16sp"
         app:layout_constraintTop_toBottomOf="@id/tv_2"
@@ -78,9 +79,11 @@
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
+        android:importantForAutofill="no"
         android:layout_marginHorizontal="60dp"
         android:layout_marginTop="5dp"
         android:background="@mipmap/et_yellow_bg"
+        android:inputType="textPassword"
         android:hint="输入密码"
         android:paddingLeft="30dp"
         android:textColor="@color/white"
@@ -108,7 +111,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:padding="2dp"
-        android:src="@drawable/ic_login_eye_open"/>
+        android:src="@drawable/ic_login_eye_close"/>
     <EditText
         android:id="@+id/et_pwd2"
         android:layout_width="match_parent"
@@ -116,9 +119,11 @@
         android:digits="0123456789abcdefghijklmnopqrstuvwxyz"
         android:layout_marginHorizontal="60dp"
         android:layout_marginTop="25dp"
+        android:inputType="textPassword"
         android:background="@mipmap/et_yellow_bg"
         android:hint="再次输入密码"
         android:paddingLeft="30dp"
+        android:importantForAutofill="no"
         android:textColor="@color/white"
         android:textColorHint="@color/color_gray_757575"
         android:textSize="16sp"
@@ -143,7 +148,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:padding="2dp"
-        android:src="@drawable/ic_login_eye_open"/>
+        android:src="@drawable/ic_login_eye_close"/>
     <TextView
         android:id="@+id/tv_register"
         android:layout_width="wrap_content"
@@ -174,7 +179,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:button="@drawable/selector_check_box"
-        android:checked="false"
+        android:checked="true"
+        android:visibility="invisible"
         android:text="我已阅读并同意《疆泰APP用户协议》"
         android:textColor="@color/orange_light"
         android:paddingLeft="15dp"
