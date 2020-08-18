@@ -278,7 +278,6 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                 .setWheelItemTextSize(12)
                 .build()
 
-
         dialog.setOnChoseListener { resId ->
             when (resId) {
                 R.id.tv_camera -> selectImage(0)
