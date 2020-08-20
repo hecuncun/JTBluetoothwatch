@@ -38,7 +38,7 @@ class LoginNewActivity : BaseActivity() {
 
     override fun initView() {
         tv_register.underline()
-        if (!apk_ip_change!! && packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.2") {
+        if (!apk_ip_change!! && packageManager.getPackageInfo(packageName, 0).versionName == "v3.2.3") {
             http_token = ""
             apk_ip_change = true
             return

@@ -96,9 +96,11 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="7dp"
             android:layout_toRightOf="@+id/ll_duration"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="23:59:59"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
 
 
         <LinearLayout
@@ -214,9 +216,9 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/ll_steps_num"
-            tools:text="18247"
             android:textColor="@color/white"
-            android:textSize="28sp" />
+            android:textSize="28sp"
+            tools:text="18247" />
 
 
         <LinearLayout
@@ -294,9 +296,11 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="4dp"
             android:layout_toRightOf="@+id/ll_best_allocation_speed"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="14'02"
             android:textColor="@color/white"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
     </RelativeLayout>
 
     <RelativeLayout

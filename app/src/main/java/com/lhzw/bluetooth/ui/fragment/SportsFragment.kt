@@ -87,9 +87,9 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     private fun translateSportBeans(type: Int): MutableList<SportBean> {
         val sportBeans = ArrayList<SportBean>()
         if (type == Constants.ACTIVITY_ALL) {
-            list = CommOperation.query(SportInfoAddrBean::class.java, "daily_date_mark")
+            list = CommOperation.query(SportInfoAddrBean::class.java, "daily_date_mark DESC, activity_start")
         } else {
-            list = CommOperation.query(SportInfoAddrBean::class.java, "activity_type", "$type", "daily_date_mark")
+            list = CommOperation.query(SportInfoAddrBean::class.java, "activity_type", "$type", "daily_date_mark DESC, activity_start")
         }
         list?.forEach {
             val date = BaseUtils.formatData(it.activity_start, it.activity_end)
