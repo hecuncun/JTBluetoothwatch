@@ -119,10 +119,14 @@ class LoginNewActivity : BaseActivity() {
                         }
                         http_token = it.getData()?.getToken()
                         showToast("登录成功")
+                        if (nickName.isEmpty()){//默认用户名为登录名
+                            nickName=et_user_name.text.toString()
+                        }
                         if ("" == apk_update_time) {// 说明第一次登陆软件
                             val sdf = SimpleDateFormat("yyyy年MM月dd日更新")
                             apk_update_time = sdf.format(System.currentTimeMillis())
                         }
+
                         jumpToMain()
                     } else {
                         showToast("${it.getMessage()}")

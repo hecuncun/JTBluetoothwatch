@@ -36,6 +36,7 @@ abstract class BaseActivity : AppCompatActivity() {
     protected var photoPath: String? by Preference(Constants.PHOTO_PATH, "")
 
     protected var http_token: String? by Preference(Constants.HTTP_TOOKEN, "")
+    protected var nickName: String by Preference(Constants.NICK_NAME, "")
 
     /**
      * 布局文件id
