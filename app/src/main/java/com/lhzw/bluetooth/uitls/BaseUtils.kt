@@ -12,6 +12,7 @@ import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Build
 import android.os.Environment
+import android.text.TextUtils
 import android.util.Log
 import android.view.ViewConfiguration
 import com.amap.api.maps.model.LatLng
@@ -487,17 +488,41 @@ object BaseUtils {
         return builder.toString()
     }
 
-    fun calculateDistance(start:LatLng, end : LatLng) : Float{
+    fun calculateDistance(start: LatLng, end: LatLng): Float {
         var total = 0.0
-        ifNotNull(start, end){ it, vt->
+        ifNotNull(start, end) { it, vt ->
             val radLat1: Double = it.latitude * 3.14159 / 180.0
             val radLat2: Double = vt.latitude * 3.14159 / 180.0
             val a = radLat1 - radLat2
             val b = it.longitude * 3.14159 / 180.0 - vt.longitude * 3.14159 / 180.0
             val s = 2 * asin(sqrt(sin(a / 2).pow(2.0) + cos(radLat1) * cos(radLat2) * sin(b / 2).pow(2.0)))
-            total =  s * 6378137.0
+            total = s * 6378137.0
         }
         return total.toFloat()
+    }
+
+    // marker 字符串转化
+    fun stringToInt(value: String): Int {
+        if (TextUtils.isEmpty(value)) return 0
+        var tmp = 0
+        var offset = value.length
+        if (offset == 1) {
+            return (Integer.parseInt(value[0].toString()) and 0xff)
+        }
+        value.forEach {
+            offset--
+            tmp += (Integer.parseInt(it.toString()) and 0xff) * 10 * offset
+        }
+        return tmp
+    }
+
+
+    fun markToInt(mark: String): Int {
+        var tmp = mark.split("-")
+        if (tmp != null && tmp.size >= 3) {
+            return stringToInt(tmp[0]) * 365 + stringToInt(tmp[1]) * 30 + stringToInt(tmp[2])
+        }
+        return 0
     }
 
 }

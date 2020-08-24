@@ -30,8 +30,9 @@ import kotlinx.android.synthetic.main.fragment_sports.*
 class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     private var list: List<SportInfoAddrBean>? = null
     private var filter_list: Array<String>? = null
+
     //private var adapter: SportAdapter? = null
-    private val adapter by lazy{
+    private val adapter by lazy {
         SportAdapter(translateSportBeans(Constants.ACTIVITY_ALL))
     }
     private val SPORT_TYPES = arrayOf(
@@ -76,20 +77,53 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("reflesh")])
     fun reflesh(str: String) {
-            Log.e("Tag", "reflesh ...")
-            adapter.setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
+        Log.e("Tag", "reflesh ...")
+        adapter.setNewData(translateSportBeans(Constants.ACTIVITY_ALL))
     }
 
     override fun lazyLoad() {
         Log.e("Tag", "lazyLoad ...")
     }
 
+    private fun sortData(data: List<SportInfoAddrBean>?): List<SportInfoAddrBean>? {
+        data?.let { im ->
+            val map = HashMap<String, MutableList<SportInfoAddrBean>>()
+            val marks = mutableListOf<String>()
+            im.forEach { iv ->
+                if (map[iv.daily_date_mark] == null) {
+                    marks.add(iv.daily_date_mark)
+                    val sportList = mutableListOf<SportInfoAddrBean>()
+                    sportList.add(iv)
+                    map[iv.daily_date_mark] = sportList
+                } else {
+                    map[iv.daily_date_mark]!!.add(iv)
+                }
+                map[iv.daily_date_mark]!!.sortByDescending { it.activity_start }
+            }
+
+            marks.sortByDescending { iv ->
+                BaseUtils.markToInt(iv)
+            }
+
+            marks?.let {
+                val sortData = mutableListOf<SportInfoAddrBean>()
+                it.forEach { iv ->
+                    map[iv]?.let { im -> sortData.addAll(im) }
+                }
+                return sortData
+            }
+        }
+        return null
+    }
+
     private fun translateSportBeans(type: Int): MutableList<SportBean> {
         val sportBeans = ArrayList<SportBean>()
-        if (type == Constants.ACTIVITY_ALL) {
-            list = CommOperation.query(SportInfoAddrBean::class.java, "daily_date_mark DESC, activity_start")
+        list = if (type == Constants.ACTIVITY_ALL) {
+            val data = CommOperation.query(SportInfoAddrBean::class.java, "daily_date_mark")
+            sortData(data)
         } else {
-            list = CommOperation.query(SportInfoAddrBean::class.java, "activity_type", "$type", "daily_date_mark DESC, activity_start")
+            val data = CommOperation.query(SportInfoAddrBean::class.java, "activity_type", "$type")
+            sortData(data)
         }
         list?.forEach {
             val date = BaseUtils.formatData(it.activity_start, it.activity_end)
@@ -167,7 +201,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     override fun onItemClick(pos: Int) {
         adapter.run {
             val data = translateSportBeans(SPORT_TYPES[pos])
-             setNewData(data)
+            setNewData(data)
         }
     }
 }
