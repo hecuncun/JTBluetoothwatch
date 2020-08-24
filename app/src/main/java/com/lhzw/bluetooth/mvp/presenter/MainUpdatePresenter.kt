@@ -22,6 +22,7 @@ import com.lhzw.bluetooth.mvp.model.UpdateModel
 import com.lhzw.bluetooth.net.rxnet.callback.DownloadCallback
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
+import com.orhanobut.logger.Logger
 import okhttp3.ResponseBody
 import java.io.File
 import java.io.FileOutputStream
@@ -130,6 +131,7 @@ class MainUpdatePresenter : BaseIPresenter<UpdateContract.IView>(), UpdateContra
                 var isApkUpdate = false
                 if (appVersionCode < it.getVersionCode()) {
                     isApkUpdate = true
+                    //Logger.e("versionCode=${it.getVersionCode()}")
                     apk = it
                 }
                 body(isApkUpdate, it.getVersionName()!!)
