@@ -14,6 +14,7 @@ import com.lhzw.bluetooth.base.BaseMvpFragment
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.dialog.LogoutDialog
 import com.lhzw.bluetooth.event.SaveWatchSettingEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
@@ -32,6 +33,7 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_setting.*
+import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -48,6 +50,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     private val TAG = "SettingFragment"
     private val PERMISS_REQUEST_CODE = 0x000056
     private var isChecking = false
+    private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)//是否自动连接
     override fun useEventBus() = true
 
     companion object {
@@ -105,12 +108,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         // 防止切换fragment 访问平台频繁
         isChecking = false
     }
-
+    private  var dialogLogout:LogoutDialog?=null
     override fun initView(view: View) {
         super.initView(view)
         // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
         initListener()
         initIvState()
+        dialogLogout = LogoutDialog(requireActivity())
     }
 
 
@@ -322,10 +326,25 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
 
         ll_logout.setOnClickListener {//退出登录
-            showToast("退出成功")
-            http_token=""
-            startActivity(Intent(requireContext(),LoginNewActivity::class.java))
-            activity?.finish()
+            dialogLogout!!.show()
+            dialogLogout!!.setConfirmListener(View.OnClickListener {
+                dialogLogout!!.dismiss()
+                showToast("退出成功")
+                http_token=""
+                //断开连接
+                connectState = false
+                //关闭自动连接
+                autoConnect = false
+                RxBus.getInstance().post("disconnect", "")
+                startActivity(Intent(requireContext(),LoginNewActivity::class.java))
+                activity?.finish()
+
+                })
+
+
+
+
+
         }
 
 
