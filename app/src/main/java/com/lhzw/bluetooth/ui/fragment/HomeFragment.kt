@@ -421,6 +421,8 @@ class HomeFragment : BaseFragment(),CancelAdapt{
         cal_line_chart.clear()
         tv_step_chart.text="--"
         tv_cal_chart.text="--"
+        tv_current_step_chart.text="--"
+        tv_current_cal_chart.text="--"
     }
 
     /**
