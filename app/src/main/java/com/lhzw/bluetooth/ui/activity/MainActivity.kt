@@ -120,7 +120,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             //未初始化就 先初始化一个用户对象
             val bean = LitePal.find<PersonalInfoBean>(1)
             if (bean == null) {
-                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 5, 194)
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 2, 194)
                 personalInfoBean.save()
             }
         } else {
@@ -384,7 +384,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             LitePal.getDatabase()
             val bean = LitePal.find<PersonalInfoBean>(1)
             if (bean == null) {
-                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 5, 194)
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 2 ,194)
                 personalInfoBean.save()
             }
 
