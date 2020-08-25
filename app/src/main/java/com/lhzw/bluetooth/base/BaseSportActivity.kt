@@ -1,11 +1,18 @@
 package com.lhzw.kotlinmvp.base
 
+import android.annotation.TargetApi
+import android.content.ContentUris
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.res.Resources
+import android.database.Cursor
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.StrictMode
+import android.provider.DocumentsContract
+import android.provider.MediaStore
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.util.TypedValue
@@ -49,6 +56,8 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     protected var scMapShotPath = "/sdcard/share/sport_gaode_map_shot.jpg"
     private var backCounter = 0
     protected var isIndoor = false
+    private val MEDIA_DOCUMENTS = "com.android.providers.media.documents"
+    private val DOWNLOAD_DOCUMENTS = "com.android.providers.downloads.documents"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(getLayoutId())
@@ -184,6 +193,65 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
      * 初始化视图
      */
     abstract fun initView()
+
+
+    // 处理图片
+    @TargetApi(19)
+    protected fun handleImageOnKitKat(data: Intent?): String? {
+        var imagePath: String? = null
+        if (data != null) {
+            val uri = data.data
+            if (DocumentsContract.isDocumentUri(this, uri)) {
+                val docid = DocumentsContract.getDocumentId(uri)
+                if (MEDIA_DOCUMENTS.equals(uri.authority)) {
+                    val id = docid.split(":")[1]
+                    // 解析出数字格式的id
+                    val selection = MediaStore.Images.Media._ID + "=" + id
+                    imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
+                } else if (DOWNLOAD_DOCUMENTS.equals(uri.authority)) {
+                    val contentUri = ContentUris.withAppendedId(Uri.parse("content: //downloads/public_downloads"), docid.toLong())
+                    imagePath = getImagePath(contentUri, null)
+                }
+            } else if ("content".equals(uri.getScheme())) {
+                imagePath = getImagePath(uri, null);
+            } else if ("file".equals(uri.getScheme())) {
+                imagePath = uri.path
+            }
+        }
+        return imagePath
+    }
+
+    protected fun handleImageBeforeKitKat(data: Intent?): String? {
+        var imagePath: String? = null
+        data?.let {
+            val uri = data.data
+            imagePath = getImagePath(uri, null)
+        }
+        return imagePath
+    }
+
+    /**
+     * 获取图片路径
+     *
+     */
+    private fun getImagePath(uri: Uri, selection: String?): String? {
+        var path: String? = null
+        var cursor: Cursor? = null
+        try {
+            cursor = contentResolver.query(uri, null, selection, null, null)
+            if (cursor != null) {
+                if (cursor.moveToFirst()) {
+                    path = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("Sport", "get image path fail")
+        } finally {
+            cursor?.close()
+        }
+        return path
+    }
+
 
     override fun onPause() {
         super.onPause()

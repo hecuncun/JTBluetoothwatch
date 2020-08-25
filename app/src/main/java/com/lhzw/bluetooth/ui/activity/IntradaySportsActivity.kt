@@ -192,7 +192,7 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
         //将old_image对象转化为bitmap对象
         im_background.buildDrawingCache()
         var mBitmap: Bitmap = im_background.getDrawingCache()
-        mBitmap = (im_background.getDrawable() as RoundedDrawable).sourceBitmap
+        mBitmap = (im_background.drawable as RoundedDrawable).sourceBitmap
         //这两个数字是控制模糊度的
         val scaleFactor = 10.0f
         val radius = 10.0f

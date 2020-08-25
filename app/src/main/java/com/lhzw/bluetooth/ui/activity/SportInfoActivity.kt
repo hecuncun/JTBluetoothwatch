@@ -1,15 +1,14 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Rect
+import android.graphics.*
 import android.os.Build
 import android.util.Log
 import android.view.View
 import android.widget.ScrollView
+import android.widget.Toast
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.R
@@ -40,6 +39,8 @@ import java.io.File
 @Suppress("DEPRECATION")
 class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstract.View, AMap.OnMapClickListener, AMap.OnMapScreenShotListener, CancelAdapt {
     private var aMap: AMap? = null
+    private var isPanelVisible = false
+    private val PICK_PHOTO = 0x00102
     override fun getLayoutId(): Int {
         return R.layout.activity_sport_info
     }
@@ -79,10 +80,13 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             //室内跑
             Constants.ACTIVITY_INDOOR -> {
                 iv_sport_icon.setBackgroundResource(R.mipmap.sport_indoor)
+                map.visibility = View.GONE
+                im_bg_share.visibility = View.VISIBLE
+                scBitmapMap = BitmapFactory.decodeResource(resources, R.drawable.bg_share_06)
+                scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
                 isIndoor = true
             }
         }
-        Log.e("ISIndoor", "value --------------------- $isIndoor         $type")
         mPresenter = MainSportPresenter(mark, "${duration}", type)
         Log.e("Tag", "mPresenter == null ? ${mPresenter == null}")
         mPresenter?.apply {
@@ -101,6 +105,14 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
                 }
             }
             it.visibility = View.GONE
+        }
+        if (isIndoor) {
+            im_bg_share.setOnClickListener {
+                body(it)
+            }
+            im_replace.setOnClickListener {
+                repalce()
+            }
         }
     }
 
@@ -226,7 +238,38 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            PICK_PHOTO -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    var imagePath: String? = null
+                    if (Build.VERSION.SDK_INT >= 19) {
+                        // 4.4及以上系统使用这个方法处理图片
+                        imagePath = handleImageOnKitKat(data);
+                    } else {
+                        // 4.4以下系统使用这个方法处理图片
+                        imagePath = handleImageBeforeKitKat(data);
+                    }
+                    scBitmapMap = BitmapFactory.decodeFile(imagePath)
+                    scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
+                    BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
+                    Log.e("ImagePath", "resultCode : ${resultCode} , ${imagePath}")
+                    displayImage(imagePath)
+                }
+            }
+            else -> {
+                UMShareAPI.get(this).onActivityResult(requestCode, resultCode, data)
+            }
+        }
+    }
+
+    private fun displayImage(path: String?) {
+        if (path != null) {
+            Log.e("ImagePath", "path : $path")
+            val bg = BitmapFactory.decodeFile(path)
+            im_bg_share.setImageBitmap(bg);
+        } else {
+            Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // 刷新view
@@ -256,10 +299,33 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         }
     }
 
+    // 室内运动 点击时间
+    private val body: (view: View) -> Unit = {
+        if (mPresenter != null) {
+            dealPanelState()
+        }
+
+        if (isPanelVisible) {
+            im_replace.visibility = View.VISIBLE
+        } else {
+            im_replace.visibility = View.GONE
+        }
+    }
+
+    // 更换背景图片
+    private val repalce: () -> Unit = {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        //Intent.ACTION_GET_CONTENT = "android.intent.action.GET_CONTENT"
+        intent.type = "image/*"
+        startActivityForResult(intent, PICK_PHOTO) // 打开相册
+    }
+
     private fun dealPanelState() {
         if (panelViewList[0].slideState == SlidingUpPanelLayout.COLLAPSED) {
+            isPanelVisible = true
             sliding_up_panel_layout.hiddedPanel()
         } else if (panelViewList[0].slideState == SlidingUpPanelLayout.HIDDEN) {
+            isPanelVisible = false
             sliding_up_panel_layout.collapsePanel()
         }
     }
