@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.net
 
+import com.lhzw.bluetooth.bean.MsgVerifyBean
 import com.lhzw.bluetooth.bean.net.*
 import io.reactivex.Observable;
 import okhttp3.ResponseBody
@@ -48,5 +49,19 @@ interface Api {
      */
     @POST(value = "security/insert/bean")
     fun insertUser(@Body user: LoginUser): Observable<BaseBean<String>>
+
+    /**
+     *  获取验证码
+     *
+     */
+    @POST(value = "verify/tell_code")
+    fun getMsgVerifyCode(@Body bean: MsgVerifyBean): Observable<BaseBean<String>>
+
+    /**
+     * 修改密码
+     *
+     */
+    @PUT(value = "user/modify")
+    fun modifyPassword(@Body bean: MsgVerifyBean): Observable<BaseBean<String>>
 
 }
