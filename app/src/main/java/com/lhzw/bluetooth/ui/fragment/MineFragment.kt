@@ -43,7 +43,6 @@ class MineFragment : BaseFragment() {
     companion object {
         fun getInstance(): MineFragment = MineFragment()
     }
-
     override fun attachLayoutRes(): Int = R.layout.fragment_mine
 
     override fun initView(view: View) {
