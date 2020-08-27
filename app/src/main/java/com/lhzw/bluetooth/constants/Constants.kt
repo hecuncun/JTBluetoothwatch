@@ -13,6 +13,7 @@ import com.lhzw.bluetooth.application.App
  */
 
 object Constants {
+    const val INFO_CHANGE="info_change"
     const val PHOTO_PATH = "photo_path"
     const val IVBACKGROUND = "iv_background"
 

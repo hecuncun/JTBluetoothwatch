@@ -42,6 +42,7 @@ import org.greenrobot.eventbus.ThreadMode
  * Created by hecuncun
  */
 class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Presenter>(), SettingContract.View {
+    private var infoChanged: Boolean by Preference(Constants.INFO_CHANGE, false)
     private var enablePhone: Boolean by Preference(Constants.TYPE_PHONE, true)
     private var enableMsg: Boolean by Preference(Constants.TYPE_MSG, true)
     private var enableQQ: Boolean by Preference(Constants.TYPE_QQ, true)
@@ -221,11 +222,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             override fun onProgressChanged(p0: SeekBar?, progress: Int, p2: Boolean) {
                 Logger.e("seekProgress==$progress")
                 tv_heart_rate_limit.text = progress.toString()
+
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-
+                infoChanged=true
             }
+
 
             override fun onStopTrackingTouch(p0: SeekBar?) {
 

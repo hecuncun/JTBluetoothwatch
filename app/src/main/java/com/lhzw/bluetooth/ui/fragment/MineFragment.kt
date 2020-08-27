@@ -3,6 +3,8 @@ package com.lhzw.bluetooth.ui.fragment
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
@@ -16,9 +18,11 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.event.SavePersonInfoEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.SelectDialog
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
@@ -33,6 +37,7 @@ import org.litepal.extension.findAll
  * Created by heCunCun on 2020/6/24
  */
 class MineFragment : BaseFragment() {
+    private var infoChanged: Boolean by Preference(Constants.INFO_CHANGE, false)
     override fun useEventBus(): Boolean = true
 
     companion object {
@@ -68,6 +73,76 @@ class MineFragment : BaseFragment() {
         tv_step_length.setOnClickListener {
             pickerStepLength?.show()
         }
+       //输入监听
+        initEditListener()
+        //rg监听
+        rg_sex.setOnCheckedChangeListener { radioGroup, i ->
+            infoChanged=true
+        }
+    }
+
+    private fun initEditListener() {
+        et_nick_name.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                if (et_nick_name.text.isNotEmpty()){
+                    infoChanged=true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+
+        et_target_cal.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                if (et_target_cal.text.isNotEmpty()){
+                    infoChanged=true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+        et_target_distance.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                if (et_target_distance.text.isNotEmpty()){
+                    infoChanged=true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
+        et_target_step.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(p0: Editable?) {
+                if (et_target_step.text.isNotEmpty()){
+                    infoChanged=true
+                }
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
+            }
+        })
     }
 
     private var pickerHeight:OptionsPickerView<String>?=null
@@ -92,6 +167,7 @@ class MineFragment : BaseFragment() {
             showToast(listHeight[options1])
             tv_height.text = listHeight[options1]
             tv_height.setTextColor(resources.getColor(R.color.white))
+            infoChanged=true
 
         }).setLayoutRes(R.layout.picker_view) {
             val tvTitle = it.findViewById<TextView>(R.id.tv_title)
@@ -126,7 +202,7 @@ class MineFragment : BaseFragment() {
             //showToast(listWeight[options1])
             tv_weight.text=listWeight[options1]
             tv_weight.setTextColor(resources.getColor(R.color.white))
-
+            infoChanged=true
         }).setLayoutRes(R.layout.picker_view) {
             val tvTitle = it.findViewById<TextView>(R.id.tv_title)
             tvTitle.text = "体重"

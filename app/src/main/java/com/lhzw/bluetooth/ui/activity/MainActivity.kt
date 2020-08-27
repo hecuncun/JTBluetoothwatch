@@ -25,6 +25,7 @@ import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.dialog.SaveChangeDialog
 import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
@@ -69,7 +70,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
     private val PERMISS_REQUEST_CODE_PHONE = 0x101
     private var tapId = Constants.TAP_HOME;
 
-
+    private var infoChanged: Boolean by Preference(Constants.INFO_CHANGE, false)//更改数据未保存
     private var bleStateChangeReceiver: BleStateChangeReceiver? = null
 
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
@@ -120,7 +121,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             //未初始化就 先初始化一个用户对象
             val bean = LitePal.find<PersonalInfoBean>(1)
             if (bean == null) {
-                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 2, 194)
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 150, 2, 194)
                 personalInfoBean.save()
             }
         } else {
@@ -384,7 +385,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             LitePal.getDatabase()
             val bean = LitePal.find<PersonalInfoBean>(1)
             if (bean == null) {
-                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 100, 2 ,194)
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 150, 2 ,194)
                 personalInfoBean.save()
             }
 
@@ -397,7 +398,13 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
     private var bleManager: BluetoothManager? = null
 
     //    private var myBleManager: BleManager? = null
+    private var saveChangeDialog:SaveChangeDialog?=null
     override fun initView() {
+        //初始化dialog
+        saveChangeDialog= SaveChangeDialog(this)
+
+
+
 //        myBleManager = BleManager(this)
 //        myBleManager!!.setGattCallbacks(this)
 
@@ -670,6 +677,10 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 if (judgeTab(Constants.TAP_HOME)) {
                     return
                 }
+                if (infoChanged){
+                  showSaveDialog()
+                    return
+                }
                 iv_home.setImageResource(R.drawable.home_selected)
                 iv_sport.setImageResource(R.drawable.sports_unselected)
                 iv_setting.setImageResource(R.drawable.setting_unselected)
@@ -684,6 +695,10 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             }
             R.id.ll_sport -> {
                 if (judgeTab(Constants.TAP_SPORTS)) {
+                    return
+                }
+                if (infoChanged){
+                    showSaveDialog()
                     return
                 }
                 iv_home.setImageResource(R.drawable.home_unselected)
@@ -703,7 +718,12 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
             }
             R.id.ll_setting -> {
+
                 if (judgeTab(Constants.TAP_SETTING)) {
+                    return
+                }
+                if (infoChanged){
+                    showSaveDialog()
                     return
                 }
 
@@ -723,7 +743,10 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 if (judgeTab(Constants.TAP_ME)) {
                     return
                 }
-
+                if (infoChanged){
+                    showSaveDialog()
+                    return
+                }
                 iv_home.setImageResource(R.drawable.home_unselected)
                 iv_sport.setImageResource(R.drawable.sports_unselected)
                 iv_setting.setImageResource(R.drawable.setting_unselected)
@@ -737,6 +760,21 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 tapId = Constants.TAP_ME;
             }
         }
+    }
+
+    private fun showSaveDialog() {
+        saveChangeDialog?.show()
+        saveChangeDialog?.setConfirmListener(object :View.OnClickListener{
+            override fun onClick(p0: View?) {
+                //保存bean
+                EventBus.getDefault().post(SavePersonInfoEvent())
+                //保存bean
+                EventBus.getDefault().post(SaveWatchSettingEvent())
+                infoChanged=false
+                saveChangeDialog?.dismiss()
+            }
+
+        })
     }
 
     private fun judgeTab(tabId: Int): Boolean {
