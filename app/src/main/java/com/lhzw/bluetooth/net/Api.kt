@@ -49,7 +49,7 @@ interface Api {
      *      verifyCode 不能为空
      */
     @POST(value = "security/insert/bean")
-    fun insertUser(@Body user: LoginUser, @Query("packageName") verifyCode: String): Observable<BaseBean<String>>
+    fun insertUser(@Body user: LoginUser, @Query("verifyCode") verifyCode: String): Observable<BaseBean<String>>
 
     /**
      *  获取验证码
