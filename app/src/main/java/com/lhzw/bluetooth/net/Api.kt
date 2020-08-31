@@ -52,13 +52,14 @@ interface Api {
 
     /**
      *  获取验证码
+     *  没有校验码都有自己的生命周期，每个校验码生命周期为5分钟；重复发送，上一个校验码会立即终止生命周期
      *
      */
     @POST(value = "verify/tell_code")
     fun getMsgVerifyCode(@Body bean: MsgVerifyBean): Observable<BaseBean<String>>
 
     /**
-     * 修改密码
+     * 修改密码 对象MsgVerifyBean中的成员变量均不能为空
      *
      */
     @PUT(value = "user/modify")
