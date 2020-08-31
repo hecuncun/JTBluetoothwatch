@@ -144,4 +144,8 @@ object Constants {
 
     const val DOWNLOAD_APK = 0
     const val DOWNLOAD_DFU = 5
+
+    const val VERIFY_TYPE_REGISTER = 0x0000 // 注册
+    const val VERIFY_TYPE_MODIFY_PASSWORD = 0x0001 // 更改密码
+
 }

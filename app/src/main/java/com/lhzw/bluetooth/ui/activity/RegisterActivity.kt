@@ -67,7 +67,7 @@ class RegisterActivity:BaseActivity() {
                         //走注册接口
 
                         val loginBean = LoginUser(et_user_name.text.toString().trim(),"",0,et_pwd.text.toString().trim(),"","")
-                        val insertUserCall = SLMRetrofit.getInstance().getApi()?.insertUser(loginBean)
+                        val insertUserCall = SLMRetrofit.getInstance().getApi()?.insertUser(loginBean, "1233")
                         insertUserCall?.compose(ThreadSwitchTransformer())?.subscribe(object :CallbackListObserver<BaseBean<String>>(){
                             override fun onSucceed(t: BaseBean<String>) {
                               if (t.isSuccessed()){
