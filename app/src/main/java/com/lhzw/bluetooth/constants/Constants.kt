@@ -131,6 +131,7 @@ object Constants {
 //    const val IP_ADD = "http://49.235.154.43:8084/"
     const val IP_ADD = "http://120.26.83.121:8084/"
     const val HTTP_TOOKEN = "x-access-token"
+    const val HTTP_CACHE_TOOKEN = "http_cache_token"
     const val FIREST_LOGIN = "FIREST_LOGIN"
 
     const val TAP_HOME = 0

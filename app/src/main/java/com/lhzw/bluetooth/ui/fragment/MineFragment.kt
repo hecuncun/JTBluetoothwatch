@@ -163,7 +163,7 @@ class MineFragment : BaseFragment() {
         //显示身高
         pickerHeight = OptionsPickerBuilder(requireContext(), OnOptionsSelectListener { options1, options2, options3, v ->
             //三级联动   现在只用1级
-            showToast(listHeight[options1])
+            //showToast(listHeight[options1])
             tv_height.text = listHeight[options1]
             tv_height.setTextColor(resources.getColor(R.color.white))
             infoChanged=true

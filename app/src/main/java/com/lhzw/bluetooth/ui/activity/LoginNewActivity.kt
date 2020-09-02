@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.activity_login_new.*
 import java.text.SimpleDateFormat
 
 /**
+ *
+ * 已弃用
  * Created by heCunCun on 2020/7/31
  */
 class LoginNewActivity : BaseActivity() {

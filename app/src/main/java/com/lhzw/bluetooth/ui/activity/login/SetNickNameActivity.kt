@@ -1,29 +1,71 @@
 package com.lhzw.bluetooth.ui.activity.login
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.view.SelectDialog
 import com.luck.picture.lib.PictureSelector
 import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_set_nick_name.*
-import kotlinx.android.synthetic.main.fragment_mine.*
+import org.litepal.LitePal
+import org.litepal.extension.find
 
 /**
  * Created by heCunCun on 2020/8/12
  */
-class SetNickNameActivity:BaseActivity() {
-    override fun attachLayoutRes(): Int= R.layout.activity_set_nick_name
+class SetNickNameActivity : BaseActivity() {
+    override fun attachLayoutRes(): Int = R.layout.activity_set_nick_name
     override fun initData() {
 
     }
-
+    private val PERMISS_REQUEST_CODE = 0x100
+    private val PERMISS_REQUEST_CODE_PHONE = 0x101
     override fun initView() {
+        if (checkPermissions(arrayOf(Manifest.permission.READ_CALL_LOG,
+                        Manifest.permission.READ_PHONE_STATE,
+                        Manifest.permission.READ_SMS,
+                        Manifest.permission.RECEIVE_MMS,
+                        Manifest.permission.RECEIVE_SMS,
+                        Manifest.permission.READ_CONTACTS,
+                        Manifest.permission.WRITE_CONTACTS,
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            Logger.e("已获取监听电话短信权限")
+        } else {
+            requestPermission(arrayOf(Manifest.permission.READ_CALL_LOG,
+                    Manifest.permission.READ_PHONE_STATE,
+                    Manifest.permission.READ_SMS,
+                    Manifest.permission.RECEIVE_MMS,
+                    Manifest.permission.RECEIVE_SMS,
+                    Manifest.permission.READ_CONTACTS,
+                    Manifest.permission.WRITE_CONTACTS,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                    Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE_PHONE)
+        }
 
+        if (checkPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE))) {
+            Logger.e("已获取存储权限")
+            //未初始化就 先初始化一个用户对象
+            val bean = LitePal.find<PersonalInfoBean>(1)
+            if (bean == null) {
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 150, 2, 180)
+                personalInfoBean.save()
+            }
+        } else {
+            Logger.e("请求存储权限")
+            requestPermission(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), PERMISS_REQUEST_CODE)
+        }
     }
 
     override fun initListener() {
@@ -31,9 +73,14 @@ class SetNickNameActivity:BaseActivity() {
             finish()
         }
         btn_next.setOnClickListener {
-           Intent(this,SetAgeAndSexActivity::class.java).apply {
-               startActivity(this)
-           }
+            val accountName = et_account.text.toString().trim()
+            if (accountName.isNotEmpty()) {
+                nickName = accountName
+                Intent(this, SetAgeAndSexActivity::class.java).apply {
+                    startActivity(this)
+                }
+            }
+
         }
 
         //头像选择
@@ -68,6 +115,21 @@ class SetNickNameActivity:BaseActivity() {
                     }
                 }
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (PERMISS_REQUEST_CODE == requestCode) {
+            //未初始化就 先初始化一个用户对象
+            LitePal.getDatabase()
+            val bean = LitePal.find<PersonalInfoBean>(1)
+            if (bean == null) {
+                val personalInfoBean = PersonalInfoBean("9", 1, 25, 172, 65, 70, 1000, 150, 2 ,180)
+                personalInfoBean.save()
+            }
+
+
         }
     }
 

@@ -6,6 +6,7 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.ui.activity.login.LoginActivity
 import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
@@ -47,8 +48,8 @@ class SplashActivity : BaseActivity() {
     }
 
     private fun jumpToLogin() {
-        //val intent = Intent(this, LoginActivity::class.java)
-        val intent = Intent(this, LoginNewActivity::class.java)
+        val intent = Intent(this, LoginActivity::class.java)
+       // val intent = Intent(this, LoginNewActivity::class.java)
         startActivity(intent)
         finish()
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)

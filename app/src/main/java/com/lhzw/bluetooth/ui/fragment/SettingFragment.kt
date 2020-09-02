@@ -23,6 +23,7 @@ import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
 import com.lhzw.bluetooth.ui.activity.LoginNewActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
+import com.lhzw.bluetooth.ui.activity.login.LoginActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
@@ -339,7 +340,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
                 //关闭自动连接
                 autoConnect = false
                 RxBus.getInstance().post("disconnect", "")
-                startActivity(Intent(requireContext(),LoginNewActivity::class.java))
+                startActivity(Intent(requireContext(),LoginActivity::class.java))
                 activity?.finish()
 
                 })

@@ -22,6 +22,8 @@ import kotlinx.android.synthetic.main.activity_login.*
 import java.text.SimpleDateFormat
 
 /**
+ *
+ *    已弃用
  * Date： 2020/6/2 0002
  * Time： 10:31
  * Created by xtqb.

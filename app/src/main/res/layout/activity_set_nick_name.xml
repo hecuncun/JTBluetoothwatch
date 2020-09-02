@@ -47,9 +47,10 @@
         android:layout_marginTop="70dp"
         android:background="@null"
         android:gravity="center"
+        android:textColorHint="#877C7C"
         android:hint="请输入用户名"
         android:padding="10dp"
-        android:textColorHint="@color/white"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_head" />

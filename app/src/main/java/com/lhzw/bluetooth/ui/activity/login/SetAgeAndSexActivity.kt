@@ -5,15 +5,23 @@ import com.jzxiang.pickerview.TimePickerDialog
 import com.jzxiang.pickerview.data.Type
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.uitls.DateUtils
 import kotlinx.android.synthetic.main.activity_set_age_and_sex.*
+import kotlinx.android.synthetic.main.fragment_mine.*
+import org.litepal.LitePal
+import org.litepal.extension.find
+import org.litepal.extension.findAll
 
 /**
  * Created by heCunCun on 2020/8/12
  */
 class SetAgeAndSexActivity : BaseActivity() {
+    private var personalInfoBean: PersonalInfoBean? = null//个人信息
     override fun attachLayoutRes(): Int = R.layout.activity_set_age_and_sex
     override fun initData() {
+        val list = LitePal.findAll<PersonalInfoBean>()
+        personalInfoBean = list[0]
 
     }
 
@@ -21,12 +29,37 @@ class SetAgeAndSexActivity : BaseActivity() {
 
     }
 
-    var age = 26
+    var age = 25
+    private var gender = 1
     override fun initListener() {
+        iv_man.setOnClickListener {
+            if (gender==1){
+                return@setOnClickListener
+            }else{
+                gender=1
+                iv_man.background=resources.getDrawable(R.drawable.rg_checked_bg)
+                iv_women.background=null
+            }
+        }
+
+        iv_women.setOnClickListener {
+            if (gender==0){
+                return@setOnClickListener
+            }else{
+                gender=0
+                iv_women.background=resources.getDrawable(R.drawable.rg_checked_bg)
+                iv_man.background=null
+            }
+        }
+
+
         iv_back.setOnClickListener {
             finish()
         }
         btn_next.setOnClickListener {
+            personalInfoBean!!.gender=gender
+            personalInfoBean!!.age=age
+            personalInfoBean!!.save()
             Intent(this, SetWeightActivity::class.java).apply {
                 startActivity(this)
             }
@@ -64,4 +97,5 @@ class SetAgeAndSexActivity : BaseActivity() {
             dialogTime.show(supportFragmentManager, "a")
         }
     }
+
 }
