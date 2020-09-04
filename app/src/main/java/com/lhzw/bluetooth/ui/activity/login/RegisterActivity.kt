@@ -45,7 +45,7 @@ class RegisterActivity : BaseActivity() {
         iv_back.setOnClickListener { finish() }
         tv_get_code.setOnClickListener {
             val phone = et_phone.text.toString().trim()
-            if (RegexUtil.checkPhone(phone)) {
+            if (RegexUtil.checkMobile(phone)) {
                 //获取验证码
                 val msgVerifyCode = SLMRetrofit.getInstance().getApi()?.getMsgVerifyCode(MsgVerifyBean(phone, phone,"","", Constants.VERIFY_TYPE_REGISTER))
                 msgVerifyCode?.compose(ThreadSwitchTransformer())?.subscribe(object : CallbackListObserver<BaseBean<String>>() {

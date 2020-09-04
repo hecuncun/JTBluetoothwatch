@@ -60,7 +60,7 @@ class LoginActivity : BaseActivity() {
         btn_login.setOnClickListener {
             val phone = et_phone.text.toString().trim()
             val pwd = et_pwd.text.toString().trim()
-            if (!RegexUtil.checkPhone(phone)) {
+            if (phone.isEmpty()) {
                 showToast("请检查手机号码是否正确")
                 return@setOnClickListener
             }
