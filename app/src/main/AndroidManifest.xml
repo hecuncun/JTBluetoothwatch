@@ -121,7 +121,7 @@
         <activity android:name=".ui.activity.ScanQRCodeActivity" />
         <activity android:name=".ui.activity.LoginNewActivity"  android:launchMode="singleTask"/>
         <activity android:name=".ui.activity.RegisterActivity" />
-        <activity android:name=".ui.activity.login.LoginActivity">
+        <activity android:name=".ui.activity.login.LoginActivity" android:launchMode="singleTask">
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 
