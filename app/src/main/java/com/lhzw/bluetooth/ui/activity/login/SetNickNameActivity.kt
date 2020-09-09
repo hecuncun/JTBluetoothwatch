@@ -141,7 +141,7 @@ class SetNickNameActivity : BaseActivity() {
                     .enableCrop(true)// 是否裁剪 true or false
                     .compress(true)// 是否压缩 true or false
                     .withAspectRatio(3, 2)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                    .circleDimmedLayer(false)// 是否圆形裁剪 true or false
+                    .circleDimmedLayer(true)// 是否圆形裁剪 true or false
                     .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
                     .showCropGrid(false)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
                     .minimumCompressSize(200)// 小于100kb的图片不压缩
@@ -163,7 +163,7 @@ class SetNickNameActivity : BaseActivity() {
                     .enableCrop(true)// 是否裁剪 true or false
                     .compress(true)// 是否压缩 true or false
                     .withAspectRatio(3, 2)// int 裁剪比例 如16:9 3:2 3:4 1:1 可自定义
-                    .circleDimmedLayer(false)// 是否圆形裁剪 true or false
+                    .circleDimmedLayer(true)// 是否圆形裁剪 true or false
                     .showCropFrame(false)// 是否显示裁剪矩形边框 圆形裁剪时建议设为false   true or false
                     .showCropGrid(false)// 是否显示裁剪矩形网格 圆形裁剪时建议设为false    true or false
                     .minimumCompressSize(200)// 小于100kb的图片不压缩
