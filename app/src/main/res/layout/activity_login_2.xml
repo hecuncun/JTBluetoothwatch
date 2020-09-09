@@ -21,14 +21,28 @@
 
     <ImageView
         android:id="@+id/iv_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:layout_marginTop="60dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/iv_shadow"
-        app:srcCompat="@mipmap/icon_jt_logo" />
+        app:srcCompat="@mipmap/icon_head_logo" />
+
+    <TextView
+        android:id="@+id/tv_logo_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="JIANGTAI"
+        android:textColor="@color/white"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
+
 
     <EditText
         android:id="@+id/et_phone"
@@ -38,14 +52,14 @@
         android:layout_marginTop="60dp"
         android:layout_marginEnd="40dp"
         android:background="@null"
-        android:textColor="@color/white"
         android:hint="手机号/用户名"
         android:inputType="text"
         android:paddingLeft="60dp"
+        android:textColor="@color/white"
         android:textColorHint="#877C7C"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_logo" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_logo_name" />
 
     <View
         android:layout_width="match_parent"
@@ -61,14 +75,14 @@
         android:layout_width="0dp"
         android:layout_height="50dp"
         android:background="@null"
+        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:hint="密码"
         android:importantForAutofill="no"
         android:inputType="textPassword"
-        android:digits="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
         android:paddingLeft="60dp"
         android:paddingRight="30dp"
-        android:textColorHint="#877C7C"
         android:textColor="@color/white"
+        android:textColorHint="#877C7C"
         app:layout_constraintEnd_toEndOf="@+id/et_phone"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/et_phone"
@@ -125,7 +139,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_marginStart="10dp"
-       android:background="@drawable/me_selected"
+        android:background="@drawable/me_selected"
         android:textAlignment="textEnd"
         android:textColor="@color/white"
         android:textSize="18sp"
