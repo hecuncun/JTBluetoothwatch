@@ -150,7 +150,7 @@ class LoginActivity : BaseActivity() {
                         }
                     } else {
                         showToast("${it.getMessage()}")
-                        tv_user_name_tip.visibility = View.VISIBLE
+
                     }
                     if (loadingView != null && loadingView!!.isShowing) {
                         loadingView?.cancel()
