@@ -4,8 +4,10 @@ import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.event.CloseEvent
 import com.lhzw.bluetooth.ui.activity.MainActivity
 import kotlinx.android.synthetic.main.activity_set_height.*
+import org.greenrobot.eventbus.EventBus
 import org.litepal.LitePal
 import org.litepal.extension.findAll
 
@@ -38,6 +40,9 @@ class SetHeightActivity : BaseActivity() {
             personalInfoBean!!.save()
             Intent(this, MainActivity::class.java).apply {
                 startActivity(this)
+                //销毁以前所有的Activity
+                EventBus.getDefault().post(CloseEvent())
+                finish()
             }
         }
     }

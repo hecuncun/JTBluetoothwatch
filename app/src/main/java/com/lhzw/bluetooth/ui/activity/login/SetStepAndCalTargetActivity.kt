@@ -4,9 +4,13 @@ import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.event.CloseEvent
 import kotlinx.android.synthetic.main.activity_set_step_and_cal_target.*
 import kotlinx.android.synthetic.main.activity_set_weight.btn_next
 import kotlinx.android.synthetic.main.activity_set_weight.iv_back
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.findAll
 
@@ -14,6 +18,7 @@ import org.litepal.extension.findAll
  * Created by heCunCun on 2020/8/14
  */
 class SetStepAndCalTargetActivity:BaseActivity() {
+
     private var personalInfoBean: PersonalInfoBean? = null//个人信息
     override fun attachLayoutRes(): Int = R.layout.activity_set_step_and_cal_target
 
@@ -44,5 +49,10 @@ class SetStepAndCalTargetActivity:BaseActivity() {
                 startActivity(this)
             }
         }
+    }
+    override fun useEventBus(): Boolean =true
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishEvent(eventBus:CloseEvent){
+          finish()
     }
 }
