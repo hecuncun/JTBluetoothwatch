@@ -11,6 +11,7 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.bean.net.BaseBean
+import com.lhzw.bluetooth.bean.net.SubJoin
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
@@ -112,8 +113,8 @@ class LoginNewActivity : BaseActivity() {
         loadingView?.setLoadingTitle("登录中...")
         loadingView?.show()
         val response = SLMRetrofit.getInstance().getApi()?.login(et_user_name.text.toString(), et_pwd.text.toString())
-        response?.compose(ThreadSwitchTransformer<BaseBean<UserInfo>>())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo>?>() {
-            override fun onSucceed(bean: BaseBean<UserInfo>?) {
+        response?.compose(ThreadSwitchTransformer())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo<SubJoin>>?>() {
+            override fun onSucceed(bean: BaseBean<UserInfo<SubJoin>>?) {
                 bean?.let {
                     if (it.isSuccessed()) {
                         if(http_token != "" && http_token != it.getData()?.getToken()){

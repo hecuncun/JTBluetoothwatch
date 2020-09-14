@@ -18,7 +18,7 @@ interface Api {
      * 登录
      */
     @GET("security/login")
-    fun login(@Query("loginName") loginName: String, @Query("password") password: String): Observable<BaseBean<UserInfo>>
+    fun login(@Query("loginName") loginName: String, @Query("password") password: String): Observable<BaseBean<UserInfo<SubJoin>>>
 
     /**
      * 获取最新 apk 信息

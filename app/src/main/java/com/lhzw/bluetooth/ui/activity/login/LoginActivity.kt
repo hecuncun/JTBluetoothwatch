@@ -4,13 +4,14 @@ import android.content.Intent
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.view.View
+import android.util.Log
 import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.bean.net.BaseBean
+import com.lhzw.bluetooth.bean.net.SubJoin
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
@@ -20,14 +21,8 @@ import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.ui.activity.MainActivity
 import com.lhzw.bluetooth.uitls.Preference
-import com.lhzw.bluetooth.uitls.RegexUtil
 import com.lhzw.bluetooth.widget.LoadingView
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_login_2.*
-import kotlinx.android.synthetic.main.activity_login_2.et_pwd
-import kotlinx.android.synthetic.main.activity_login_2.iv_eye
-import kotlinx.android.synthetic.main.activity_login_2.tv_register
-import kotlinx.android.synthetic.main.activity_login_new.*
 import java.text.SimpleDateFormat
 
 /**
@@ -119,18 +114,21 @@ class LoginActivity : BaseActivity() {
         loadingView?.setLoadingTitle("登录中...")
         loadingView?.show()
         val response = SLMRetrofit.getInstance().getApi()?.login(phone, pwd)
-        response?.compose(ThreadSwitchTransformer<BaseBean<UserInfo>>())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo>?>() {
-            override fun onSucceed(bean: BaseBean<UserInfo>?) {
+        response?.compose(ThreadSwitchTransformer<BaseBean<UserInfo<SubJoin>>>())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo<SubJoin>>?>() {
+            override fun onSucceed(bean: BaseBean<UserInfo<SubJoin>>?) {
                 bean?.let {
                     if (it.isSuccessed()) {
-                        if (cachePhone!= phone) {
-                            setTarget=true
-                            if (cachePhone!=""){
+                        if (cachePhone != phone) {
+                            setTarget = true
+                            if (cachePhone != "") {
                                 deleteAllSport()
                             }
                         }
-                        cachePhone=phone
+                        cachePhone = phone
                         http_token = it.getData()?.getToken()
+
+                        Log.e("LOGINTIME", "时间   :   ${it.getData()?.getInfo()?.getCreateTime()}")
+
                         showToast("登录成功")
                         if (nickName.isEmpty()) {//默认用户名为登录名
                             nickName = phone

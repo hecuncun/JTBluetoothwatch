@@ -6,8 +6,13 @@ package com.lhzw.bluetooth.bean.net
  * Created by xtqb.
  */
 
-class UserInfo {
+class UserInfo<T> {
     private var token: String? = null
 
+    private var user: T? = null
+
     fun getToken(): String? = token
+
+    fun getInfo() = user
+
 }

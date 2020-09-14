@@ -11,6 +11,7 @@ import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.net.BaseBean
+import com.lhzw.bluetooth.bean.net.SubJoin
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.net.CallbackListObserver
@@ -73,8 +74,8 @@ class LoginActivity : AppCompatActivity() {
         loadingView?.setLoadingTitle("登录中...")
         loadingView?.show()
         val response = SLMRetrofit.getInstance().getApi()?.login(et_account.text.toString(), et_password.text.toString())
-        response?.compose(ThreadSwitchTransformer<BaseBean<UserInfo>>())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo>?>() {
-            override fun onSucceed(bean: BaseBean<UserInfo>?) {
+        response?.compose(ThreadSwitchTransformer())?.subscribe(object : CallbackListObserver<BaseBean<UserInfo<SubJoin>>?>() {
+            override fun onSucceed(bean: BaseBean<UserInfo<SubJoin>>?) {
                 bean?.let {
                     if (it.isSuccessed()) {
                         http_token = it.getData()?.getToken()
