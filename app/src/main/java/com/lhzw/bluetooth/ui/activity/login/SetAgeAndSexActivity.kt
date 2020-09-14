@@ -6,9 +6,12 @@ import com.jzxiang.pickerview.data.Type
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.event.CloseEvent
 import com.lhzw.bluetooth.uitls.DateUtils
 import kotlinx.android.synthetic.main.activity_set_age_and_sex.*
 import kotlinx.android.synthetic.main.fragment_mine.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.find
 import org.litepal.extension.findAll
@@ -97,5 +100,9 @@ class SetAgeAndSexActivity : BaseActivity() {
             dialogTime.show(supportFragmentManager, "a")
         }
     }
-
+    override fun useEventBus(): Boolean =true
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishEvent(eventBus: CloseEvent){
+        finish()
+    }
 }

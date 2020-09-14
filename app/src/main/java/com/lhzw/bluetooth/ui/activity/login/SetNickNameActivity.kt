@@ -6,6 +6,7 @@ import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.event.CloseEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.view.SelectDialog
@@ -14,6 +15,8 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_set_nick_name.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.find
 
@@ -173,5 +176,11 @@ class SetNickNameActivity : BaseActivity() {
                     isDragFrame(false).// 是否可拖动裁剪框(固定)
                     forResult(PictureConfig.CHOOSE_REQUEST)
         }
+    }
+
+    override fun useEventBus(): Boolean =true
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishEvent(eventBus: CloseEvent){
+        finish()
     }
 }

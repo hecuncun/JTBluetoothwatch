@@ -4,7 +4,10 @@ import android.content.Intent
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.PersonalInfoBean
+import com.lhzw.bluetooth.event.CloseEvent
 import kotlinx.android.synthetic.main.activity_set_weight.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.litepal.LitePal
 import org.litepal.extension.findAll
 
@@ -42,5 +45,10 @@ class SetWeightActivity : BaseActivity() {
             }
         }
 
+    }
+    override fun useEventBus(): Boolean =true
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishEvent(eventBus: CloseEvent){
+        finish()
     }
 }

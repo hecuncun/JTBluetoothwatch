@@ -4,7 +4,6 @@ import android.content.Intent
 import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
-import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
@@ -14,20 +13,17 @@ import com.lhzw.bluetooth.bean.net.BaseBean
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
+import com.lhzw.bluetooth.event.CloseEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.net.CallbackListObserver
 import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.ui.activity.MainActivity
 import com.lhzw.bluetooth.uitls.Preference
-import com.lhzw.bluetooth.uitls.RegexUtil
 import com.lhzw.bluetooth.widget.LoadingView
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_login_2.*
-import kotlinx.android.synthetic.main.activity_login_2.et_pwd
-import kotlinx.android.synthetic.main.activity_login_2.iv_eye
-import kotlinx.android.synthetic.main.activity_login_2.tv_register
-import kotlinx.android.synthetic.main.activity_login_new.*
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.text.SimpleDateFormat
 
 /**
@@ -123,13 +119,13 @@ class LoginActivity : BaseActivity() {
             override fun onSucceed(bean: BaseBean<UserInfo>?) {
                 bean?.let {
                     if (it.isSuccessed()) {
-                        if (cachePhone!= phone) {
-                            setTarget=true
-                            if (cachePhone!=""){
+                        if (cachePhone != phone) {
+                            setTarget = true
+                            if (cachePhone != "") {
                                 deleteAllSport()
                             }
                         }
-                        cachePhone=phone
+                        cachePhone = phone
                         http_token = it.getData()?.getToken()
                         showToast("登录成功")
                         if (nickName.isEmpty()) {//默认用户名为登录名
@@ -187,5 +183,12 @@ class LoginActivity : BaseActivity() {
         startActivity(intent)
         finish()
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+    }
+
+    override fun useEventBus(): Boolean = true
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun finishEvent(eventBus: CloseEvent) {
+        finish()
     }
 }
