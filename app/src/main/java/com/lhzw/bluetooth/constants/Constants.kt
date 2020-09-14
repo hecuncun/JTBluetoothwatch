@@ -20,6 +20,7 @@ object Constants {
     const val APK_UPDATE_TIME = "apk_update_time"
     const val FIRM_UPDATE_TIME = "firm_update_time"
     const val APK_IP_CHANGE = "apk_ip_change"
+    const val REGISTERTIME = "registertime"
 
 
     // 运动类型

@@ -28,6 +28,7 @@ import com.makeramen.roundedimageview.RoundedDrawable
 import kotlinx.android.synthetic.main.activity_intraday_ports.*
 import org.litepal.LitePal
 import org.litepal.extension.findAll
+import java.util.*
 
 
 /**
@@ -41,12 +42,19 @@ class IntradaySportsActivity : BaseShareActivity(), View.OnClickListener {
     private var nickName: String by Preference(Constants.NICK_NAME, "")
     private val PICK_PHOTO = 0x00102
     private var ivBackground: String by Preference(Constants.IVBACKGROUND, "")
+
+    private var registerTime: Long? by Preference(Constants.REGISTERTIME, 0)//注册时间
     override fun attachLayoutRes(): Int {
         return R.layout.activity_intraday_ports
     }
 
     override fun initData() {
         tv_name.text=nickName
+        //计算当前天数
+        val dateNow = Date(System.currentTimeMillis())
+        val dateRegister =  Date(registerTime!!)
+        val days = (dateNow.time - dateRegister.time)/(1000*60*60*24)
+        tv_second_title.text="疆泰陪您运动$days 天"
         //查询当前步数,cal
         val currentList = LitePal.findAll<CurrentDataBean>()
         if (currentList.isNotEmpty()) {

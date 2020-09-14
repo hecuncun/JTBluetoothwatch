@@ -21,6 +21,7 @@ import com.lhzw.bluetooth.net.CallbackListObserver
 import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.ui.activity.MainActivity
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_login_2.*
@@ -35,6 +36,7 @@ import java.text.SimpleDateFormat
 class LoginActivity : BaseActivity() {
     private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
     private var apk_ip_change: Boolean? by Preference(Constants.APK_IP_CHANGE, false)
+    private var registerTime: Long? by Preference(Constants.REGISTERTIME, 0)
     override fun attachLayoutRes(): Int = R.layout.activity_login_2
 
     override fun initData() {
@@ -131,7 +133,7 @@ class LoginActivity : BaseActivity() {
                         http_token = it.getData()?.getToken()
 
                         Log.e("LOGINTIME", "时间   :   ${it.getData()?.getInfo()?.getCreateTime()}")
-
+                        registerTime = DateUtils.dateToLong(it.getData()?.getInfo()?.getCreateTime())
                         showToast("登录成功")
                         if (nickName.isEmpty()) {//默认用户名为登录名
                             nickName = phone
