@@ -25,7 +25,6 @@ import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseIView
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.constants.ShareBgBitmap
-import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -57,6 +56,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     protected var indoor_backgroud: String? by Preference(Constants.INDOOR_BACKGROUD, "")
     protected var scMapShotPath = "/sdcard/share/sport_gaode_map_shot.jpg"
     private var backCounter = 0
+    private var gToast: Toast? = null
     protected var isIndoor = false
     private val MEDIA_DOCUMENTS = "com.android.providers.media.documents"
     private val DOWNLOAD_DOCUMENTS = "com.android.providers.downloads.documents"
@@ -168,7 +168,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
                 this.finish()
                 return false
             }
-            Toast.makeText(this, "再按一次退出", Toast.LENGTH_SHORT).show()
+            showToast("再按一次退出")
             Handler().postDelayed({ backCounter = 0 }, 2000)
             return false
         }
@@ -178,7 +178,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     protected fun getAnimationState(): Boolean {
         mPresenter?.also {
             if (!it.getAnimationState()) {
-                Toast.makeText(this, "等待动画结束", Toast.LENGTH_SHORT).show()
+                showToast("等待动画结束")
                 return false
             }
         }
@@ -254,6 +254,37 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
         return path
     }
 
+    @Override
+    fun cancel() {
+        cancelToast()
+    }
+
+    @Override
+    fun toastMsg(msg: String) {
+        showToast(msg)
+    }
+
+    /**
+     * Post Toast
+     *
+     * @param text
+     */
+    protected fun showToast(text: String?) {
+        if (gToast == null) {
+            gToast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
+            gToast?.show()
+        } else {
+            gToast?.setText(text)
+            gToast?.duration = Toast.LENGTH_SHORT
+            gToast?.show()
+        }
+    }
+
+    protected fun cancelToast() {
+        gToast?.let {
+            it.cancel()
+        }
+    }
 
     override fun onPause() {
         super.onPause()

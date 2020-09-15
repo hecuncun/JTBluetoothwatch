@@ -93,9 +93,11 @@ class SportModel(var mark: String) : SportConstract.Model {
         var pos = 0
         var max = 0
         var dis_total = 0.0
+        var time_total = 0
         distance_list?.forEach {
             Log.e("Distance", "--------------------------------- 2  " + it.value)
             total += it.value
+            time_total += 60
             dis_total += it.value
             if (total == 100000) {
                 pos++
@@ -120,39 +122,56 @@ class SportModel(var mark: String) : SportConstract.Model {
         }
         var percent = 0
         if (second > 0 && total > 0) {
+            pos++
             percent = 100000 / total
-            distance_map!![distance_map!!.size] = second
+            distance_map!![pos] = second
         }
 
         val bar_speed_list = ArrayList<BarBean>()
         total = 0
         distance_map?.also {
             for (index in 1..pos) {
-                if (percent > 0 && index == (distance_map!!.size - 1)) {
-                    total += it[index]!!
+                if (percent > 0 && index == pos) {
+                    val second = it[index]!! % 60
+                    val minute = it[index]!! / 60
+                    var time = ""
+                    if (minute < 0x0A) {
+                        time += "0"
+                    }
+                    time += "$minute\'"
+                    if (second < 0x0A) {
+                        time += "0"
+                    }
+                    time += "$second\""
+                    val bean = BarBean(0.0f, -1, time)
+                    bar_speed_list.add(bean)
                 } else {
                     total += it[index]!!
+                    val second = it[index]!! % 60
+                    val minute = it[index]!! / 60
+                    var speed = ""
+                    if (minute < 0x0A) {
+                        speed += "0"
+                    }
+                    speed += "$minute\'"
+                    if (second < 0x0A) {
+                        speed += "0"
+                    }
+                    speed += "$second\""
+                    val bean = BarBean(it[index]?.toFloat()!! / max!!, 0, speed)
+                    bar_speed_list.add(bean)
                 }
-                val second = it[index]!! % 60
-                val minute = it[index]!! / 60
-                var speed = ""
-                if (minute < 0x0A) {
-                    speed += "0"
-                }
-                speed += "$minute\'"
-                if (second < 0x0A) {
-                    speed += "0"
-                }
-                speed += "$second\""
-                val bean = BarBean(it[index]?.toFloat()!! / max!!, 0, speed)
-                bar_speed_list.add(bean)
             }
         }
+//        if(percent > 0) {
+//            distance_map!!.remove(pos)
+//        }
+        Log.e("SIZE", "bar_speed_list size : -----------   ${bar_speed_list.size}")
         convertView?.findViewById<HorizontalBarGraph>(R.id.tv_hor_bar).setListUpdate(bar_speed_list)
-        val hour = total / 3600
-        val minute = (total % 3600) / 60
-        second = total % 60
-        if (total == 0) {
+        val hour = time_total / 3600
+        val minute = (time_total % 3600) / 60
+        second = time_total % 60
+        if (time_total == 0) {
             convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", "0").replace("T", "00:00:00")
         } else {
             var time = ""
@@ -167,18 +186,17 @@ class SportModel(var mark: String) : SportConstract.Model {
             if (second < 0x0A) {
                 time += "0"
             }
-            time += "$second:"
+            time += "$second"
 
-            var distance: String = ""
+            var distance = ""
             if (dis_total > 100000) {
-                distance = String.format("%.2f", dis_total / 100000)
+                distance = String.format("%.2f", dis_total.toFloat() / 100000)
             } else {
-                distance = String.format("%.3f", dis_total / 100000)
+                distance = String.format("%.3f", dis_total.toFloat() / 100000)
             }
 
             convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", distance).replace("T", time)
         }
-
 
         // 配速
         val speed_list = queryData(mark = mark, type = Constants.SPEED)

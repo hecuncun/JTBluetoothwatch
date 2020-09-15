@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="110dp">
+    android:layout_height="74dp">
 
     <ImageView
         android:id="@+id/im_portrait"
@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_16"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="@string/sport_duration"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_12"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center_vertical"
         android:text="12:58"
         android:textColor="@color/gray"
@@ -45,12 +45,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_16"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="3dp"
         android:text="@string/sport_calorie"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toBottomOf="@id/tv_duration"
-        app:layout_constraintLeft_toRightOf="@+id/im_portrait" />
+        app:layout_constraintLeft_toRightOf="@+id/im_portrait"
+        app:layout_constraintTop_toBottomOf="@id/tv_duration" />
 
     <TextView
         android:id="@+id/tv_calorie"
@@ -61,15 +61,15 @@
         android:text="12:58"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
-        app:layout_constraintLeft_toRightOf="@+id/tv_calorie_title" />
+        app:layout_constraintLeft_toRightOf="@+id/tv_calorie_title"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title" />
 
     <TextView
         android:id="@+id/tv_allocation_speed_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_20"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:text="@string/allocation_speed"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
@@ -81,7 +81,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dp_12"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:gravity="center_vertical"
         android:text="12:58"
         android:textColor="@color/gray"
@@ -97,8 +97,8 @@
         android:text="@string/step_num"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
-        app:layout_constraintLeft_toRightOf="@+id/tv_duration" />
+        app:layout_constraintLeft_toRightOf="@+id/tv_duration"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title" />
 
     <TextView
         android:id="@+id/tv_steps"
@@ -109,8 +109,8 @@
         android:text="12:58"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title"
-        app:layout_constraintLeft_toRightOf="@+id/tv_steps_title" />
+        app:layout_constraintLeft_toRightOf="@+id/tv_steps_title"
+        app:layout_constraintTop_toTopOf="@+id/tv_calorie_title" />
 
     <View
         android:id="@+id/splite"
@@ -139,6 +139,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@+id/splite"
         app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/date"
         android:layout_width="wrap_content"
@@ -147,21 +148,21 @@
         android:text="日期"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
-        app:layout_constraintTop_toTopOf="@+id/tv_ymt"
-        app:layout_constraintLeft_toRightOf="@+id/im_portrait" />
+        app:layout_constraintLeft_toRightOf="@+id/im_portrait"
+        app:layout_constraintTop_toTopOf="@+id/tv_ymt" />
 
     <TextView
-        android:layout_marginTop="15dp"
         android:id="@+id/tv_ymt"
         android:layout_width="95dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
         android:gravity="center_vertical"
         android:text="2019-12-28"
         android:textColor="@color/gray"
         android:textSize="@dimen/sp_14"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@+id/tv_calorie_title"
-        app:layout_constraintLeft_toLeftOf="@+id/tv_calorie"/>
+        app:layout_constraintLeft_toLeftOf="@+id/tv_calorie"
+        app:layout_constraintTop_toBottomOf="@+id/tv_calorie_title" />
 
     <TextView
         android:id="@+id/tv_time"

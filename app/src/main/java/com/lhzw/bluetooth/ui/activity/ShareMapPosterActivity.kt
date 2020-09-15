@@ -101,6 +101,7 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
             lenght = ShareBgBitmap.bg_bitmap!!.height
         }
         val bg = BlurBitmapUtil.centerSquareScaleBitmap(ShareBgBitmap.bg_bitmap!!, lenght)
+        im_bg_share.alpha = 0.5f
         im_bg_share.setImageBitmap(bg)
 
         val mark: String = intent.getStringExtra("mark")

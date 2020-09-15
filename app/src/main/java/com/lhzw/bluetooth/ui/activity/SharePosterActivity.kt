@@ -54,7 +54,7 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     }
 
     private fun saveShareUI2Bitmap() {
-        if(shareFile == null) {
+        if (shareFile == null) {
             rl_share_poster.isDrawingCacheEnabled = true
             rl_share_poster.buildDrawingCache()
             val bitmap = rl_share_poster.getDrawingCache()
@@ -73,10 +73,10 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     private fun initView() {
         tv_save_poster.paint.flags = Paint.UNDERLINE_TEXT_FLAG //下划线
         tv_save_poster.paint.isAntiAlias = true//抗锯齿
-        tv_sports_num.text=intent.getStringExtra("numSports")?:""
-        tv_step.text=intent.getStringExtra("steps")?:""
-        tv_distance.text=intent.getStringExtra("distance")?:""
-        tv_calorie.text=intent.getStringExtra("cal")?:""
+        tv_sports_num.text = intent.getStringExtra("numSports") ?: ""
+        tv_step.text = intent.getStringExtra("steps") ?: ""
+        tv_distance.text = intent.getStringExtra("distance") ?: ""
+        tv_calorie.text = intent.getStringExtra("cal") ?: ""
 
     }
 
@@ -91,8 +91,8 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
 
     private fun initData() {
         GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
-        tv_name.text=nickName
-        tv_time.text= DateUtils.getTodayStringData()
+        tv_name.text = nickName
+        tv_time.text = DateUtils.getTodayStringData()
         val bg_bitmap = intent.getSerializableExtra("bg_bitmap")!! as ShareBgBean
         if (bg_bitmap.path == null || "".equals(bg_bitmap.path)) {
             val bitmap = BitmapFactory.decodeResource(resources, R.drawable.icon_share_default)
@@ -192,7 +192,7 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     override fun onDestroy() {
         super.onDestroy()
         shareFile?.let {
-            if(it.isFile && it.exists()) {
+            if (it.isFile && it.exists()) {
                 it.delete()
             }
         }

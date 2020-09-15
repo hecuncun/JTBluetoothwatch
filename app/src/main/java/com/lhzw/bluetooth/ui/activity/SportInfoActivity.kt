@@ -9,12 +9,10 @@ import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ScrollView
-import android.widget.Toast
 import com.amap.api.maps.AMap
 import com.amap.api.maps.model.LatLng
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
-import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -84,17 +82,23 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
                 im_bg_share.visibility = View.VISIBLE
                 iv_sport_icon.setBackgroundResource(R.mipmap.sport_indoor)
                 if (!TextUtils.isEmpty(indoor_backgroud)) {
-                    scBitmapMap = BitmapFactory.decodeFile(indoor_backgroud)
-                    var with = scBitmapMap?.width!!
-                    if (scBitmapMap?.width!! > scBitmapMap?.height!!) {
-                        with = scBitmapMap?.height!!
+                    try {
+                        scBitmapMap = BitmapFactory.decodeFile(indoor_backgroud)
+                        var with = scBitmapMap?.width!!
+                        if (scBitmapMap?.width!! > scBitmapMap?.height!!) {
+                            with = scBitmapMap?.height!!
+                        }
+                        if (with > 100) {
+                            with = 100
+                        }
+                        scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, with, with)
+                        BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
+                        displayImage(indoor_backgroud)
+                    } catch (e: java.lang.Exception) {
+                        indoor_backgroud = ""
+                        scBitmapMap = BitmapFactory.decodeResource(resources, R.drawable.bg_share_06)
+                        scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
                     }
-                    if (with > 100) {
-                        with = 100
-                    }
-                    scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, with, with)
-                    BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
-                    displayImage(indoor_backgroud)
                 } else {
                     scBitmapMap = BitmapFactory.decodeResource(resources, R.drawable.bg_share_06)
                     scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
@@ -141,7 +145,6 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         }
     }
 
-    @SuppressLint("LogNotTimber")
     private fun initTileBar() {
         toolbar_title.text = intent.getStringExtra("ymt")
         im_back.visibility = View.VISIBLE
@@ -296,7 +299,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             val bg = BitmapFactory.decodeFile(path)
             im_bg_share.setImageBitmap(bg);
         } else {
-            Toast.makeText(this, "获取图片失败", Toast.LENGTH_SHORT).show();
+            showToast("获取图片失败")
         }
     }
 
@@ -384,6 +387,5 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             scBitmapShot = Bitmap.createBitmap(bitmap, 0, 100, bitmap?.width!!, bitmap?.width!!)
             BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
         }
-        mPresenter?.setAnimationState(true)
     }
 }

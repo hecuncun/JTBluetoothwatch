@@ -360,9 +360,9 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                     Log.e("onMap", "draw path success ....")
                     setMapAnimOver(true)
 //                    mHandler.sendEmptyMessageDelayed(ANIMATION, 150)
-                    activity?.trailview.setOnClickListener {
-                        Toast.makeText(activity, "等待动画结束", Toast.LENGTH_LONG).show()
-                    }
+//                    activity?.trailview.setOnClickListener {
+//                        mView?.toastMsg("等待动画结束")
+//                    }
                     val screenPoints = ArrayList<Point>()
                     douglasList?.forEach {
                         screenPoints.add(amp.projection.toScreenLocation(it))
@@ -426,6 +426,8 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
                 SHOTSCREEN -> {
                     var listener = msg.obj as AMap.OnMapScreenShotListener
                     aMap?.getMapScreenShot(listener)
+                    setAnimationState(true)
+                    mView?.cancel()
                 }
             }
         }

@@ -29,7 +29,8 @@ interface SportConstract {
     }
 
     interface View : BaseIView {
-
+        fun cancel()
+        fun toastMsg(msg: String)
     }
 
     interface Presenter {
