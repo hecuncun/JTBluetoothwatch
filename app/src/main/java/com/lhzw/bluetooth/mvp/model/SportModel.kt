@@ -92,10 +92,11 @@ class SportModel(var mark: String) : SportConstract.Model {
         var second = 0
         var pos = 0
         var max = 0
-        Log.e("Distance", "---------------------------------1  " + distance_list?.size)
+        var dis_total = 0.0
         distance_list?.forEach {
             Log.e("Distance", "--------------------------------- 2  " + it.value)
             total += it.value
+            dis_total += it.value
             if (total == 100000) {
                 pos++
                 distance_map!![pos] = second + 60
@@ -117,16 +118,21 @@ class SportModel(var mark: String) : SportConstract.Model {
                 second += 60
             }
         }
+        var percent = 0
         if (second > 0 && total > 0) {
-            pos++
-            distance_map!![pos] = (second + 60 * 100000) / total
+            percent = 100000 / total
+            distance_map!![distance_map!!.size] = second
         }
 
         val bar_speed_list = ArrayList<BarBean>()
         total = 0
         distance_map?.also {
             for (index in 1..pos) {
-                total += it[index]!!
+                if (percent > 0 && index == (distance_map!!.size - 1)) {
+                    total += it[index]!!
+                } else {
+                    total += it[index]!!
+                }
                 val second = it[index]!! % 60
                 val minute = it[index]!! / 60
                 var speed = ""
@@ -162,7 +168,15 @@ class SportModel(var mark: String) : SportConstract.Model {
                 time += "0"
             }
             time += "$second:"
-            convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", "${distance_map?.size}").replace("T", time)
+
+            var distance: String = ""
+            if (dis_total > 100000) {
+                distance = String.format("%.2f", dis_total / 100000)
+            } else {
+                distance = String.format("%.3f", dis_total / 100000)
+            }
+
+            convertView?.findViewById<TextView>(R.id.tv_allocation_speed_note).text = activity?.resources.getString(R.string.allocation_speed_note).replace("D", distance).replace("T", time)
         }
 
 

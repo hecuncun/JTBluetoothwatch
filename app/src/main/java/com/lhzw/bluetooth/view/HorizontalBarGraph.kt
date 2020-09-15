@@ -142,10 +142,10 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                 val lineGradient = LinearGradient(0.0f, 0.0f, barTotalLen * it.perent, 0.0f,
                         intArrayOf(Color.parseColor("#CC0099"), Color.parseColor("#6F4DAC"), Color.parseColor("#0099FF")),
                         floatArrayOf(0.0f, 0.5f, 1.0f), Shader.TileMode.CLAMP)
-                mDrawbles?.paint?.setShader(lineGradient)
+                mDrawbles?.paint?.shader = lineGradient
                 mDrawbles?.paint?.style = Paint.Style.FILL
                 mDrawbles?.setBounds(allocation_speed_marginLef.toInt(), fisrebar_marginTop.toInt() + counter * between_bar,
-                        (textWith + marginSpace + barTotalLen * it.perent).toInt(), (barHeight + fisrebar_marginTop).toInt() + counter * between_bar)
+                        if ((textWith + marginSpace + barTotalLen * it.perent).toInt() > bar_total.toFloat()) bar_total else (textWith + marginSpace + barTotalLen * it.perent).toInt(), (barHeight + fisrebar_marginTop) + counter * between_bar)
                 mDrawbles?.draw(canvas)
 
                 // 绘制配速文本
