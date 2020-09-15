@@ -28,7 +28,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@mipmap/ic_yellow_back" />
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="设置目标步数和热量"
+        android:textColor="@color/white"
+        android:textSize="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/iv_back" />
     <TextView
         android:id="@+id/textView5"
         android:layout_width="wrap_content"
@@ -61,7 +69,7 @@
         app:backgroundColor="@color/transparent"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:highlightColor="@color/color_yellow_primary"
+        app:highlightColor="@color/color_high_light"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_sex"
@@ -124,7 +132,7 @@
         app:backgroundColor="@color/transparent"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        app:highlightColor="@color/color_yellow_primary"
+        app:highlightColor="@color/color_high_light"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view"

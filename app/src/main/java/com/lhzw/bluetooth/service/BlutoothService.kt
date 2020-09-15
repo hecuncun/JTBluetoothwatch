@@ -49,7 +49,7 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         response(response, Constants.UPDATE_PERSON_INFO_RESPONSE_CODE) {
             Log.e("Watch", "onPersonalInfoSaveResponse .... ")
             Logger.e("个人信息设置到手表成功")
-            showToast("保存个人信息成功")
+            showToast("手表同步个人信息成功")
             //刷新首页目标步数
             EventBus.getDefault().post(RefreshTargetStepsEvent())
         }

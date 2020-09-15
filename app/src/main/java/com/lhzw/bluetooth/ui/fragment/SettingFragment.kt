@@ -204,13 +204,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
         //     Logger.e(personalInfoBean.toString())
         //先删除所有的bean对象再去添加
-        if (connectState) {
-            //已连接才能保存
-            RxBus.getInstance().post("updatePersonInfo", "")
-        } else {
-            //请先连接手表后保存
-            showToast("设置会在连接手表后生效")
-        }
+//        if (connectState) {
+//            //已连接才能保存
+//            RxBus.getInstance().post("updatePersonInfo", "")
+//        } else {
+//            //请先连接手表后保存
+//            showToast("设置会在连接手表后生效")
+//        }
 
 
     }

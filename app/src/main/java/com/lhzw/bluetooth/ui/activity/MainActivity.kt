@@ -535,6 +535,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 toolbar_right_img.setImageResource(R.mipmap.icon_set_save_normal)
                 toolbar_right_img.setOnClickListener {
                     //保存bean
+                    infoChanged=false
                     EventBus.getDefault().post(SaveWatchSettingEvent())
                 }
                 if (mSettingFragment == null) {
@@ -564,6 +565,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 toolbar_right_img.setOnClickListener {
                     //保存bean
                     EventBus.getDefault().post(SavePersonInfoEvent())
+                    infoChanged=false
                 }
                 if (mMineFragment == null) {
                     mMineFragment = MineFragment.getInstance()
@@ -766,10 +768,11 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
         saveChangeDialog?.show()
         saveChangeDialog?.setConfirmListener(object :View.OnClickListener{
             override fun onClick(p0: View?) {
-                //保存bean
-                EventBus.getDefault().post(SavePersonInfoEvent())
+
                 //保存bean
                 EventBus.getDefault().post(SaveWatchSettingEvent())
+                //保存bean
+                EventBus.getDefault().post(SavePersonInfoEvent())
                 infoChanged=false
                 saveChangeDialog?.dismiss()
             }
