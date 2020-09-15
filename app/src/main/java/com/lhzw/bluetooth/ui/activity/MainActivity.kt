@@ -740,8 +740,9 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                 tv_me.setTextColor(getColor(R.color.tab_unselected))
                 showFragment(FRAGMENT_SETTING)
                 tapId = Constants.TAP_SETTING;
+                select=0
             }
-            R.id.ll_me -> {
+            R.id.ll_me -> {//我的
                 if (judgeTab(Constants.TAP_ME)) {
                     return
                 }
@@ -749,6 +750,7 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
                     showSaveDialog()
                     return
                 }
+                select=1
                 iv_home.setImageResource(R.drawable.home_unselected)
                 iv_sport.setImageResource(R.drawable.sports_unselected)
                 iv_setting.setImageResource(R.drawable.setting_unselected)
@@ -763,18 +765,32 @@ class MainActivity : BaseActivity(), CancelAdapt, View.OnClickListener {
             }
         }
     }
-
+    private var select = 0
     private fun showSaveDialog() {
         saveChangeDialog?.show()
         saveChangeDialog?.setConfirmListener(object :View.OnClickListener{
             override fun onClick(p0: View?) {
 
-                //保存bean
-                EventBus.getDefault().post(SaveWatchSettingEvent())
-                //保存bean
-                EventBus.getDefault().post(SavePersonInfoEvent())
+
+                if (select==1){
+                    //保存bean  个人信息
+                    EventBus.getDefault().post(SavePersonInfoEvent())
+                }else{
+                    //保存bean  心率设置
+                    EventBus.getDefault().post(SaveWatchSettingEvent())
+                }
+
+
                 infoChanged=false
                 saveChangeDialog?.dismiss()
+            }
+
+        })
+        saveChangeDialog?.setCancelListener(object :View.OnClickListener{
+            override fun onClick(p0: View?) {
+                EventBus.getDefault().post(CancelSaveEvent())
+                saveChangeDialog?.dismiss()
+                infoChanged=false
             }
 
         })

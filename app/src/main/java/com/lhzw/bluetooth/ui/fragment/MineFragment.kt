@@ -19,6 +19,7 @@ import com.lhzw.bluetooth.base.BaseFragment
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.event.CancelSaveEvent
 import com.lhzw.bluetooth.event.SavePersonInfoEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
@@ -393,5 +394,14 @@ class MineFragment : BaseFragment() {
             showToast("设置会在连接手表后生效")
         }
         initPersonalInfo()
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun cancelSave(e:CancelSaveEvent){
+        initPersonalInfo()
+        et_target_step.setText("")
+        et_target_cal.setText("")
+        et_target_distance.setText("")
+        et_nick_name.setText("")
     }
 }

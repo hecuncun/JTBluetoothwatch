@@ -15,6 +15,7 @@ import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.dialog.LogoutDialog
+import com.lhzw.bluetooth.event.CancelSaveEvent
 import com.lhzw.bluetooth.event.SaveWatchSettingEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.glide.GlideUtils
@@ -101,6 +102,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             ru_suan.text = "[${data.heart_rate.times(0.8).toInt()}-${data.heart_rate.times(0.9).toInt() - 1}]"
             wu_yang.text = "[${data.heart_rate.times(0.9).toInt()}-${data.heart_rate}]"
         }
+    }
+
+
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun cancelSave(e: CancelSaveEvent){
+       getPersonalInfoSuccess(personalInfoBean)
     }
 
     // 刷新更新状态
@@ -204,13 +212,13 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         wu_yang.text = "[${heart_rate.times(0.9).toInt()}-${heart_rate}]"
         //     Logger.e(personalInfoBean.toString())
         //先删除所有的bean对象再去添加
-//        if (connectState) {
-//            //已连接才能保存
-//            RxBus.getInstance().post("updatePersonInfo", "")
-//        } else {
-//            //请先连接手表后保存
-//            showToast("设置会在连接手表后生效")
-//        }
+        if (connectState) {
+            //已连接才能保存
+            RxBus.getInstance().post("updatePersonInfo", "")
+        } else {
+            //请先连接手表后保存
+            showToast("设置会在连接手表后生效")
+        }
 
 
     }

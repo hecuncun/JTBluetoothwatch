@@ -10,7 +10,7 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:textSize="16sp"
-        android:text="是否现在将修改的信息同步到手表?"
+        android:text="是否保存修改?"
         android:textColor="@color/text_color_gray" />
 
     <View style="@style/horizontalGrayLine" />
@@ -26,7 +26,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="稍后同步"
+            android:text="取消"
             android:textColor="@color/text_color_gray" />
         <TextView
             android:id="@+id/tv_confirm"
@@ -34,7 +34,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="现在同步"
+            android:text="保存"
             android:background="@drawable/btn_right_bg"
             android:textColor="@color/white" />
     </LinearLayout>

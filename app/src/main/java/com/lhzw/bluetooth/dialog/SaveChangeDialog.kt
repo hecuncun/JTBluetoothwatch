@@ -25,16 +25,16 @@ class SaveChangeDialog(context: Context) : BaseAlertDialog<SaveChangeDialog>(con
     }
 
     override fun setUiBeforShow() {
-        tv_cancel.setOnClickListener {
-            infoChanged = false
-            dismiss()
-        }
+
 
     }
 
     fun setConfirmListener(listener: View.OnClickListener) {
         tv_confirm.setOnClickListener(listener)
 
+    }
+    fun setCancelListener(listener: View.OnClickListener){
+        tv_cancel.setOnClickListener (listener)
     }
 
     fun setTitle(title: String) {
