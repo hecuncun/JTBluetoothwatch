@@ -126,7 +126,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
             var distance_margin = textTitleMargin + textTitleWith / 2
             val bar_total = barTotalLen + textWith + marginSpace
             val between_bar = barHeight + barGaps
-            val uini_progress = barTotalLen / 10
+            val uini_offset = dp2px(2)
             var isOver = false
             list?.forEach {
                 // 绘制bar背景
@@ -137,7 +137,7 @@ class HorizontalBarGraph(context: Context?, attrs: AttributeSet?) : View(context
                     distance_margin = textTitleMargin + textTitleWith / 2 - rect?.width()!! * 2
                 }
                 canvas.drawText("${counter + 1}", distance_margin.toFloat(), titleGaps + textTitleHight +
-                        rect?.height()!!.toFloat() + 2 * titleGaps + counter * between_bar, textPaint)
+                        rect?.height()!!.toFloat() + 2 * titleGaps + counter * between_bar + uini_offset, textPaint)
                 // 绘制柱状图
                 if (it.progress == 0) {
                     val lineGradient = LinearGradient(0.0f, 0.0f, barTotalLen * it.perent, 0.0f,
