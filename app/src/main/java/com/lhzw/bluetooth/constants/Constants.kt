@@ -16,6 +16,7 @@ object Constants {
     const val INFO_CHANGE="info_change"
     const val PHOTO_PATH = "photo_path"
     const val IVBACKGROUND = "iv_background"
+    const val INDOOR_BACKGROUD = "indoor_backgroud"
 
     const val APK_UPDATE_TIME = "apk_update_time"
     const val FIRM_UPDATE_TIME = "firm_update_time"

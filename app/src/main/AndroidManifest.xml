@@ -119,14 +119,18 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".ui.activity.StatisticsActivity" />
         <activity android:name=".ui.activity.ScanQRCodeActivity" />
-        <activity android:name=".ui.activity.LoginNewActivity"  android:launchMode="singleTask"/>
+        <activity
+            android:name=".ui.activity.LoginNewActivity"
+            android:launchMode="singleTask" />
         <activity android:name=".ui.activity.RegisterActivity" />
-        <activity android:name=".ui.activity.login.LoginActivity" android:launchMode="singleTask">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
+        <activity
+            android:name=".ui.activity.login.LoginActivity"
+            android:launchMode="singleTask">
+            <!--            <intent-filter>-->
+            <!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
+            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
+            <!--            </intent-filter>-->
         </activity>
         <activity android:name=".ui.activity.login.AgreementActivity" />
         <activity android:name=".ui.activity.login.RegisterActivity" />

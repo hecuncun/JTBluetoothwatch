@@ -18,17 +18,18 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.amap.api.maps.MapView
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseIView
+import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.constants.ShareBgBitmap
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.mvp.contract.SportConstract
 import com.lhzw.bluetooth.mvp.presenter.MainSportPresenter
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.panel.base.BaseSlidingUIPanelView
 import com.lhzw.dmotest.SlidingUIPanelView
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
@@ -53,6 +54,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     protected var convertView: View? = null
     protected var scBitmapShot: Bitmap? = null  // 截屏
     protected var scBitmapMap: Bitmap? = null   // 原始
+    protected var indoor_backgroud: String? by Preference(Constants.INDOOR_BACKGROUD, "")
     protected var scMapShotPath = "/sdcard/share/sport_gaode_map_shot.jpg"
     private var backCounter = 0
     protected var isIndoor = false
@@ -93,7 +95,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
         panelViewList.add(panel)
         sliding_up_panel_layout.adapter = panelAdapter
         convertView?.findViewById<TextView>(R.id.tv_share_poster)?.setOnClickListener {
-            if(scBitmapMap == null) {
+            if (scBitmapMap == null) {
                 showToast("没有轨迹")
                 return@setOnClickListener
             }
@@ -150,7 +152,7 @@ abstract class BaseSportActivity<T : BaseIPresenter<SportConstract.View>> : AppC
     }
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        Log.e("onKeyDown","$keyCode" )
+        Log.e("onKeyDown", "$keyCode")
 
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (!isIndoor && !getAnimationState()) {

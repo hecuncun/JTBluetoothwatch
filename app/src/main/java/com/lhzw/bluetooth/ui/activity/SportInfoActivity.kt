@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.*
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import android.view.View
 import android.widget.ScrollView
@@ -79,11 +80,26 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
             }
             //室内跑
             Constants.ACTIVITY_INDOOR -> {
-                iv_sport_icon.setBackgroundResource(R.mipmap.sport_indoor)
                 map.visibility = View.GONE
                 im_bg_share.visibility = View.VISIBLE
-                scBitmapMap = BitmapFactory.decodeResource(resources, R.drawable.bg_share_06)
-                scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
+                iv_sport_icon.setBackgroundResource(R.mipmap.sport_indoor)
+                if (!TextUtils.isEmpty(indoor_backgroud)) {
+                    scBitmapMap = BitmapFactory.decodeFile(indoor_backgroud)
+                    var with = scBitmapMap?.width!!
+                    if (scBitmapMap?.width!! > scBitmapMap?.height!!) {
+                        with = scBitmapMap?.height!!
+                    }
+                    if (with > 100) {
+                        with = 100
+                    }
+                    scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, with, with)
+                    BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
+                    displayImage(indoor_backgroud)
+                } else {
+                    scBitmapMap = BitmapFactory.decodeResource(resources, R.drawable.bg_share_06)
+                    scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
+                }
+
                 isIndoor = true
             }
         }
@@ -240,20 +256,32 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
             PICK_PHOTO -> {
-                if (resultCode == Activity.RESULT_OK) {
-                    var imagePath: String? = null
-                    if (Build.VERSION.SDK_INT >= 19) {
-                        // 4.4及以上系统使用这个方法处理图片
-                        imagePath = handleImageOnKitKat(data);
-                    } else {
-                        // 4.4以下系统使用这个方法处理图片
-                        imagePath = handleImageBeforeKitKat(data);
+                try {
+                    if (resultCode == Activity.RESULT_OK) {
+                        var imagePath: String? = null
+                        if (Build.VERSION.SDK_INT >= 19) {
+                            // 4.4及以上系统使用这个方法处理图片
+                            imagePath = handleImageOnKitKat(data);
+                        } else {
+                            // 4.4以下系统使用这个方法处理图片
+                            imagePath = handleImageBeforeKitKat(data);
+                        }
+                        indoor_backgroud = imagePath
+                        scBitmapMap = BitmapFactory.decodeFile(imagePath)
+                        var with = scBitmapMap?.width!!
+                        if (scBitmapMap?.width!! > scBitmapMap?.height!!) {
+                            with = scBitmapMap?.height!!
+                        }
+                        if (with > 100) {
+                            with = 100
+                        }
+                        scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, with, with)
+                        BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
+                        Log.e("ImagePath", "resultCode : $resultCode , $imagePath")
+                        displayImage(imagePath)
                     }
-                    scBitmapMap = BitmapFactory.decodeFile(imagePath)
-                    scBitmapShot = Bitmap.createBitmap(scBitmapMap, 0, 100, scBitmapMap?.width!!, scBitmapMap?.width!!)
-                    BaseUtils.savePicture(scBitmapShot, "sport_gaode_map_shot.jpg")
-                    Log.e("ImagePath", "resultCode : ${resultCode} , ${imagePath}")
-                    displayImage(imagePath)
+                } catch (e: Exception) {
+                    showToast("图片尺寸不匹配， ")
                 }
             }
             else -> {
@@ -339,7 +367,7 @@ class SportInfoActivity : BaseSportActivity<MainSportPresenter>(), SportConstrac
 
     /**
      * bitmap - 截屏返回的bitmap对象。
-    status - 地图渲染状态， 1：地图渲染完成，0：未渲染完成
+     * status - 地图渲染状态， 1：地图渲染完成，0：未渲染完成
      */
     override fun onMapScreenShot(bitmap: Bitmap?, pState: Int) {
         Log.e("onMap", "scBitmapShot  ..............  $pState")
