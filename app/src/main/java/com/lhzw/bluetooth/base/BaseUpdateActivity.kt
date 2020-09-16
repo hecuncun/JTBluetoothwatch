@@ -7,6 +7,7 @@ import com.lhzw.bluetooth.mvp.presenter.MainUpdatePresenter
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import com.lhzw.kotlinmvp.presenter.BaseIPresenter
+import kotlinx.android.synthetic.main.dialog_progress_bar.*
 import java.text.SimpleDateFormat
 
 /**

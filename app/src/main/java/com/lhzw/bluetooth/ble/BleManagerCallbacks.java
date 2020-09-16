@@ -26,7 +26,7 @@ public interface BleManagerCallbacks extends no.nordicsemi.android.ble.BleManage
 
     void onActivityAddressRequestResponse(byte[] response);
 
-    void onSportDetailInfoResponse(byte[] response,byte request_code, int type, String ID);
+    void onSportDetailInfoResponse(byte[] response, byte request_code, int type, String ID);
 
     void onNorFlashReadResponse(byte[] response, String ID);
 
@@ -49,4 +49,6 @@ public interface BleManagerCallbacks extends no.nordicsemi.android.ble.BleManage
     void _onReconnectResponse(byte[] response);
 
     void _onMtuUpdateResponse(byte[] response);
+
+    void _onUpdateError();
 }

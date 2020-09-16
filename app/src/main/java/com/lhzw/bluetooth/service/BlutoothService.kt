@@ -354,6 +354,13 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
         }
     }
 
+    /**
+     * OTA 升级失败 回调
+     */
+    override fun _onUpdateError() {
+        RxBus.getInstance().post("onupdateprogress", "-2")
+    }
+
     /*************************     OTA升级       ****************************************************/
 
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)

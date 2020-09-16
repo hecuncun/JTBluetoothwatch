@@ -302,8 +302,15 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
             showLoadingView("准备腕表升级...")
             state == UPDATEFIRM
         } else if (value == -2) {
+            progesss_watch.progress = 0
+            state = FREE
+            App.setSynState(false)
+            connectState = false
+            tv_update_watch_status.text = "等待下载"
+            tv_update_watch.isEnabled = true
+            tv_update_watch.setTextColor(getColor(R.color.blue_light))
             cancelLoadingView()
-            showToast("升级失败")
+            showToast("升级失败，请稍后重试")
         }
     }
 

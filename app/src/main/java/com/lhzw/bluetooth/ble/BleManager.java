@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattService;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -395,7 +396,6 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private int dfu_total_image_send = 0; //用于做进度条
 
     private int dfu_cmd_start() {
-
         bleManagerCallbacks.onDfuStatus("开始升级");
 
         dfu_total_image_send = 0;
@@ -411,12 +411,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[2] = (byte) (dfu_total_image_size >> 8);
         data[3] = (byte) (dfu_total_image_size >> 16);
         data[4] = (byte) (dfu_total_image_size >> 24);
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_bootsetting_apollo() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送APOLLO BOOTSETTING");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -430,12 +431,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[0] = 0x31;
         byte[] bootsetting = FileHelper.readFile(dfuFile.getApolloBootSettingPath(), 0, dfuFile.getApolloDatSize());
         System.arraycopy(bootsetting, 0, data, 1, bootsetting.length);
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_prevalidate_apollo() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送APOLLO PREVALIDATE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -443,13 +445,14 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x32;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
 
     private int dfu_cmd_image_data_start_apollo() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -483,11 +486,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[11] = (byte) (dfuImageDataCrc >> 16);
         data[12] = (byte) (dfuImageDataCrc >> 24);
         System.arraycopy(bin, 0, data, 13, bin.length);
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_image_data_send_apollo() {
+        resetTimer(TIMER_STATE_REMOVE);
         if ((dfuFile.getApolloBinSize() - dfuImageDataOffset) > 231) {
             dfuImageDataSize = 231;
         } else {
@@ -511,12 +516,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[11] = (byte) (dfuImageDataCrc >> 16);
         data[12] = (byte) (dfuImageDataCrc >> 24);
         System.arraycopy(bin, 0, data, 13, bin.length);
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_image_data_apollo() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -542,10 +548,9 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private int dfu_cmd_image_data_write_apollo() {
 
 //        bleManagerCallbacks.onDfuStatus("发送APOLLO IMAGE DATA WRITE");
-
+        resetTimer(TIMER_STATE_REMOVE);
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
-
             if (data.getValue()[1] != 0) {
                 bleManagerCallbacks.onDfuStatus("CRC 错误");
             } else {
@@ -560,12 +565,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x34;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_postvalidate_apollo() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送APOLLO POSTVALIDATE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -580,13 +586,14 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x35;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_reset_n_activate_apollo() {
         bleManagerCallbacks.onDfuStatus("发送APOLLO RESET N ACTIVATE");
-
+        resetTimer(TIMER_STATE_REMOVE);
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
 
@@ -599,15 +606,15 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x36;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
-
         return 0;
     }
 
     private int dfu_cmd_bootsetting_nrf52() {
 
         bleManagerCallbacks.onDfuStatus("发送NRF52 BOOTSETTING");
-
+        resetTimer(TIMER_STATE_REMOVE);
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
             if (data.getValue()[1] != 0) {
@@ -621,6 +628,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[0] = 0x37;
         byte[] bootsetting = FileHelper.readFile(dfuFile.getNrf52BootSettingPath(), 0, dfuFile.getNrf52DatSize());
         System.arraycopy(bootsetting, 0, data, 1, bootsetting.length);
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
 
 
@@ -628,7 +636,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     }
 
     private int dfu_cmd_prevalidate_nrf52() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送NRF52 PREVALIDATE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -637,12 +645,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x38;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_image_data_start_nrf52() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -677,11 +686,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[12] = (byte) (dfuImageDataCrc >> 24);
         System.arraycopy(bin, 0, data, 13, bin.length);
 //        Logger.i(Logger.BLE_TAG, byte2HexStr(data));
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_image_data_send_nrf52() {
+        resetTimer(TIMER_STATE_REMOVE);
         if ((dfuFile.getNrf52BinSize() - dfuImageDataOffset) > 231) {
             dfuImageDataSize = 231;
         } else {
@@ -706,12 +717,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         data[12] = (byte) (dfuImageDataCrc >> 24);
         System.arraycopy(bin, 0, data, 13, bin.length);
 //        Logger.i(Logger.BLE_TAG, byte2HexStr(data));
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_image_data_nrf52() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -737,7 +749,7 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
     private int dfu_cmd_image_data_write_nrf52() {
 
 //        bleManagerCallbacks.onDfuStatus("发送NRF52 IMAGE DATA WRITE");
-
+        resetTimer(TIMER_STATE_REMOVE);
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
 //            Logger.i(Logger.BLE_TAG, byte2HexStr(data.getValue()));
 
@@ -753,12 +765,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x3A;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_postvalidate_nrf52() {
-
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送NRF52 POSTVALIDATE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -773,11 +786,13 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x3B;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
         return 0;
     }
 
     private int dfu_cmd_reset_n_activate_nrf52() {
+        resetTimer(TIMER_STATE_REMOVE);
         bleManagerCallbacks.onDfuStatus("发送NRF52 RESET N ACTIVATE");
 
         setNotificationCallback(mCommTXRXCharacteristic).with((device, data) -> {
@@ -792,9 +807,45 @@ public class BleManager extends no.nordicsemi.android.ble.BleManager<BleManagerC
         });
         byte[] data = new byte[1];
         data[0] = 0x3C;
+        resetTimer(TIMER_STATE_SEND);
         writeCharacteristic(mCommTXRXCharacteristic, data).enqueue();
 
         return 0;
     }
     //蓝牙升级腕表固件
+
+    /**
+     * 失败处理 机制
+     */
+    protected final int DELAY_WATCH_ERROR = 0x15;
+    private final int TIMER_STATE_REMOVE = 0x01;
+    private final int TIMER_STATE_SEND = 0x02;
+    private final int TIMER_STATE_ALL = 0x03;
+
+    private void resetTimer(int state) {
+        switch (state) {
+            case TIMER_STATE_REMOVE:
+                mHadler.removeMessages(DELAY_WATCH_ERROR);
+                break;
+            case TIMER_STATE_SEND:
+                mHadler.sendEmptyMessageDelayed(DELAY_WATCH_ERROR, 3000);
+                break;
+            case TIMER_STATE_ALL:
+                mHadler.removeMessages(DELAY_WATCH_ERROR);
+                mHadler.sendEmptyMessageDelayed(DELAY_WATCH_ERROR, 3000);
+                break;
+        }
+    }
+
+    private Handler mHadler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case DELAY_WATCH_ERROR:
+                    removeMessages(DELAY_WATCH_ERROR);
+                    bleManagerCallbacks._onUpdateError();
+                    break;
+            }
+        }
+    };
 }

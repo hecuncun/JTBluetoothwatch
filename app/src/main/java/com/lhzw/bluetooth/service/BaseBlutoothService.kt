@@ -1,5 +1,6 @@
 package com.lhzw.bluetooth.service
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Service
 import android.bluetooth.BluetoothDevice
@@ -834,6 +835,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     protected var requestTimes: Int = 0  //发送次数
     protected var mHandler = object : Handler() {
+        @SuppressLint("HandlerLeak")
         override fun handleMessage(msg: Message?) {
             when (msg?.what) {
                 DYNAMIC_DATE -> {
@@ -867,7 +869,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     requestTimes++
                     if (requestTimes < 4) {
                         myBleManager?._mtu_update()
-                        sendEmptyMessageDelayed(MTU_UPDATE_DELAY, 2000)
+                        sendEmptyMessageDelayed(MTU_UPDATE_DELAY, 3000)
                     } else {
                         removeMessages(MTU_UPDATE_DELAY)
                         requestTimes = 0
@@ -879,17 +881,19 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     requestTimes++
                     if (requestTimes < 4) {
                         myBleManager?.connection_update()
-                        sendEmptyMessageDelayed(CONNET_UPDATE_DELAY, 2000)
+                        sendEmptyMessageDelayed(CONNET_UPDATE_DELAY, 5000)
                     } else {
                         removeMessages(CONNET_UPDATE_DELAY)
                         requestTimes = 0
+                        // 解析失败
+                        RxBus.getInstance().post("onupdateprogress", "-2")
 //                        showToast("MTU同步失败")
                     }
                 }
                 DELAY_WATCH_ERROR -> {
                     showToast("试试------------------------------------------------------------");
                     removeMessages(DELAY_WATCH_ERROR)
-                    EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 4))
+                    EventBus.getDefault().post(ProgressEvent(0.0f, 4))
                 }
             }
         }
