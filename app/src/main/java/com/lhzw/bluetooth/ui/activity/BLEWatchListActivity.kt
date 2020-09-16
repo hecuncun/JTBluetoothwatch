@@ -200,6 +200,10 @@ class BLEWatchListActivity : BaseActivity() {
                 drawable.level=0
                 showToast("已断开连接")
             }
+            4->{
+                drawable.level=0
+                showToast("手表数据解析超时")
+            }
         }
 
     }
