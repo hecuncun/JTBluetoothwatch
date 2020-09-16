@@ -48,6 +48,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private val MTU_DELAY = 0x02
     protected val MTU_UPDATE_DELAY = 0x03
     protected val CONNET_UPDATE_DELAY = 0x9
+    protected val DELAY_WATCH_ERROR = 0x15
+    private val TIMER_STATE_REMOVE = 0x01
+    private val TIMER_STATE_SEND = 0x02
+    private val TIMER_STATE_ALL = 0x03
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
@@ -89,6 +93,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("callBackBluetooth", "onActivityAddressRequestResponse.... ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
             if (response[0].toInt() == 0x0E) {
+                resetTimer(TIMER_STATE_REMOVE)
                 if (sportActivityBeanList.size > 0) {
                     sportActivityBeanList.clear()
                 }
@@ -126,6 +131,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 } else {
                     // 设置手表蓝牙为低功耗
                     hasSports = false
+                    resetTimer(TIMER_STATE_SEND)
                     myBleManager?.settinng_connect_parameter(false)
                     Log.e("callBackBluetooth", "settinng_connect_parameter....")
                 }
@@ -244,10 +250,10 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 
     override fun onSettingConnectParameter(response: ByteArray?) {
         // 设置手表为低功率状态
-//        Log.e("BluetoothCallBack", "onSettingConnectParameter   ${BaseUtils.byte2HexStr(response!!)} ....")
         Log.e("callBackBluetooth", "onSettingConnectParameter....")
         syncTime = "${DateUtils.longToString(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss")}"
         response(response, Constants.CONNECT_RESPONSE_CODE) {
+            resetTimer(TIMER_STATE_REMOVE)
             // 刷新界面
             RxBus.getInstance().post("reflesh", "")
             //开始接受消息提醒
@@ -271,7 +277,6 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 // 要保证第一次同步完成后才能进入累加获取数据
                 sportActivityBeanList.clear()
-                Log.e("Tag", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
                 EventBus.getDefault().post(ProgressEvent(1.0f, 2))
             } else {
                 //开始连接进入进度条,连接并初始化成功后再发成功
@@ -356,6 +361,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             Log.e("readSport", "onSportsParamReadResponse ... ${BaseUtils.byte2HexStr(response)}")
             Log.e("callBackBluetooth", "onSportsParamReadResponse.... $ID")
             if (response[0].toInt() == 0x0D && Constants.ACTIVITIES.contains(response[1].toInt() and 0xFF)) {
+                resetTimer(TIMER_STATE_REMOVE)
                 //解析当前活动
                 SportInfoAddrBean.parserSportInfoAddr(response, ID) { data, mark, bean ->
 //                    Log.e("Sportmark", "mark = $mark")
@@ -366,6 +372,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
             } else {
                 // 设置手表蓝牙为低功耗
+                resetTimer(TIMER_STATE_SEND)
                 myBleManager?.settinng_connect_parameter(false)
                 Log.e("callBackBluetooth", "settinng_connect_parameter.... ")
 //                Toast.makeText(App.context, "获取信息有误.同步数据结束，请求指令：$ERROR", Toast.LENGTH_LONG).show()
@@ -382,9 +389,11 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("callBackBluetooth", "onDailyDataRequestResponse.... ${BaseUtils.byte2HexStr(response!!)}")
         response?.let {
             if (response[0].toInt() == 0x0C) {
+                resetTimer(TIMER_STATE_REMOVE)
                 DailyDataBean.parserDailyData(response, isSyncAscending) { datas ->
                     if (datas.size == 0) {
                         // 设置手表蓝牙为低功耗
+                        resetTimer(TIMER_STATE_SEND)
                         myBleManager?.settinng_connect_parameter(false)
                     } else {
                         if (datas.size > 0) {
@@ -412,6 +421,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("callBackBluetooth", "onSportDetailInfoResponse.... $ID")
         if (request_code.toInt() == 0x0D) {
             response?.let {
+                resetTimer(TIMER_STATE_REMOVE)
                 if (response.size > 11) {
                     progress++
                     EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 0))
@@ -421,7 +431,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                         readSportDetailMap.put(ID, detail)
                     }
                     val map = readSportDetailMap.get(ID)
-                    if (map!!.get(type) == null) {
+                    if (map!![type] == null) {
                         val list = ArrayList<Byte>()
                         val tmp = it.toList()
                         list.addAll(tmp.subList(11, tmp.size))
@@ -429,7 +439,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 //                        Log.e("sportdetail", "type $type  ${BaseUtils.byte2HexStr(tmp.subList(11, tmp.size).toByteArray())}")
                     } else {
                         val tmp = it.toList()
-                        map.get(type)?.addAll(tmp.subList(11, tmp.size))
+                        map[type]?.addAll(tmp.subList(11, tmp.size))
 
                     }
                     readSportDetailBean()
@@ -455,19 +465,21 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
         Log.e("callBackBluetooth", "onNorFlashReadResponse.... $ID")
         response?.let {
             if (response[0].toInt() == 0x04 && response[1].toInt() == 0x0C) {
+                resetTimer(TIMER_STATE_REMOVE)
 //                Log.e("dailyinfo", "$ID : ${BaseUtils.byte2HexStr(response)}")
-                if (noFlashMap.get(ID) == null) {
+                if (noFlashMap[ID] == null) {
                     val list = ArrayList<Byte>()
                     val tmp = it.toList()
                     list.addAll(tmp.subList(11, tmp.size))
-                    noFlashMap.put(ID, list)
+                    noFlashMap[ID] = list
                 } else {
                     val tmp = it.toList()
-                    noFlashMap.get(ID)!!.addAll(tmp.subList(11, tmp.size))
+                    noFlashMap[ID]!!.addAll(tmp.subList(11, tmp.size))
                 }
                 if (readDailyBean.isOver) {
                     Thread {
                         DailyInfoDataBean.parserDailyInfoBean(noFlashMap) {
+                            resetTimer(TIMER_STATE_SEND)
                             myBleManager?.read_boundary_address()
                             Log.e("callBackBluetooth", "read_boundary_address....")
                         }
@@ -547,6 +559,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 } else {
                     myBleManager?.daily_data_request(byteArrayOf(0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00))
                 }
+                resetTimer(TIMER_STATE_SEND)
                 Log.e("callBackBluetooth", "daily_data_request....")
             }
         }
@@ -562,6 +575,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             content.addAll(BaseUtils.intToByteArray(readDailyBean.current_addr))
             content.add((readDailyBean.read_len and 0xff).toByte())
 //            Log.e("Daily", "${bean.sport_date}  ${BaseUtils.byte2HexStr(content.toByteArray())}")
+            resetTimer(TIMER_STATE_SEND)
             myBleManager?.norFlash_read(content.toByteArray(), bean.sport_date)
             Log.e("callBackBluetooth", "norFlash_read....")
             content.clear()
@@ -591,6 +605,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             var value = BaseUtils.byte2HexStr(content.toByteArray())!!
             ERROR += "\n日期 ${value.substring(3, 20)}\n活动序号 ：${value.substring(21, 23)}\n地址：${value.substring(24, 35)}"
 //            Log.e("readSport", "$bean.daily_date  $value}")
+            resetTimer(TIMER_STATE_SEND)
             myBleManager?.sports_param_read(content.toByteArray(), bean.daily_date + "-" + BaseUtils.byte2HexStr(byteArrayOf(readActivityBean.request_mark)))
             Log.e("callBackBluetooth", "sports_param_read....")
             content.clear()
@@ -731,6 +746,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
             }
             content.add((len and 0xFF).toByte())
 //            Log.e("SportDetail", "sendCMD:  ${BaseUtils.byte2HexStr(content.toByteArray())}")
+            resetTimer(TIMER_STATE_SEND)
             myBleManager?.sport_detail_info_request(content.toByteArray(), 0x0D, bean.data_type, bean.sport_detail_mark)
             Log.e("callBackBluetooth", "sport_detail_info_request....  ${bean.sport_detail_mark}")
         } else {
@@ -782,6 +798,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                 }
                 readSportDetailMap.clear()
                 // 设置手表蓝牙为低功耗
+                resetTimer(TIMER_STATE_SEND)
                 myBleManager?.settinng_connect_parameter(false)
                 Log.e("callBackBluetooth", "settinng_connect_parameter....")
             }.start()
@@ -869,8 +886,32 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
 //                        showToast("MTU同步失败")
                     }
                 }
+                DELAY_WATCH_ERROR -> {
+                    showToast("试试------------------------------------------------------------");
+                    removeMessages(DELAY_WATCH_ERROR)
+                    EventBus.getDefault().post(ProgressEvent(progress / progressBarMax, 4))
+                }
             }
         }
+    }
+
+    /**
+     *  state 是否是结束位置
+     */
+    protected fun resetTimer(state: Int) {
+        when (state) {
+            TIMER_STATE_REMOVE -> {
+                mHandler.removeMessages(DELAY_WATCH_ERROR)
+            }
+            TIMER_STATE_SEND -> {
+                mHandler.sendEmptyMessageDelayed(DELAY_WATCH_ERROR, 5000)
+            }
+            TIMER_STATE_ALL -> {
+                mHandler.removeMessages(DELAY_WATCH_ERROR)
+                mHandler.sendEmptyMessageDelayed(DELAY_WATCH_ERROR, 5000)
+            }
+        }
+
     }
 
     override fun onDestroy() {

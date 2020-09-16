@@ -56,8 +56,10 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         tv_app_update_date.text = apk_update_time
         tv_watch_update_date.text = firm_update_time
         mPresenter?.initWatchUI()
-        tv_app_version.text = "JIANGTAI ${App.instance
-                .packageManager.getPackageInfo(App.instance.packageName, 0).versionName}"
+        tv_app_version.text = "JIANGTAI ${
+            App.instance
+                    .packageManager.getPackageInfo(App.instance.packageName, 0).versionName
+        }"
 //        checkPermission()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
