@@ -202,7 +202,7 @@ class BLEWatchListActivity : BaseActivity() {
             }
             4->{
                 drawable.level=0
-                showToast("手表数据解析超时")
+                showToast("手表数据同步超时")
             }
         }
 
