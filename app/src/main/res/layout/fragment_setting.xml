@@ -873,7 +873,7 @@
                 android:layout_height="20dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="8dp"
-                android:src="@drawable/icon_update_sortware" />
+                android:src="@drawable/icon_back" />
 
             <TextView
                 android:layout_width="0dp"
