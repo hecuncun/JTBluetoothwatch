@@ -80,7 +80,6 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
         tv_step.text = intent.getStringExtra("steps") ?: ""
         tv_distance.text = intent.getStringExtra("distance") ?: ""
         tv_calorie.text = intent.getStringExtra("cal") ?: ""
-
     }
 
     private fun setListener() {
@@ -193,7 +192,6 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
                         tv_save_poster.setTextColor(getColor(R.color.gray_little1))
                     }
                 }
-
             }
         }
         return false
