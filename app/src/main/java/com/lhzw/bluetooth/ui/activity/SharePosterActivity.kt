@@ -6,6 +6,7 @@ import android.content.pm.ActivityInfo
 import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
@@ -139,8 +140,12 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
                 }
                 val send = Intent()
                 send.action = Intent.ACTION_SEND
-                val uri = FileProvider.getUriForFile(this.applicationContext,
-                        "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    FileProvider.getUriForFile(this.applicationContext,
+                            "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+                } else {
+                    Uri.fromFile(shareFile)
+                }
                 send.putExtra(Intent.EXTRA_STREAM, uri);
                 send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
