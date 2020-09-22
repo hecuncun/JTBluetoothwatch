@@ -7,6 +7,7 @@ import android.graphics.Paint
 import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
@@ -185,7 +186,9 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                 }
                 val send = Intent()
                 send.action = Intent.ACTION_SEND
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                val uri = FileProvider.getUriForFile(this.applicationContext,
+                        "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+                send.putExtra(Intent.EXTRA_STREAM, uri)
                 send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
@@ -196,9 +199,9 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.action = Intent.ACTION_SEND
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+                send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
             }
@@ -209,7 +212,7 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                 }
                 val send = Intent()
                 send.action = Intent.ACTION_SEND
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
                 send.type = "image/*";
                 send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);

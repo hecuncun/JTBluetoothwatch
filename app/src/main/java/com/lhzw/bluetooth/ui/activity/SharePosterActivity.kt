@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.StrictMode
 import android.os.StrictMode.VmPolicy
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
@@ -41,6 +42,7 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
     private var path: String? = "/sdcard/share/xxxxxx.jpg"
     private var shareFile: File? = null
     private var nickName: String by Preference(Constants.NICK_NAME, "")
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
@@ -136,11 +138,14 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.action = Intent.ACTION_SEND
+                val uri = FileProvider.getUriForFile(this.applicationContext,
+                        "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+                send.putExtra(Intent.EXTRA_STREAM, uri);
+                send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
-                startActivityForResult(send, WX_QUEST);
+                startActivityForResult(send, WX_QUEST)
+//                systemShareWeChat(shareFile!!)
             }
             R.id.im_circle -> {
                 if (!BaseUtils.isAppInstall(this@SharePosterActivity, "com.tencent.mm")) {
@@ -148,9 +153,9 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.action = Intent.ACTION_SEND
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+                send.type = "image/*";
                 send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
             }
@@ -160,9 +165,9 @@ class SharePosterActivity : AppCompatActivity(), View.OnClickListener, View.OnTo
                     return
                 }
                 val send = Intent()
-                send.setAction(Intent.ACTION_SEND)
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                send.setType("image/*");
+                send.action = Intent.ACTION_SEND
+                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+                send.type = "image/*";
                 send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
                 startActivityForResult(send, WX_QUEST);
             }
