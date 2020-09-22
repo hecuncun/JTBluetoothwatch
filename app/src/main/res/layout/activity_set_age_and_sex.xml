@@ -46,6 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="56dp"
+        android:padding="5dp"
         android:background="@drawable/rg_checked_bg"
         app:layout_constraintEnd_toStartOf="@id/iv_women"
         app:layout_constraintHorizontal_chainStyle="packed"
@@ -55,6 +56,7 @@
 
     <ImageView
         android:id="@+id/iv_women"
+        android:padding="5dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="33dp"
@@ -68,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="1995.01.01"
+        android:text="1990.01.01"
         android:textColor="@color/white"
         android:textSize="24sp"
         android:textStyle="bold"

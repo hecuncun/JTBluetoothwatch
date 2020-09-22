@@ -79,10 +79,10 @@
         app:layout_constraintBottom_toTopOf="@id/btn_next"
         android:layout_marginBottom="100dp"
         app:textColor="@color/white"
-        app:lines="80"
+        app:lines="50"
         app:markerSize="0dp"
         app:orientation="VERTICAL"
-        app:startLineValue="140"
+        app:startLineValue="160"
         app:step_value="1" />
     <TextView
         android:id="@+id/tv_height"

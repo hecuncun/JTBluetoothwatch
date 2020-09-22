@@ -139,6 +139,8 @@
         <activity android:name=".ui.activity.login.SetWeightActivity" />
         <activity android:name=".ui.activity.login.SetStepAndCalTargetActivity" />
         <activity android:name=".ui.activity.login.SetHeightActivity" />
+        <activity android:name=".ui.activity.login.ResetPwdActivity" />
+        <activity android:name=".ui.activity.login.ResetPwdSuccessActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

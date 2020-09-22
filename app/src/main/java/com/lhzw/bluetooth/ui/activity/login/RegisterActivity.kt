@@ -80,6 +80,7 @@ class RegisterActivity : BaseActivity() {
                     override fun onSucceed(t: BaseBean<String>) {
                         if (t.isSuccessed()) {
                             showToast("注册成功")
+                            cachePhone=phone
                             finish()
                         } else if (t.getCode() == "-1") {
                             showToast(t.getMessage() + "")

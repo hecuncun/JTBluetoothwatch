@@ -22,11 +22,11 @@ import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.mvp.contract.SettingContract
 import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
-import com.lhzw.bluetooth.ui.activity.LoginNewActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
 import com.lhzw.bluetooth.ui.activity.login.LoginActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
+import com.lhzw.bluetooth.uitls.KeepLiveUtil
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.EditNameDialog
 import com.lhzw.bluetooth.view.SelectDialog
@@ -35,7 +35,6 @@ import com.luck.picture.lib.config.PictureConfig
 import com.luck.picture.lib.config.PictureMimeType
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_setting.*
-import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
@@ -105,10 +104,9 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     }
 
 
-
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun cancelSave(e: CancelSaveEvent){
-       getPersonalInfoSuccess(personalInfoBean)
+    fun cancelSave(e: CancelSaveEvent) {
+        getPersonalInfoSuccess(personalInfoBean)
     }
 
     // 刷新更新状态
@@ -118,7 +116,8 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         // 防止切换fragment 访问平台频繁
         isChecking = false
     }
-    private  var dialogLogout:LogoutDialog?=null
+
+    private var dialogLogout: LogoutDialog? = null
     override fun initView(view: View) {
         super.initView(view)
         // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
@@ -235,7 +234,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             }
 
             override fun onStartTrackingTouch(p0: SeekBar?) {
-                infoChanged=true
+                infoChanged = true
             }
 
 
@@ -333,7 +332,7 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
 
         ll_update_sortware.setOnClickListener {
-            startActivityForResult(Intent(activity, UpdateFuncActivity::class.java),UPDATE_REQUEST_CODE)
+            startActivityForResult(Intent(activity, UpdateFuncActivity::class.java), UPDATE_REQUEST_CODE)
             activity?.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
         }
 
@@ -342,19 +341,46 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
             dialogLogout!!.setConfirmListener(View.OnClickListener {
                 dialogLogout!!.dismiss()
                 showToast("退出成功")
-                http_token=""
+                http_token = ""
                 //断开连接
                 connectState = false
                 //关闭自动连接
                 autoConnect = false
                 RxBus.getInstance().post("disconnect", "")
-                startActivity(Intent(requireContext(),LoginActivity::class.java))
+                startActivity(Intent(requireContext(), LoginActivity::class.java))
                 activity?.finish()
 
-                })
+            })
+        }
 
 
-
+        //打开后台运行设置
+        tv_set_permission.setOnClickListener {
+            //进入各个厂家的后台设置
+            if (KeepLiveUtil.isHuawei()) {
+                KeepLiveUtil.goHuaweiSetting()
+            }
+            if (KeepLiveUtil.isXiaomi()) {
+                KeepLiveUtil.goXiaomiSetting()
+            }
+            if (KeepLiveUtil.isLeTV()) {
+                KeepLiveUtil.goLetvSetting()
+            }
+            if (KeepLiveUtil.isMeizu()) {
+                KeepLiveUtil.goMeizuSetting()
+            }
+            if (KeepLiveUtil.isOPPO()) {
+                KeepLiveUtil.goOPPOSetting()
+            }
+            if (KeepLiveUtil.isVIVO()) {
+                KeepLiveUtil.goVIVOSetting()
+            }
+            if (KeepLiveUtil.isSamsung()) {
+                KeepLiveUtil.goSamsungSetting()
+            }
+            if (KeepLiveUtil.isSmartisan()) {
+                KeepLiveUtil.goSmartisanSetting()
+            }
 
 
         }

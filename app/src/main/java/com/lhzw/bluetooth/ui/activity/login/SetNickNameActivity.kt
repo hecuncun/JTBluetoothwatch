@@ -79,11 +79,10 @@ class SetNickNameActivity : BaseActivity() {
             val accountName = et_account.text.toString().trim()
             if (accountName.isNotEmpty()) {
                 nickName = accountName
-                Intent(this, SetAgeAndSexActivity::class.java).apply {
-                    startActivity(this)
-                }
             }
-
+            Intent(this, SetAgeAndSexActivity::class.java).apply {
+                startActivity(this)
+            }
         }
 
         //头像选择

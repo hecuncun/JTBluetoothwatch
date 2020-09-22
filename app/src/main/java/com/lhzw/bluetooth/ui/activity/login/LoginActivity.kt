@@ -48,6 +48,8 @@ class LoginActivity : BaseActivity() {
         if ("" != http_token) {
             jumpToMain()
         }
+
+        et_phone.setText(cachePhone)//默认填写注册账号  或者上次登录账号
     }
 
     override fun initView() {
@@ -80,6 +82,11 @@ class LoginActivity : BaseActivity() {
         }
         iv_eye.setOnClickListener {
             switchPwdMode(et_pwd, iv_eye)
+        }
+        tv_reset_pwd.setOnClickListener {
+            Intent(this,ResetPwdActivity::class.java).apply {
+                startActivity(this)
+            }
         }
     }
 

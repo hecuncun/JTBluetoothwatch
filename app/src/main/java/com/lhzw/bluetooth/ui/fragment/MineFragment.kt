@@ -152,10 +152,10 @@ class MineFragment : BaseFragment() {
         val listHeight = mutableListOf<String>()
         val listWeight = mutableListOf<String>()
         val listStepLength = mutableListOf<String>()
-        for (i  in 150..200){
+        for (i  in 160..200){
             listHeight.add(i.toString())
         }
-        for (i  in 30..100){
+        for (i  in 40..100){
             listWeight.add(i.toString())
         }
         for (i  in 30..120){

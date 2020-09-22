@@ -79,7 +79,7 @@
         app:lines="70"
         app:markerSize="0dp"
         app:orientation="HORIZONTAL"
-        app:startLineValue="30"
+        app:startLineValue="40"
         app:step_value="1" />
 
     <LinearLayout
@@ -142,7 +142,7 @@
         app:markerSize="0dp"
         app:orientation="HORIZONTAL"
         app:textColor="@color/white"
-        app:startLineValue="30"
+        app:startLineValue="40"
         app:step_value="1" />
     <LinearLayout
         android:id="@+id/ll_hope_container"
