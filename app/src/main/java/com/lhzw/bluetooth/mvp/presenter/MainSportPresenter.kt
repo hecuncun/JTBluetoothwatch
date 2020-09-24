@@ -170,7 +170,7 @@ class MainSportPresenter(var mark: String, var duration: String, val type: Int) 
     // 显示分享对话框
     override fun showSharePopuWindow(activity: Activity, stareBitmap: Bitmap?) {
         var dialog = ShareShareDialog(activity, stareBitmap)
-        dialog.getWindow().decorView.setBackgroundResource(R.color.transparent)
+        dialog.window.decorView.setBackgroundResource(R.color.transparent)
         dialog.showDialog()
 
 

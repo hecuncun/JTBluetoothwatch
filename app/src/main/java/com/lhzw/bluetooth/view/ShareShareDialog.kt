@@ -4,8 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.BottomSheetDialog
+import android.support.v4.content.FileProvider
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +16,7 @@ import android.widget.Toast
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.tencent.bugly.Bugly.applicationContext
 import com.umeng.socialize.UMShareListener
 import com.umeng.socialize.bean.SHARE_MEDIA
 import kotlinx.android.synthetic.main.child_share.*
@@ -99,26 +102,32 @@ class ShareShareDialog(private var mContext: Activity?, private var shareBitmap:
             when (platform) {
                 SHARE_MEDIA.QQ -> {
                     val send = Intent()
-                    send.setAction(Intent.ACTION_SEND)
-                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                    send.setType("image/*");
-                    send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity");//微信朋友圈，仅支持分享图片
-                    mContext?.startActivityForResult(send, WX_QUEST);
+                    send.action = Intent.ACTION_SEND
+                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+                    send.type = "image/*"
+                    send.setClassName("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity") //微信朋友圈，仅支持分享图片
+                    mContext?.startActivityForResult(send, WX_QUEST)
                 }
                 SHARE_MEDIA.WEIXIN_CIRCLE -> {
                     val send = Intent()
-                    send.setAction(Intent.ACTION_SEND)
-                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                    send.setType("image/*");
-                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
-                    mContext?.startActivityForResult(send, WX_QUEST);
+                    send.action = Intent.ACTION_SEND
+                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+                    send.type = "image/*"
+                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI") //微信朋友圈，仅支持分享图片
+                    mContext?.startActivityForResult(send, WX_QUEST)
                 }
                 SHARE_MEDIA.WEIXIN -> {
                     val send = Intent()
-                    send.setAction(Intent.ACTION_SEND)
-                    send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile));
-                    send.setType("image/*");
-                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
+                    send.action = Intent.ACTION_SEND
+                    val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        FileProvider.getUriForFile(applicationContext,
+                                "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+                    } else {
+                        Uri.fromFile(shareFile)
+                    }
+                    send.putExtra(Intent.EXTRA_STREAM, uri)
+                    send.type = "image/*"
+                    send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI")  //微信朋友，仅支持分享图片
                     mContext?.startActivityForResult(send, WX_QUEST);
                 }
                 else -> {
