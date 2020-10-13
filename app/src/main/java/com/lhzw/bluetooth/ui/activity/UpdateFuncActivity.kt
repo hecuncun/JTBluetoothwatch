@@ -393,7 +393,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         if (keyCode == KeyEvent.KEYCODE_BACK && interceptFinish()) {
-            showToast("正在下载升级")
             return false
         }
         return super.onKeyDown(keyCode, event)

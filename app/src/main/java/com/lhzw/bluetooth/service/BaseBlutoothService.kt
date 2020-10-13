@@ -881,7 +881,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
                     requestTimes++
                     if (requestTimes < 4) {
                         myBleManager?.connection_update()
-                        sendEmptyMessageDelayed(CONNET_UPDATE_DELAY, 5000)
+                        sendEmptyMessageDelayed(CONNET_UPDATE_DELAY, 8000)
                     } else {
                         removeMessages(CONNET_UPDATE_DELAY)
                         requestTimes = 0
