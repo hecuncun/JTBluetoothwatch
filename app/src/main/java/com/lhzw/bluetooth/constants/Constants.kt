@@ -90,6 +90,7 @@ object Constants {
     const val TYPE_CURRENT_DATA = "type_current_data"
     const val BIRTHDAY = "birthday"
     const val NICK_NAME = "nick_name"
+    const val IS_AGREEMENT = "is_agreement"
 
     //数据类型
     const val STEP = 0;         // 计步     四个字节    单位  步      每分钟记录一次

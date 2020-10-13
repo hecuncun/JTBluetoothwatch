@@ -132,7 +132,7 @@
             <!--                <category android:name="android.intent.category.LAUNCHER" />-->
             <!--            </intent-filter>-->
         </activity>
-        <activity android:name=".ui.activity.login.AgreementActivity" />
+        <activity android:name=".ui.activity.login.AgreementActivity"/>
         <activity android:name=".ui.activity.login.RegisterActivity" />
         <activity android:name=".ui.activity.login.SetNickNameActivity" />
         <activity android:name=".ui.activity.login.SetAgeAndSexActivity" />

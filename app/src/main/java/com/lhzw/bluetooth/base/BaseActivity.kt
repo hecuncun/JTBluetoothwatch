@@ -39,6 +39,8 @@ abstract class BaseActivity : AppCompatActivity() {
     protected var cachePhone: String? by Preference(Constants.HTTP_CACHE_TOOKEN, "")
     protected var nickName: String by Preference(Constants.NICK_NAME, "")
 
+    protected var isAgreement:Boolean by Preference(Constants.IS_AGREEMENT,false)
+
     /**
      * 布局文件id
      */
