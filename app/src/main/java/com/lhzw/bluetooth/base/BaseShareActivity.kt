@@ -449,6 +449,7 @@ abstract class BaseShareActivity : AppCompatActivity() {
                 }
             }
             val bean = SportBean(
+                    it.daily_date_mark,
                     it.activity_type,
                     date[0],
                     date[1],

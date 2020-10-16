@@ -2,10 +2,12 @@ package com.lhzw.bluetooth.ui.fragment
 
 import android.animation.ObjectAnimator
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import com.hwangjr.rxbus.annotation.Subscribe
 import com.hwangjr.rxbus.annotation.Tag
 import com.hwangjr.rxbus.thread.EventThread
@@ -22,7 +24,11 @@ import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
 import com.lhzw.bluetooth.ui.activity.SportInfoActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuCreator
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItem
+import com.yanzhenjie.recyclerview.swipe.SwipeMenuItemClickListener
 import kotlinx.android.synthetic.main.fragment_sports.*
+
 
 /**
  * Created by hecuncun on 2019/11/13
@@ -64,10 +70,48 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
         }
 
         recyclerview.layoutManager = LinearLayoutManager(context)
-        recyclerview.adapter = adapter
         adapter.setOnItemClickListener { _, view, position ->
             body(view, position)
         }
+
+        val mSwipeMenuCreator = SwipeMenuCreator { _, rightMenu, _ ->
+            /* SwipeMenuItem deleteItem = new SwipeMenuItem(mContext);
+            // 各种文字和图标属性设置。
+            leftMenu.addMenuItem(deleteItem); // 在Item左侧添加一个菜单。*/
+            // 在Item右侧添加一个菜单。
+            // 1 删除
+            val deleteItem = SwipeMenuItem(context)
+            deleteItem.setText("删除")
+                    .setBackgroundColor(resources.getColor(R.color.red))
+                    .setTextColor(Color.WHITE) // 文字颜色。
+                    .setTextSize(16) // 文字大小。
+                    .setWidth(170).height = ViewGroup.LayoutParams.MATCH_PARENT
+            rightMenu.addMenuItem(deleteItem)
+
+            // 注意：哪边不想要菜单，那么不要添加即可。
+        }
+        // 设置监听器。
+        // 设置监听器。
+        recyclerview.setSwipeMenuCreator(mSwipeMenuCreator)
+
+        val mMenuItemClickListener = SwipeMenuItemClickListener { menuBridge ->
+            // 任何操作必须先关闭菜单，否则可能出现Item菜单打开状态错乱。
+            menuBridge.closeMenu()
+            val direction = menuBridge.direction // 左侧还是右侧菜单。
+            val adapterPosition = menuBridge.adapterPosition // RecyclerView的Item的position。
+            val menuPosition = menuBridge.position // 菜单在RecyclerView的Item中的Position。
+            if (menuPosition == 0) {
+                // 删除条目
+                Log.e("DELETE", "delete item ...")
+                val marker = adapter.deleteItem(adapterPosition)
+                // 删除数据库数据
+                CommOperation.delete(SportInfoAddrBean::class.java, "daily_date_mark", marker)
+            }
+        }
+        // 菜单点击监听。
+        recyclerview.setSwipeMenuItemClickListener(mMenuItemClickListener)
+        // 必须 最后执行
+        recyclerview.adapter = adapter
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -163,6 +207,7 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
                 }
             }
             val bean = SportBean(
+                    it.daily_date_mark,
                     it.activity_type,
                     date[0],
                     date[1],

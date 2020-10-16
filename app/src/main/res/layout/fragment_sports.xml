@@ -8,15 +8,15 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_title"
         android:layout_width="match_parent"
-        android:layout_marginTop="10.5dp"
-        android:layout_height="45dp"/>
+        android:layout_height="45dp"
+        android:layout_marginTop="10.5dp" />
 
     <View style="@style/horizontalsplite" />
 
-    <android.support.v7.widget.RecyclerView
+    <com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layoutAnimation="@anim/layout_fall_down_anim"/>
+        android:layoutAnimation="@anim/layout_fall_down_anim" />
 
 </LinearLayout>

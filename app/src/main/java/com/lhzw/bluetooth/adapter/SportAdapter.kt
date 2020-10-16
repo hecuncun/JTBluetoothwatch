@@ -91,6 +91,13 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
         }
         return false
     }
+
+    fun deleteItem(position: Int): String {
+        val mark = data[position].mark
+        data.removeAt(position)
+        notifyDataSetChanged()
+        return mark
+    }
 }
 
 //class SportAdapter(val mContext: Context, var data: List<SportInfoAddrBean>?) : RecyclerView.Adapter<SportAdapter.Viewholder>(), View.OnClickListener {
