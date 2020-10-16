@@ -25,7 +25,7 @@
                 android:layout_height="150dp"
                 app:circleColor="@color/gray_bottom"
                 app:isColorful="true"
-                app:radius="70dp"
+                app:radius="65dp"
                 app:ringColor="@color/gray"
                 app:ringEndColor="#3399FF"
                 app:ringStartColor="#00FF00" />
@@ -93,7 +93,7 @@
                 android:layout_height="150dp"
                 app:circleColor="@color/gray_bottom"
                 app:isColorful="true"
-                app:radius="70dp"
+                app:radius="65dp"
                 app:ringColor="@color/gray"
                 app:ringEndColor="#FF0000"
                 app:ringStartColor="#FF00FF" />
