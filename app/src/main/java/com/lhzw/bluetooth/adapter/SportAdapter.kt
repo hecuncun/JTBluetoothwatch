@@ -71,7 +71,7 @@ class SportAdapter(data: List<SportBean>) : BaseQuickAdapter<SportBean, BaseView
                     v?.findViewById<TextView>(R.id.date)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                     v?.findViewById<TextView>(R.id.tv_ymt)?.setTextColor(v?.context?.resources?.getColor(R.color.white)!!)
                 }
-                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP -> {
+                MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP, MotionEvent.ACTION_MOVE -> {
                     v?.findViewById<TextView>(R.id.tv_duration_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_duration)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
                     v?.findViewById<TextView>(R.id.tv_calorie_title)?.setTextColor(v?.context?.resources?.getColor(R.color.gray)!!)
