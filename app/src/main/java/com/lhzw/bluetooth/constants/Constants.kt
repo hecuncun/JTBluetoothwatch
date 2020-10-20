@@ -23,6 +23,8 @@ object Constants {
     const val APK_IP_CHANGE = "apk_ip_change"
     const val REGISTERTIME = "registertime"
 
+    const val IS_AGREE="is_agree"
+
 
     // 运动类型
     const val ACTIVITY_RUNNING = 0xB1  //跑步

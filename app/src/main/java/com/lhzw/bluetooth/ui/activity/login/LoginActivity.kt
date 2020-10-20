@@ -5,6 +5,8 @@ import android.text.InputType
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.util.Log
+import android.view.Gravity
+import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
@@ -15,6 +17,7 @@ import com.lhzw.bluetooth.bean.net.SubJoin
 import com.lhzw.bluetooth.bean.net.UserInfo
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.db.CommOperation
+import com.lhzw.bluetooth.dialog.AgreementDialog
 import com.lhzw.bluetooth.event.CloseEvent
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.net.CallbackListObserver
@@ -37,6 +40,7 @@ class LoginActivity : BaseActivity() {
     private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
     private var apk_ip_change: Boolean? by Preference(Constants.APK_IP_CHANGE, false)
     private var registerTime: Long? by Preference(Constants.REGISTERTIME, 0)
+    private var isAgree: Boolean by Preference(Constants.IS_AGREE, false)
     override fun attachLayoutRes(): Int = R.layout.activity_login_2
 
     override fun initData() {
@@ -51,8 +55,29 @@ class LoginActivity : BaseActivity() {
 
         et_phone.setText(cachePhone)//默认填写注册账号  或者上次登录账号
     }
-
+    private var agreementDialog:AgreementDialog?=null
     override fun initView() {
+        //显示权限弹框
+        agreementDialog= AgreementDialog(this)
+        agreementDialog?.setCanceledOnTouchOutside(false)
+        agreementDialog?.setCancelable(false)
+        if (!isAgree){//还未同意
+
+            agreementDialog?.show()
+            //todo 适配今日头条弹窗不居中解决
+//            val lp= agreementDialog!!.window.attributes;
+////设置宽高，高度默认是自适应的，宽度根据屏幕宽度比例设置
+//            lp.width = ScreenUtils.getWidth(this);
+////这里设置居中
+//            lp.gravity = Gravity.CENTER;
+//            agreementDialog?.window?.attributes = lp
+            agreementDialog?.setOnConfirmListener(View.OnClickListener {
+                //不同意
+                agreementDialog?.dismiss()
+                finish()
+            })
+        }
+
         tv_register.setOnClickListener {
             Intent(this, RegisterActivity::class.java).apply {
                 startActivity(this)
