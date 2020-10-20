@@ -301,18 +301,18 @@ abstract class BaseShareActivity : AppCompatActivity() {
             val uri = data.data
             if (DocumentsContract.isDocumentUri(this, uri)) {
                 val docid = DocumentsContract.getDocumentId(uri)
-                if (MEDIA_DOCUMENTS.equals(uri.authority)) {
+                if (MEDIA_DOCUMENTS == uri.authority) {
                     val id = docid.split(":")[1]
                     // 解析出数字格式的id
                     val selection = MediaStore.Images.Media._ID + "=" + id
                     imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection)
-                } else if (DOWNLOAD_DOCUMENTS.equals(uri.authority)) {
+                } else if (DOWNLOAD_DOCUMENTS == uri.authority) {
                     val contentUri = ContentUris.withAppendedId(Uri.parse("content: //downloads/public_downloads"), docid.toLong())
                     imagePath = getImagePath(contentUri, null)
                 }
-            } else if ("content".equals(uri.getScheme())) {
+            } else if ("content" == uri.scheme) {
                 imagePath = getImagePath(uri, null);
-            } else if ("file".equals(uri.getScheme())) {
+            } else if ("file" == uri.scheme) {
                 imagePath = uri.path
             }
         }
