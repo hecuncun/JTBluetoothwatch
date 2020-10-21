@@ -21,23 +21,21 @@ import java.io.ByteArrayOutputStream
 object ShareUtils {
     fun shareImageToWx(mContext: Context, imagePath: String?, state: Int) {
         //创建WXImageObject对象，并设置文件路径
-        val imgObj = WXImageObject()
-        //设置图像文件的路径
-        imgObj.setImagePath(imagePath)
+        val bitmap = BitmapFactory.decodeFile(imagePath)
+        val imgObj = WXImageObject(bitmap)
         //创建WXMediaMessage对象，并包装创建WXImageObject对象
         val msg = WXMediaMessage()
-        msg.title = "太极疆泰"
-        msg.description = "运动绽放激情"
         msg.mediaObject = imgObj
         //压缩图像
-        val bitmap = BitmapFactory.decodeFile(imagePath)
+
         val thumbBmp = Bitmap.createScaledBitmap(bitmap, 120, 120, true)
         bitmap.recycle() //释放图像所占用的内存资源
         msg.thumbData = bmpToByteArray(thumbBmp, true) //设置缩略图
         val req = SendMessageToWX.Req()
-        req.transaction = buildTransaction("image/*")
+        req.transaction = buildTransaction("img")
         req.message = msg
         req.scene = if (state == 0) SendMessageToWX.Req.WXSceneSession else SendMessageToWX.Req.WXSceneTimeline
+        req.userOpenId = "wx17ab04a8ad941271"
         WXAPIFactory.createWXAPI(mContext, Constants.APP_ID).sendReq(req)
     }
 
