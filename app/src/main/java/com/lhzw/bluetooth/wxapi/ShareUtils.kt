@@ -27,7 +27,6 @@ object ShareUtils {
         val msg = WXMediaMessage()
         msg.mediaObject = imgObj
         //压缩图像
-
         val thumbBmp = Bitmap.createScaledBitmap(bitmap, 120, 120, true)
         bitmap.recycle() //释放图像所占用的内存资源
         msg.thumbData = bmpToByteArray(thumbBmp, true) //设置缩略图
@@ -35,7 +34,7 @@ object ShareUtils {
         req.transaction = buildTransaction("img")
         req.message = msg
         req.scene = if (state == 0) SendMessageToWX.Req.WXSceneSession else SendMessageToWX.Req.WXSceneTimeline
-        req.userOpenId = "wx17ab04a8ad941271"
+        req.userOpenId = Constants.USER_ID
         WXAPIFactory.createWXAPI(mContext, Constants.APP_ID).sendReq(req)
     }
 
