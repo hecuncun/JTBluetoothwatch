@@ -5,7 +5,6 @@ import com.just.agentweb.AgentWeb
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_webview.*
-import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * Created by heCunCun on 2020/10/20

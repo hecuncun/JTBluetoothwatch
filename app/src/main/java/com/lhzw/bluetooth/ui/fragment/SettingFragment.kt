@@ -10,6 +10,7 @@ import android.widget.Toast
 import com.jzxiang.pickerview.TimePickerDialog
 import com.jzxiang.pickerview.data.Type
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseMvpFragment
 import com.lhzw.bluetooth.bean.PersonalInfoBean
 import com.lhzw.bluetooth.bus.RxBus
@@ -24,6 +25,7 @@ import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
 import com.lhzw.bluetooth.ui.activity.login.LoginActivity
+import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.KeepLiveUtil
@@ -352,7 +354,12 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
 
             })
         }
-
+        ll_private.setOnClickListener {
+            //点击隐私
+            val intent = Intent(App.context, WebViewActivity::class.java)
+            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+            startActivity(intent)
+        }
 
         //打开后台运行设置
         tv_set_permission.setOnClickListener {
