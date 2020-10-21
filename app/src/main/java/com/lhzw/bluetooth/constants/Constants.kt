@@ -152,5 +152,6 @@ object Constants {
 
     const val VERIFY_TYPE_REGISTER = 0x0000 // 注册
     const val VERIFY_TYPE_MODIFY_PASSWORD = 0x0001 // 更改密码
+    const val APP_ID = "wx1fd7f0ff7df35c16"
 
 }

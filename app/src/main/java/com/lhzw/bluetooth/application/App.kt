@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.multidex.MultiDexApplication
 import android.util.Log
-import com.lhzw.bluetooth.BuildConfig
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.service.BleConnectService

@@ -5,10 +5,8 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.graphics.Paint
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.StrictMode
-import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
 import android.view.MotionEvent
 import android.view.View
@@ -16,6 +14,7 @@ import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.bean.FlatSportBean
 import com.lhzw.bluetooth.constants.Constants
 import com.lhzw.bluetooth.constants.ShareBgBitmap
@@ -24,6 +23,7 @@ import com.lhzw.bluetooth.glide.BlurBitmapUtil
 import com.lhzw.bluetooth.glide.GlideUtils
 import com.lhzw.bluetooth.uitls.BaseUtils
 import com.lhzw.bluetooth.uitls.Preference
+import com.lhzw.bluetooth.wxapi.ShareUtils
 import kotlinx.android.synthetic.main.activity_map_share_poster.*
 import kotlinx.android.synthetic.main.activity_share_poster.im_bg_share
 import kotlinx.android.synthetic.main.activity_share_poster.im_cancel
@@ -185,31 +185,33 @@ class ShareMapPosterActivity : AppCompatActivity(), View.OnClickListener, View.O
                     Toast.makeText(this, "微信未安装", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val send = Intent()
-
-                send.action = Intent.ACTION_SEND
-                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    FileProvider.getUriForFile(this.applicationContext,
-                            "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
-                } else {
-                    Uri.fromFile(shareFile)
-                }
-                send.putExtra(Intent.EXTRA_STREAM, uri)
-                send.type = "image/*";
-                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
-                startActivityForResult(send, WX_QUEST);
+//                val send = Intent()
+//                send.action = Intent.ACTION_SEND
+//                val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    FileProvider.getUriForFile(this.applicationContext,
+//                            "com.lhzw.bluetooth.fileprovider", shareFile!!.absoluteFile) //这个是版本大于Android7.0（包含）临时访问文件，没有这个会报异常
+//                } else {
+//                    Uri.fromFile(shareFile)
+//                }
+//                send.putExtra(Intent.EXTRA_STREAM, uri)
+//                send.type = "image/*";
+//                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI");//微信朋友圈，仅支持分享图片
+//                startActivityForResult(send, WX_QUEST)
+                ShareUtils.shareImageToWx(App.context, shareFile!!.absolutePath, 0)
             }
             R.id.im_circle -> {
                 if (!BaseUtils.isAppInstall(this@ShareMapPosterActivity, "com.tencent.mm")) {
                     Toast.makeText(this, "微信未安装", Toast.LENGTH_SHORT).show()
                     return
                 }
-                val send = Intent()
-                send.action = Intent.ACTION_SEND
-                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
-                send.type = "image/*";
-                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
-                startActivityForResult(send, WX_QUEST);
+//                val send = Intent()
+//                send.action = Intent.ACTION_SEND
+//                send.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(shareFile))
+//                send.type = "image/*";
+//                send.setClassName("com.tencent.mm", "com.tencent.mm.ui.tools.ShareToTimeLineUI");//微信朋友圈，仅支持分享图片
+//                startActivityForResult(send, WX_QUEST);
+                ShareUtils.shareImageToWx(App.context, shareFile!!.absolutePath, 1)
+                finish()
             }
             R.id.im_qq -> {
                 if (!BaseUtils.isAppInstall(this@ShareMapPosterActivity, "com.tencent.mobileqq")) {
