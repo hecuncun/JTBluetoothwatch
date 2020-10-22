@@ -7,6 +7,7 @@ import android.text.method.PasswordTransformationMethod
 import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.MsgVerifyBean
 import com.lhzw.bluetooth.bean.net.BaseBean
@@ -16,6 +17,7 @@ import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.net.CallbackListObserver
 import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
+import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.CountDownTimerUtils
 import com.lhzw.bluetooth.uitls.RegexUtil
 import com.orhanobut.logger.Logger
@@ -106,6 +108,12 @@ class RegisterActivity : BaseActivity() {
         }
         iv_eye.setOnClickListener {
             switchPwdMode(et_pwd, iv_eye)
+        }
+        ll_private.setOnClickListener {
+            //点击隐私
+            val intent = Intent(App.context, WebViewActivity::class.java)
+            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+            startActivity(intent)
         }
     }
 
