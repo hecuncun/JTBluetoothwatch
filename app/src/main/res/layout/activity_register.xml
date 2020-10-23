@@ -180,7 +180,7 @@
         android:layout_marginTop="30dp"
         android:button="@drawable/selector_check_box"
         android:checked="true"
-        android:visibility="invisible"
+        android:visibility="visible"
         android:text="我已阅读并同意《疆泰APP用户协议》"
         android:textColor="@color/orange_light"
         android:paddingLeft="15dp"

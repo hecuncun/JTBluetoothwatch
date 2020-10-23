@@ -143,6 +143,7 @@
         <activity android:name=".ui.activity.login.ResetPwdActivity" />
         <activity android:name=".ui.activity.login.ResetPwdSuccessActivity" />
         <activity android:name=".ui.activity.web.WebViewActivity" />
+        <activity android:name=".ui.activity.UserAgreementActivity" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

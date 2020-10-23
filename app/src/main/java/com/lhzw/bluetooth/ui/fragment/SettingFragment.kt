@@ -24,6 +24,7 @@ import com.lhzw.bluetooth.mvp.contract.SettingContract
 import com.lhzw.bluetooth.mvp.presenter.SettingPresenter
 import com.lhzw.bluetooth.ui.activity.AboutUsActivity
 import com.lhzw.bluetooth.ui.activity.UpdateFuncActivity
+import com.lhzw.bluetooth.ui.activity.UserAgreementActivity
 import com.lhzw.bluetooth.ui.activity.login.LoginActivity
 import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.BaseUtils
@@ -356,9 +357,12 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
         }
         ll_private.setOnClickListener {
             //点击隐私
-            val intent = Intent(App.context, WebViewActivity::class.java)
-            intent.putExtra("url","http://www.cetcjt.com/ysxy")
-            startActivity(intent)
+//            val intent = Intent(App.context, WebViewActivity::class.java)
+//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            startActivity(intent)
+            Intent(activity, UserAgreementActivity::class.java).apply {
+                startActivity(this)
+            }
         }
 
         //打开后台运行设置

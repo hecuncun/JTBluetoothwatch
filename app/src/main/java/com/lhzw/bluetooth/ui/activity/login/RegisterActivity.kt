@@ -17,6 +17,7 @@ import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.net.CallbackListObserver
 import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
+import com.lhzw.bluetooth.ui.activity.UserAgreementActivity
 import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.CountDownTimerUtils
 import com.lhzw.bluetooth.uitls.RegexUtil
@@ -111,9 +112,12 @@ class RegisterActivity : BaseActivity() {
         }
         ll_private.setOnClickListener {
             //点击隐私
-            val intent = Intent(App.context, WebViewActivity::class.java)
-            intent.putExtra("url","http://www.cetcjt.com/ysxy")
-            startActivity(intent)
+//            val intent = Intent(App.context, WebViewActivity::class.java)
+//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            startActivity(intent)
+            Intent(this, UserAgreementActivity::class.java).apply {
+                startActivity(this)
+            }
         }
     }
 

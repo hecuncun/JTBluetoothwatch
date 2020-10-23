@@ -24,10 +24,16 @@ import com.lhzw.bluetooth.net.CallbackListObserver
 import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.ui.activity.MainActivity
+import com.lhzw.bluetooth.ui.activity.UserAgreementActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
 import kotlinx.android.synthetic.main.activity_login_2.*
+import kotlinx.android.synthetic.main.activity_login_2.checkbox
+import kotlinx.android.synthetic.main.activity_login_2.et_pwd
+import kotlinx.android.synthetic.main.activity_login_2.iv_eye
+import kotlinx.android.synthetic.main.activity_login_2.tv_register
+import kotlinx.android.synthetic.main.activity_login_new.*
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.text.SimpleDateFormat
@@ -83,7 +89,11 @@ class LoginActivity : BaseActivity() {
                 startActivity(this)
             }
         }
-
+        desc.setOnClickListener {
+            Intent(this,UserAgreementActivity::class.java).apply {
+                startActivity(this)
+            }
+        }
         btn_login.setOnClickListener {
             val phone = et_phone.text.toString().trim()
             val pwd = et_pwd.text.toString().trim()
@@ -96,7 +106,11 @@ class LoginActivity : BaseActivity() {
                 return@setOnClickListener
             }
             //走登陆接口
-            login(phone, pwd)
+            if (checkbox.isChecked) {
+                login(phone, pwd)
+            } else {
+                showToast("请先勾选已阅读并同意《疆泰用户协议和隐私政策》")
+            }
 
         }
     }

@@ -17,6 +17,7 @@ import com.flyco.dialog.widget.base.BaseDialog
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.application.App.Companion.context
 import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.ui.activity.UserAgreementActivity
 import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.Preference
 import kotlinx.android.synthetic.main.dialog_agreement.*
@@ -70,8 +71,11 @@ class AgreementDialog(context: Context) : BaseDialog<AgreementDialog>(context){
     class UserClick(context: Context) :ClickableSpan(){
         override fun onClick(widget: View) {
             //点击用户协议
-            val intent = Intent(context, WebViewActivity::class.java)
-            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            val intent = Intent(context, WebViewActivity::class.java)
+//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            intent.flags = FLAG_ACTIVITY_NEW_TASK
+//            context.startActivity(intent)
+            val intent = Intent(context,UserAgreementActivity::class.java)
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }
@@ -86,8 +90,11 @@ class AgreementDialog(context: Context) : BaseDialog<AgreementDialog>(context){
     class PrivateClick(context: Context) :ClickableSpan(){
         override fun onClick(widget: View) {
             //点击隐私
-            val intent = Intent(context, WebViewActivity::class.java)
-            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            val intent = Intent(context, WebViewActivity::class.java)
+//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+//            intent.flags = FLAG_ACTIVITY_NEW_TASK
+//            context.startActivity(intent)
+            val intent = Intent(context,UserAgreementActivity::class.java)
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
         }
