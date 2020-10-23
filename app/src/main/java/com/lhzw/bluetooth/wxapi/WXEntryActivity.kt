@@ -35,14 +35,14 @@ class WXEntryActivity : WXCallbackActivity(), IWXAPIEventHandler {
     override fun onNewIntent(p0: Intent?) {
         super.onNewIntent(p0)
         intent = p0
-        api?.handleIntent(intent,this)
+        api?.handleIntent(intent, this)
     }
 
     override fun onReq(baseReq: BaseReq?) {}
     override fun onResp(baseResp: BaseResp) {
         when (baseResp.errCode) {
-            BaseResp.ErrCode.ERR_OK -> Toast.makeText(this, "分享成功", Toast.LENGTH_LONG).show()
             BaseResp.ErrCode.ERR_USER_CANCEL -> Toast.makeText(this, "分享取消", Toast.LENGTH_LONG).show()
+            BaseResp.ErrCode.ERR_OK -> Toast.makeText(this, "分享成功", Toast.LENGTH_LONG).show()
             BaseResp.ErrCode.ERR_AUTH_DENIED -> Toast.makeText(this, "被拒绝", Toast.LENGTH_LONG).show()
             else -> Toast.makeText(this, "未知错误", Toast.LENGTH_LONG).show()
         }

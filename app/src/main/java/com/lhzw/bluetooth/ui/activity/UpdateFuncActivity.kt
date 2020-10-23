@@ -62,7 +62,6 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
         }"
 //        checkPermission()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
         checkVersion()
     }
 
@@ -332,8 +331,8 @@ class UpdateFuncActivity : BaseUpdateActivity<MainUpdatePresenter>() {
 
     override fun getMainPresent() = MainUpdatePresenter()
     override fun updateApkState(state: Boolean, versionName: String) {
-      //  tv_app_version.text = "JIANGTAI $versionName"
-      //  tv_app_version.setTextColor(getColor(if (state) R.color.blue_light else R.color.gray))
+//        tv_app_version.text = "JIANGTAI $versionName
+        tv_app_version.setTextColor(getColor(if (state) R.color.blue_light else R.color.gray))
         if (state) {
             tv_app_update_date.visibility = View.GONE
             progesss_app.visibility = View.VISIBLE
