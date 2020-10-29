@@ -71,13 +71,13 @@ class AgreementDialog(context: Context) : BaseDialog<AgreementDialog>(context){
     class UserClick(context: Context) :ClickableSpan(){
         override fun onClick(widget: View) {
             //点击用户协议
-//            val intent = Intent(context, WebViewActivity::class.java)
-//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
-//            intent.flags = FLAG_ACTIVITY_NEW_TASK
-//            context.startActivity(intent)
-            val intent = Intent(context,UserAgreementActivity::class.java)
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra("url","http://www.cetcjt.com/ysxy")
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
+//            val intent = Intent(context,UserAgreementActivity::class.java)
+//            intent.flags = FLAG_ACTIVITY_NEW_TASK
+//            context.startActivity(intent)
         }
         override fun updateDrawState(ds: TextPaint) {
             super.updateDrawState(ds)
@@ -90,13 +90,13 @@ class AgreementDialog(context: Context) : BaseDialog<AgreementDialog>(context){
     class PrivateClick(context: Context) :ClickableSpan(){
         override fun onClick(widget: View) {
             //点击隐私
-//            val intent = Intent(context, WebViewActivity::class.java)
-//            intent.putExtra("url","http://www.cetcjt.com/ysxy")
-//            intent.flags = FLAG_ACTIVITY_NEW_TASK
-//            context.startActivity(intent)
-            val intent = Intent(context,UserAgreementActivity::class.java)
+            val intent = Intent(context, WebViewActivity::class.java)
+            intent.putExtra("url","http://www.cetcjt.com/ysxy")
             intent.flags = FLAG_ACTIVITY_NEW_TASK
             context.startActivity(intent)
+//            val intent = Intent(context,UserAgreementActivity::class.java)
+//            intent.flags = FLAG_ACTIVITY_NEW_TASK
+//            context.startActivity(intent)
         }
 
         override fun updateDrawState(ds: TextPaint) {

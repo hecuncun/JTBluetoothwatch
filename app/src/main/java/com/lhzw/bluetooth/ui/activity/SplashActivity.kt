@@ -6,7 +6,10 @@ import android.view.animation.AlphaAnimation
 import android.view.animation.Animation
 import com.lhzw.bluetooth.R
 import com.lhzw.bluetooth.base.BaseActivity
+import com.lhzw.bluetooth.constants.Constants
+import com.lhzw.bluetooth.dialog.AgreementDialog
 import com.lhzw.bluetooth.ui.activity.login.LoginActivity
+import com.lhzw.bluetooth.uitls.Preference
 import kotlinx.android.synthetic.main.activity_splash.*
 
 /**
@@ -18,9 +21,30 @@ class SplashActivity : BaseActivity() {
     override fun attachLayoutRes(): Int = R.layout.activity_splash
     override fun initData() {
     }
-
+    private var isAgree: Boolean by Preference(Constants.IS_AGREE, false)
+    private var agreementDialog:AgreementDialog?=null
     override fun initView() {
         if (firest_login) {
+            //显示权限弹框
+            agreementDialog= AgreementDialog(this)
+            agreementDialog?.setCanceledOnTouchOutside(false)
+            agreementDialog?.setCancelable(false)
+            if (!isAgree){//还未同意
+
+                agreementDialog?.show()
+                //todo 适配今日头条弹窗不居中解决
+//            val lp= agreementDialog!!.window.attributes;
+////设置宽高，高度默认是自适应的，宽度根据屏幕宽度比例设置
+//            lp.width = ScreenUtils.getWidth(this);
+////这里设置居中
+//            lp.gravity = Gravity.CENTER;
+//            agreementDialog?.window?.attributes = lp
+                agreementDialog?.setOnConfirmListener(View.OnClickListener {
+                    //不同意
+                    agreementDialog?.dismiss()
+                    finish()
+                })
+            }
             fadeIn(tv_login, 0.1f, 1.0f, 2300)
             tv_login.setOnClickListener {
                 firest_login = false

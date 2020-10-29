@@ -10,6 +10,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import com.lhzw.bluetooth.R
+import com.lhzw.bluetooth.application.App
 import com.lhzw.bluetooth.base.BaseActivity
 import com.lhzw.bluetooth.bean.*
 import com.lhzw.bluetooth.bean.net.BaseBean
@@ -25,6 +26,7 @@ import com.lhzw.bluetooth.net.SLMRetrofit
 import com.lhzw.bluetooth.net.ThreadSwitchTransformer
 import com.lhzw.bluetooth.ui.activity.MainActivity
 import com.lhzw.bluetooth.ui.activity.UserAgreementActivity
+import com.lhzw.bluetooth.ui.activity.web.WebViewActivity
 import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.widget.LoadingView
@@ -46,7 +48,7 @@ class LoginActivity : BaseActivity() {
     private var apk_update_time: String? by Preference(Constants.APK_UPDATE_TIME, "")
     private var apk_ip_change: Boolean? by Preference(Constants.APK_IP_CHANGE, false)
     private var registerTime: Long? by Preference(Constants.REGISTERTIME, 0)
-    private var isAgree: Boolean by Preference(Constants.IS_AGREE, false)
+
     override fun attachLayoutRes(): Int = R.layout.activity_login_2
 
     override fun initData() {
@@ -61,28 +63,9 @@ class LoginActivity : BaseActivity() {
 
         et_phone.setText(cachePhone)//默认填写注册账号  或者上次登录账号
     }
-    private var agreementDialog:AgreementDialog?=null
-    override fun initView() {
-        //显示权限弹框
-        agreementDialog= AgreementDialog(this)
-        agreementDialog?.setCanceledOnTouchOutside(false)
-        agreementDialog?.setCancelable(false)
-        if (!isAgree){//还未同意
 
-            agreementDialog?.show()
-            //todo 适配今日头条弹窗不居中解决
-//            val lp= agreementDialog!!.window.attributes;
-////设置宽高，高度默认是自适应的，宽度根据屏幕宽度比例设置
-//            lp.width = ScreenUtils.getWidth(this);
-////这里设置居中
-//            lp.gravity = Gravity.CENTER;
-//            agreementDialog?.window?.attributes = lp
-            agreementDialog?.setOnConfirmListener(View.OnClickListener {
-                //不同意
-                agreementDialog?.dismiss()
-                finish()
-            })
-        }
+    override fun initView() {
+
 
         tv_register.setOnClickListener {
             Intent(this, RegisterActivity::class.java).apply {
@@ -90,9 +73,12 @@ class LoginActivity : BaseActivity() {
             }
         }
         desc.setOnClickListener {
-            Intent(this,UserAgreementActivity::class.java).apply {
-                startActivity(this)
-            }
+//            Intent(this,UserAgreementActivity::class.java).apply {
+//                startActivity(this)
+//            }
+            val intent = Intent(App.context, WebViewActivity::class.java)
+            intent.putExtra("url","http://www.cetcjt.com/ysxy")
+            startActivity(intent)
         }
         btn_login.setOnClickListener {
             val phone = et_phone.text.toString().trim()
