@@ -15,7 +15,8 @@ class CountDownTimerUtils
  * is called.
  * @param countDownInterval The interval along the way to receiver
  * [.onTick] callbacks.
- */(private val mTextView: TextView, millisInFuture: Long, countDownInterval: Long) : CountDownTimer(millisInFuture, countDownInterval) {
+ */
+(private val mTextView: TextView, millisInFuture: Long, countDownInterval: Long) : CountDownTimer(millisInFuture, countDownInterval) {
     override fun onTick(millisUntilFinished: Long) {
         mTextView.isClickable = false //设置不可点击
         mTextView.text = (millisUntilFinished / 1000).toString() + "秒后重发" //设置倒计时时间

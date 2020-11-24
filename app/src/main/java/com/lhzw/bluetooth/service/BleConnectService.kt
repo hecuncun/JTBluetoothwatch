@@ -29,7 +29,8 @@ class BleConnectService : Service() {
     private var isScanning = false  //是否正在扫描
     private val SCAN_DURATION: Long = 20000//扫描持续时长10s
     private val mListValues = mutableListOf<ExtendedBluetoothDevice>()
-    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")
+    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_MAC_ADDRESS, "")//最后一次扫码识别的MAC
+    private var lastConnectedDeviceAdress: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)
     private var connectState: Boolean by Preference(Constants.CONNECT_STATE, false)//蓝牙连接状态
@@ -81,7 +82,8 @@ class BleConnectService : Service() {
             Logger.e(" BleConnectService收到断开回调event")
             connectState = false
             if (!autoConnect) {//主动断开
-                lastDeviceMacAddress = ""//清除缓存
+                lastDeviceMacAddress = ""//清除最后一次扫码的缓存
+                lastConnectedDeviceAdress=""//清除上次成功连接的设备
             }
             if (autoConnect && bleManager!!.adapter.isEnabled && !connectState) {//蓝牙处于打开状态并且可以自动连接就执行   自动连接   走扫描蓝牙流程
                 startAutoScanAndConnect()
@@ -127,7 +129,12 @@ class BleConnectService : Service() {
                 .build()
 
         val filters = mutableListOf<ScanFilter>()//过滤器
-        filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
+        if (autoConnect){
+            filters.add(ScanFilter.Builder().setDeviceAddress(lastConnectedDeviceAdress).build())
+        }else{
+            filters.add(ScanFilter.Builder().setDeviceAddress(lastDeviceMacAddress).build())
+        }
+
         try {
             scanner.startScan(filters, settings, scanCallback)
             isScanning = true
@@ -155,6 +162,7 @@ class BleConnectService : Service() {
                 Logger.e("延时==$scannerDelayTime")
             } else {//扫码结束   未连接成功
                 if (!connectState) {
+                    autoConnect=false
                     showToast("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
                     Logger.e("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
                     EventBus.getDefault().post(HideDialogEvent(false))
@@ -164,18 +172,17 @@ class BleConnectService : Service() {
             Log.e("BLE_Error", "BT Adapter is not turned ON ...")
         }
     }
-    var scanAddress=""//搜索到的上个蓝牙mac
+
     private val scanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            Logger.e("onScanResult")
         }
 
         override fun onBatchScanResults(results: MutableList<ScanResult>) {
             if (connectState){//已连接就不走扫描回调
                 return
             }
-            Log.e("SCANCallBack", "搜索设备中...size==${results.size}")
-            for (result in results) {
+            Log.e("Scan", "搜索设备中...size==${results.size}")
+            for (result in results) {//此方法用来保存扫描到的设备
                 if (result.device.name != null && result.device.name.contains("SW")) {
                     if (mListValues.size == 0) {
                         mListValues.add(ExtendedBluetoothDevice(result))
@@ -193,75 +200,58 @@ class BleConnectService : Service() {
                     }
 
                 }
-                Logger.e("已找到周围腕表设备数量==${mListValues.size}")
+                Logger.e("已找到筛选的周围腕表设备数量==${mListValues.size}")
             }
-            Logger.e("lastDeviceMacAddress=$lastDeviceMacAddress")
-            if (lastDeviceMacAddress.isNotEmpty()) {//目标设备mac不为空
-                if (autoConnect) {
-                    val lastList = mListValues.filter {
-                        it.device.address == lastDeviceMacAddress
-                    }
-                    if (lastList.isNotEmpty()){
-                        scanAddress =lastList[0].device.address
-                    }
-                    Logger.e("ScanResult==>BleAddress=$scanAddress,isConnecting=$isConnecting")
-                    if (lastList.isNotEmpty()) {
-                        if (!connectState) {
-                            Logger.e("已找到蓝牙设备")
-                            if (!isConnecting) {
-                             Logger.e("发送连接请求...")
-                                RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
-                                isConnecting = true
-                                if (loadingView == null) {
-                                    if (App.getActivityContext() != null) {
-                                        loadingView = LoadingView(App.getActivityContext())
-                                        loadingView?.setLoadingTitle("连接中...")
-
-                                    }
-                                }
+            if(autoConnect){
+                //自动连接
+                val lastList = mListValues.filter {
+                    it.device.address == lastConnectedDeviceAdress
+                }
+                if (lastList.isNotEmpty()){//周围设备中有目标设备
+                    if (!connectState) {
+                        Log.e("Scan","自动连接..已找到目标蓝牙设备")
+                        if (!isConnecting) {
+                            Logger.e("发送连接请求...")
+                            RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
+                            isConnecting = true
+                            if (loadingView == null) {
                                 if (App.getActivityContext() != null) {
-                                    try {
-                                        loadingView?.show()
-                                    } catch (e: java.lang.Exception) {
-                                        e.printStackTrace()
-                                    }
+                                    loadingView = LoadingView(App.getActivityContext())
+                                    loadingView?.setLoadingTitle("连接中...")
 
                                 }
-
                             }
-
-
-                        }
-                    }else{
-                        Log.e("BleConnect","autoConnect=$autoConnect,lastDeviceMacAddress=$lastDeviceMacAddress 设备不在范围")
-                    }
-
-                } else {
-                    //此处为扫码连接
-                    val list = mListValues.filter {
-                        it.device.address == lastDeviceMacAddress
-                    }
-                    if (list.isNotEmpty()) {
-                        val extendedDevice = mListValues.filter {
-                            it.device.address == lastDeviceMacAddress
-                        }[0]
-                        if (!connectState) {
-                            Logger.e("找到蓝牙设备")
-                            if (!isConnecting) {
-                                Logger.e("发送连接指令..")
-                                RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
-                                isConnecting = true
+                            if (App.getActivityContext() != null) {
+                                try {
+                                    loadingView?.show()
+                                } catch (e: java.lang.Exception) {
+                                    e.printStackTrace()
+                                }
                             }
-
                         }
-                    } else {
-                        Logger.e("搜索目标蓝牙设备中...")
                     }
+                }else{//周围设备中没有目标设备
+                    Log.e("BleConnect","autoConnect=$autoConnect,目标设备=${lastConnectedDeviceAdress},不在连接范围")
                 }
             }else{
-                Log.e("BleConnect","缓存的腕表MAC==$lastDeviceMacAddress")
-                //没有需要连接的设备
-                autoConnect=false
+                //手动扫描
+                val lastList = mListValues.filter {
+                    it.device.address == lastDeviceMacAddress
+                }
+                if (lastList.isNotEmpty()){
+                    val extendedDevice=lastList[0]
+                    if (!connectState) {
+                        Log.e("Scan","手动扫码找到蓝牙设备")
+                        if (!isConnecting) {
+                            Log.e("Scan","发送连接指令..")
+                            RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
+                            isConnecting = true
+                        }else{
+                            Log.e("Scan","扫码后蓝牙连接中...")
+                        }
+
+                    }
+                }
             }
         }
 

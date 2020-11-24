@@ -55,7 +55,7 @@ abstract class BaseBlutoothService : Service(), BleManagerCallbacks {
     private val TIMER_STATE_ALL = 0x03
     protected var currentAddrss = ""
     private var lastConnectedDevice: String by Preference(Constants.LAST_CONNECTED_ADDRESS, "")//上次连接成功的设备mac
-    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存扫码的mac
+    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_MAC_ADDRESS, "")//缓存扫码的mac
     private var syncTime: String by Preference(Constants.SYNC_TIME, "")//最近同步时间
     private var isSyncAscending: Boolean by Preference(Constants.ISSYNCASCENDING, false)//缓存扫码的mac
     protected var acceptMsg: Boolean by Preference(Constants.ACCEPT_MSG, false)//同步数据完成后再开始接受通知
