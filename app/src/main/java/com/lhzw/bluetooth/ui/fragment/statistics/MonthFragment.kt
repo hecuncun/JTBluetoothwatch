@@ -214,6 +214,7 @@ class MonthFragment : BaseFragment() {
             barChat.data.notifyDataChanged()
             barChat.notifyDataSetChanged()
         } else {
+
             set1 = BarDataSet(values, "Data Set")
             // * 可变参数展开操作符
             // set1.setColors(*ColorTemplate.VORDIPLOM_COLORS)
