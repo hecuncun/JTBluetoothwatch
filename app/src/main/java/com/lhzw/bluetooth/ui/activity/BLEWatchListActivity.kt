@@ -1,6 +1,7 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
+import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
@@ -22,6 +23,7 @@ import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.BaseUtils
+import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.SpaceItemDecoration
 import com.lhzw.bluetooth.widget.LoadingView
@@ -40,7 +42,7 @@ import org.greenrobot.eventbus.ThreadMode
 class BLEWatchListActivity : BaseActivity() {
 
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
-    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_MAC_ADDRESS, "")//扫码获取的mac
+    private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_MAC_ADDRESS, "")//缓存mac
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)//是否自动连接
     private val REQUEST_CODE = 0x333
     private val PERMISS_REQUEST_CODE = 0x356

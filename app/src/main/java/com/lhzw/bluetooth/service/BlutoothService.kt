@@ -60,11 +60,11 @@ class BlutoothService : BaseBlutoothService(), DfuConfigCallBack {
 
     @Subscribe(thread = EventThread.MAIN_THREAD, tags = [Tag("connect")])
     fun connect(event: BlutoothEvent) {
-        Logger.e("收到了RxBus  连接手表的指令")
+        Log.e("Scan","收到了RxBus  连接手表的指令")
         mContext = event.context
         myBleManager?.let {
             currentAddrss = event.device.address
-            it.connect(event.device).retry(3, 100)
+            it.connect(event.device).retry(3, 1000)
                     .useAutoConnect(false)
                     .timeout(10000)
                     .enqueue()

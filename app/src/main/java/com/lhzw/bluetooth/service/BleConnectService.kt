@@ -129,8 +129,9 @@ class BleConnectService : Service() {
                 .build()
 
         val filters = mutableListOf<ScanFilter>()//过滤器
+        filters.clear()
         if (autoConnect){
-            filters.add(ScanFilter.Builder().setDeviceAddress(lastConnectedDeviceAdress).build())
+            filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
         }else{
             filters.add(ScanFilter.Builder().setDeviceAddress(lastDeviceMacAddress).build())
         }
@@ -163,8 +164,7 @@ class BleConnectService : Service() {
             } else {//扫码结束   未连接成功
                 if (!connectState) {
                     autoConnect=false
-                    showToast("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
-                    Logger.e("连接失败,未发现设备:$connectedDeviceName--$lastDeviceMacAddress")
+                    showToast("连接失败,未发现设备:$connectedDeviceName")
                     EventBus.getDefault().post(HideDialogEvent(false))
                 }
             }
@@ -243,14 +243,16 @@ class BleConnectService : Service() {
                     if (!connectState) {
                         Log.e("Scan","手动扫码找到蓝牙设备")
                         if (!isConnecting) {
-                            Log.e("Scan","发送连接指令..")
+                            Log.e("Scan","发送连接指令...")
                             RxBus.getInstance().post("connect", BlutoothEvent(extendedDevice.device, App.getActivityContext()))
                             isConnecting = true
                         }else{
-                            Log.e("Scan","扫码后蓝牙连接中...")
+                            Log.e("Scan","连接中...")
                         }
 
                     }
+                }else{
+                    Log.e("Scan","手动扫码未找到蓝牙设备")
                 }
             }
         }
