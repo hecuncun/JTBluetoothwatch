@@ -119,7 +119,10 @@ class BleConnectService : Service() {
 
 
     private fun startScan() {
-        Logger.e("正在搜索蓝牙...")
+        if(!bleManager?.adapter!!.isEnabled){
+            Log.e("scan","未开启手机蓝牙")
+            return
+        }
         val scanner = BluetoothLeScannerCompat.getScanner()
         val settings = ScanSettings.Builder()
                 .setLegacy(false)
@@ -214,6 +217,16 @@ class BleConnectService : Service() {
                             Logger.e("发送连接请求...")
                             RxBus.getInstance().post("connect", BlutoothEvent(lastList[0].device, App.getActivityContext()))
                             isConnecting = true
+                            //此处加入连接超时重置连接状态机制,防止发送连接指令后未成功,一直处于连接中,导致后续的指令无法继续发送
+                            Handler().postDelayed({
+                                if(isConnecting && !connectState){
+                                    isConnecting = false
+                                }
+
+                            },20000)
+
+
+
                             if (loadingView == null) {
                                 if (App.getActivityContext() != null) {
                                     loadingView = LoadingView(App.getActivityContext())
@@ -228,6 +241,8 @@ class BleConnectService : Service() {
                                     e.printStackTrace()
                                 }
                             }
+                        }else{
+                            Log.e("Scan", "已发送过连接请求,15秒内不再发送连接请求")
                         }
                     }
                 }else{//周围设备中没有目标设备
@@ -267,6 +282,10 @@ class BleConnectService : Service() {
     private var autoScanner: BluetoothLeScannerCompat? = null
     private var scannerDelayTime = 2000L//默认一秒
     private fun startAutoScanAndConnect() {
+        if(!bleManager?.adapter!!.isEnabled){
+            Log.e("scan","未开启手机蓝牙")
+            return
+        }
         scannerDelayTime *= 2
         if (scannerDelayTime > 4000L) {
             scannerDelayTime = 4000L
