@@ -134,9 +134,15 @@ class BleConnectService : Service() {
         val filters = mutableListOf<ScanFilter>()//过滤器
         filters.clear()
         if (autoConnect){
-            filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
+            if (connectedDeviceName.isNotEmpty()){
+                filters.add(ScanFilter.Builder().setDeviceName(connectedDeviceName).build())
+            }
+
         }else{
-            filters.add(ScanFilter.Builder().setDeviceAddress(lastDeviceMacAddress).build())
+            if(lastDeviceMacAddress.isNotEmpty()){
+                filters.add(ScanFilter.Builder().setDeviceAddress(lastDeviceMacAddress).build())
+            }
+
         }
 
         try {
