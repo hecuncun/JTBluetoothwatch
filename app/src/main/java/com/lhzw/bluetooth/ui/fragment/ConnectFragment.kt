@@ -31,7 +31,6 @@ import org.greenrobot.eventbus.ThreadMode
  */
 class ConnectFragment : BaseFragment() {
     private var connectedDeviceName: String by Preference(Constants.CONNECT_DEVICE_NAME, "")//缓存设备名称
-   // private var lastDeviceMacAddress: String by Preference(Constants.LAST_DEVICE_ADDRESS, "")//缓存mac
     private var autoConnect: Boolean by Preference(Constants.AUTO_CONNECT, false)//是否自动连接
     val REQUEST_CODE = 0x333
     val PERMISS_REQUEST_CODE = 0x356
