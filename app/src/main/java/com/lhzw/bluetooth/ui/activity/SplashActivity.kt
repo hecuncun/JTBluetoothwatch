@@ -73,7 +73,6 @@ class SplashActivity : BaseActivity() {
 
     private fun jumpToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
-       // val intent = Intent(this, LoginNewActivity::class.java)
         startActivity(intent)
         finish()
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
