@@ -123,7 +123,6 @@ class SettingFragment : BaseMvpFragment<SettingContract.View, SettingContract.Pr
     private var dialogLogout: LogoutDialog? = null
     override fun initView(view: View) {
         super.initView(view)
-        // GlideUtils.showCircleWithBorder(iv_head_photo, photoPath, R.drawable.pic_head, resources.getColor(R.color.white))
         initListener()
         initIvState()
         dialogLogout = LogoutDialog(requireActivity())
