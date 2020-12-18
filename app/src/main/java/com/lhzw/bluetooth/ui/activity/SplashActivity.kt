@@ -32,7 +32,7 @@ class SplashActivity : BaseActivity() {
             if (!isAgree){//还未同意
 
                 agreementDialog?.show()
-                //todo 适配今日头条弹窗不居中解决
+                // 适配今日头条弹窗不居中解决
 //            val lp= agreementDialog!!.window.attributes;
 ////设置宽高，高度默认是自适应的，宽度根据屏幕宽度比例设置
 //            lp.width = ScreenUtils.getWidth(this);
