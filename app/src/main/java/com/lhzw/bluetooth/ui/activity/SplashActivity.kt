@@ -31,7 +31,6 @@ class SplashActivity : BaseActivity() {
             agreementDialog?.setCanceledOnTouchOutside(false)
             agreementDialog?.setCancelable(false)
             if (!isAgree){//还未同意
-
                 agreementDialog?.show()
                 // 适配今日头条弹窗不居中解决
 //            val lp= agreementDialog!!.window.attributes;
