@@ -61,6 +61,7 @@ class SplashActivity : BaseActivity() {
                 override fun onAnimationEnd(p0: Animation?) {
                     if (!firest_login) {
                         jumpToLogin()
+
                     }
                 }
 
