@@ -37,7 +37,6 @@ class SportsFragment : BaseFragment(), SportTypeAdapter.OnItemClickListener {
     private var list: List<SportInfoAddrBean>? = null
     private var filter_list: Array<String>? = null
 
-    //private var adapter: SportAdapter? = null
     private val adapter by lazy {
         SportAdapter(translateSportBeans(Constants.ACTIVITY_ALL))
     }
