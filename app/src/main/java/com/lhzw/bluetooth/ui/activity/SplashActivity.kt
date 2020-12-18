@@ -24,6 +24,7 @@ class SplashActivity : BaseActivity() {
     private var isAgree: Boolean by Preference(Constants.IS_AGREE, false)
     private var agreementDialog:AgreementDialog?=null
     override fun initView() {
+
         if (firest_login) {
             //显示权限弹框
             agreementDialog= AgreementDialog(this)
