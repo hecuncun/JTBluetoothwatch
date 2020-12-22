@@ -1,7 +1,6 @@
 package com.lhzw.bluetooth.ui.activity
 
 import android.Manifest
-import android.animation.Animator
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.ValueAnimator
@@ -23,7 +22,6 @@ import com.lhzw.bluetooth.event.*
 import com.lhzw.bluetooth.ext.showToast
 import com.lhzw.bluetooth.service.BleConnectService
 import com.lhzw.bluetooth.uitls.BaseUtils
-import com.lhzw.bluetooth.uitls.DateUtils
 import com.lhzw.bluetooth.uitls.Preference
 import com.lhzw.bluetooth.view.SpaceItemDecoration
 import com.lhzw.bluetooth.widget.LoadingView
@@ -62,17 +60,18 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     override fun initData() {
-        tv_sync_time.text="最近一次同步时间 $syncTime"
+        tv_sync_time.text = "最近一次同步时间 $syncTime"
     }
-    private lateinit var drawable:ClipDrawable
+
+    private lateinit var drawable: ClipDrawable
     val animator = ValueAnimator.ofInt(10000)
     private fun initProgress() {
-        animator.duration=5000
+        animator.duration = 5000
         animator.addUpdateListener {
             val value = it.animatedValue as Int
-            drawable.level=value
-            if (value==10000){
-                drawable.level=0
+            drawable.level = value
+            if (value == 10000) {
+                drawable.level = 0
             }
         }
     }
@@ -83,8 +82,8 @@ class BLEWatchListActivity : BaseActivity() {
         recyclerView.layoutManager = manager
         watchList = ArrayList()
         watchList?.add(ConnectWatchBean("JIANGTAI疆泰5X", "型号：SW2500", "产品特性：远距离无线通信 生命体征监测", "户外助手"))
-        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4X", "型号：SW2400", "产品特性：远距离无线通信 生命体征监测","户外助手"))
-        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4", "型号：SW2401", "产品特性：10ATM防水 生命体征监测","户外运动"))
+        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4X", "型号：SW2400", "产品特性：远距离无线通信 生命体征监测", "户外助手"))
+        watchList?.add(ConnectWatchBean("JIANGTAI疆泰4", "型号：SW2401", "产品特性：10ATM防水 生命体征监测", "户外运动"))
         recyclerView.adapter = adapter
         recyclerView.addItemDecoration(SpaceItemDecoration(BaseUtils.dip2px(16)))
     }
@@ -100,13 +99,14 @@ class BLEWatchListActivity : BaseActivity() {
         initViewAnimator()
 
     }
-    private var animatorWatch:ObjectAnimator?=null//手表渐现动画
+
+    private var animatorWatch: ObjectAnimator? = null//手表渐现动画
     private fun initViewAnimator() {
-        val holder1 = PropertyValuesHolder.ofFloat("scaleX", 0f,1f)
-        val holder2 = PropertyValuesHolder.ofFloat("scaleY", 0f,1f)
-        val holder3 = PropertyValuesHolder.ofFloat("alpha", 0f,1f)
-        animatorWatch  = ObjectAnimator.ofPropertyValuesHolder(iv_simple, holder1, holder2, holder3)
-        animatorWatch?.duration=3000
+        val holder1 = PropertyValuesHolder.ofFloat("scaleX", 0f, 1f)
+        val holder2 = PropertyValuesHolder.ofFloat("scaleY", 0f, 1f)
+        val holder3 = PropertyValuesHolder.ofFloat("alpha", 0f, 1f)
+        animatorWatch = ObjectAnimator.ofPropertyValuesHolder(iv_simple, holder1, holder2, holder3)
+        animatorWatch?.duration = 3000
     }
 
     private fun initConnectState() {
@@ -120,7 +120,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     override fun initListener() {
         fl_sync.setOnClickListener {
-          //  animator.start()
+            //  animator.start()
             startSyncData()
         }
         im_back.setOnClickListener {
@@ -178,30 +178,30 @@ class BLEWatchListActivity : BaseActivity() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun setSyncDataProgress(event: ProgressEvent){
+    fun setSyncDataProgress(event: ProgressEvent) {
         Logger.e("进度==${event.progress},state=${event.state}")
-      //  0 运动数据同步  1 运动数据解析  2 同步解析结束
-        when(event.state){
-            0->{
-                drawable.level=(10000*(event.progress*0.5)).toInt()
+        //  0 运动数据同步  1 运动数据解析  2 同步解析结束
+        when (event.state) {
+            0 -> {
+                drawable.level = (10000 * (event.progress * 0.5)).toInt()
             }
-            1->{
-                drawable.level=(10000*(event.progress*0.5+0.5)).toInt()
-                if(drawable.level==10000){
+            1 -> {
+                drawable.level = (10000 * (event.progress * 0.5 + 0.5)).toInt()
+                if (drawable.level == 10000) {
                     showToast("同步数据成功")
-                    drawable.level=0
+                    drawable.level = 0
                     loadingView?.dismiss()
                 }
             }
-            2->{
-                drawable.level=0
+            2 -> {
+                drawable.level = 0
             }
-            3->{//3 进程杀死/断开连接销毁进度
-                drawable.level=0
+            3 -> {//3 进程杀死/断开连接销毁进度
+                drawable.level = 0
                 showToast("已断开连接")
             }
-            4->{
-                drawable.level=0
+            4 -> {
+                drawable.level = 0
                 showToast("手表数据同步超时")
             }
         }
@@ -210,7 +210,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (connectState){
+        if (connectState) {
             animatorWatch?.start()
 
         }
@@ -218,7 +218,7 @@ class BLEWatchListActivity : BaseActivity() {
 
     private fun jumpToScannerActivity() {// Manifest.permission.VIBRATE允许访问振动设备
         if (checkPermissions(arrayOf(Manifest.permission.CAMERA, Manifest.permission.VIBRATE))) {
-            BleConnectService.isConnecting=false//开始扫码操作   将正在连接重置为未连接
+            BleConnectService.isConnecting = false//开始扫码操作   将正在连接重置为未连接
             val intent = Intent(this, ScanQRCodeActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE)
         } else {
@@ -252,7 +252,7 @@ class BLEWatchListActivity : BaseActivity() {
                 //showToast("扫描结果为$result")
                 Logger.e("result=$result")
                 //此处进行蓝牙连接 SW2500,SW2500_D371,E3:0B:AA:DE:D3:71,00010000,6811E7ED,00010000,00000001,00010000,00010000
-                if (result!!.split(",")[0].contains( "SW")) {//如果为手表设备,扫码成功就保存设备
+                if (result!!.split(",")[0].contains("SW")) {//如果为手表设备,扫码成功就保存设备
                     lastDeviceMacAddress = result.split(",")[2]
                     connectedDeviceName = result.split(",")[1]
                     autoConnect = false //扫码成功就不自动连接,等连接成功后再设置为自动连接
@@ -315,7 +315,7 @@ class BLEWatchListActivity : BaseActivity() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun hideDialog(event: HideDialogEvent) {
         loadingView?.dismiss()
-        tv_sync_time.text=syncTime
+        tv_sync_time.text = syncTime
     }
 
 }
