@@ -84,18 +84,28 @@ class App : MultiDexApplication() {
         SpiderMan.init(this)//奔溃日志
         refWatcher = setupLeakCanary()
         registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks)
-        // 启动服务
-        if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
-            startService(Intent(context, BlutoothService::class.java))
+        try{
+            // 启动服务
+
+            if (!BaseUtils.isServiceRunning(Constants.SERVICE_PACKAGE)) {
+                startService(Intent(context, BlutoothService::class.java))
+                Log.e("tag","Application蓝牙服务")
+            }
+            //启动蓝牙连接服务
+            if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)) {
+                startService(Intent(context, BleConnectService::class.java))
+                Log.e("tag","Application启动连接服务")
+            }
+            //启动电话/短信监听服务
+            if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)) {
+                startService(Intent(context, SmsAndPhoneService::class.java))
+                Log.e("tag","Application启动连接服务SmsAndPhoneService")
+            }
+
+        }catch (e:Exception){
+            Log.e("tag","APP第一次启动连接服务  异常")
         }
-        //启动蓝牙连接服务
-        if (!BaseUtils.isServiceRunning(Constants.BLE_CONNECT_SERVICE_PACKAGE)) {
-            startService(Intent(context, BleConnectService::class.java))
-        }
-        //启动电话/短信监听服务
-        if (!BaseUtils.isServiceRunning(Constants.SMS_AND_PHONE_SERVICE_PACKAGE)) {
-            startService(Intent(context, SmsAndPhoneService::class.java))
-        }
+
         initLoggerConfig()
         //初始化数据库
         LitePal.initialize(context)

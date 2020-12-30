@@ -177,6 +177,7 @@ class WeekFragment : BaseFragment() {
         if (barChat.data != null && barChat.data.dataSetCount > 0) {
             set1 = barChat.data.getDataSetByIndex(0) as BarDataSet
             set1.values = values
+            set1.notifyDataSetChanged()
             barChat.data.notifyDataChanged()
             barChat.notifyDataSetChanged()
         } else {

@@ -148,7 +148,7 @@ class MonthFragment : BaseFragment() {
         val year = dataString.split("-")[0].toInt()
         val month = dataString.split("-")[1]
         var monthSize = getMonthSize(month, year)
-        val times = arrayOfNulls<String>(monthSize)
+        val times = Array(monthSize){""}
         for (i in 1..monthSize) {
             if (i == 1 || i == times.size || i == 15) {
                 times[i - 1] = i.toString()
@@ -211,6 +211,7 @@ class MonthFragment : BaseFragment() {
         if (barChat.data != null && barChat.data.dataSetCount > 0) {
             set1 = barChat.data.getDataSetByIndex(0) as BarDataSet
             set1.values = values
+            set1.notifyDataSetChanged()
             barChat.data.notifyDataChanged()
             barChat.notifyDataSetChanged()
         } else {
